@@ -1,0 +1,14 @@
+# README
+
+Pomi is a web application that allows users to track and log their time using the Pomodoro technique (see Pomodoro Technique).
+
+## References
+ - [Functional Specification](./docs/pomi-functional-spec.md)
+
+## Instructions
+### Scripts
+ - `yarn install`: download dependencies
+ - `yarn build`: build app
+ - `yarn start`: start app
+ - `yarn dev`: start dev server
+
