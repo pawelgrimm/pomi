@@ -46,11 +46,15 @@ This version will not support the following features:
  - Offline mode
 
 # Flowchart
+
 ![](assets/pomi-state-diagram.png)
+
 *Figure 1. Pomi State Diagram*
 
 # Screen-by-Screen Specification
+
 ## Main Screens
+
 <img src="./assets/mockups/New Session.png" width="200px")</img>
 
 *Figure 2. New Session*
@@ -60,11 +64,13 @@ This version will not support the following features:
 *Figure 3. Timer In Progress*
 
 ##Menu
+
 <img src="./assets/mockups/Menu.png" width="200px")</img>
 
 *Figure 4. Menu*
 
 ##Settings
+
 <img src="./assets/mockups/settings/Timer.png" width="200px")</img>
 
 *Figure 5. Timer Settings*
