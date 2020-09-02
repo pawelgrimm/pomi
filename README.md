@@ -1,3 +1,5 @@
+<img src="./docs/assets/pomi-icon.png" width="100px"/>
+
 # README
 
 Pomi is a web application that allows users to track and log their time using the Pomodoro technique (see [Pomodoro Technique](https://francescocirillo.com/pages/pomodoro-technique
