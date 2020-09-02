@@ -1,5 +1,6 @@
 ---
 <img src="./assets/pomi-icon.png" width="100px"/>
+
 # Pomi
 Functional Specification
 
