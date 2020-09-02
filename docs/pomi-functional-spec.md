@@ -55,35 +55,35 @@ This version will not support the following features:
 
 ## Main Screens
 
-<img src="./assets/mockups/New Session.png" width="200px")</img>
+<img src="./assets/mockups/New Session.png" width="200px" />
 
 *Figure 2. New Session*
 
-<img src="./assets/mockups/Configured Session.png" width="200px")</img>
+<img src="./assets/mockups/Configured Session.png" width="200px" />
 
 *Figure 3. Timer In Progress*
 
-##Menu
+## Menu
 
-<img src="./assets/mockups/Menu.png" width="200px")</img>
+<img src="./assets/mockups/Menu.png" width="200px" />
 
 *Figure 4. Menu*
 
-##Settings
+## Settings
 
-<img src="./assets/mockups/settings/Timer.png" width="200px")</img>
+<img src="./assets/mockups/Settings/Timer.png" width="200px" />
 
 *Figure 5. Timer Settings*
 
-<img src="./assets/mockups/settings/Accounts.png" width="200px")</img>
+<img src="./assets/mockups/Settings/Accounts.png" width="200px" />
 
 *Figure 6. Account Settings (Linked)*
 
-<img src="./assets/mockups/Confirmation Modal.png" width="200px")</img>
+<img src="./assets/mockups/Confirmation Modal.png" width="200px" />
 
 *Figure 7. Confirmation Modal when unlinking account*
 
-<img src="./assets/mockups/settings/Accounts-1.png" width="200px")</img>
+<img src="./assets/mockups/Settings/Accounts-1.png" width="200px" />
 
 *Figure 8. Account Settings (Unlinked)*
 
