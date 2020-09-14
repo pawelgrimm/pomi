@@ -1,0 +1,7 @@
+@use "src/styles/tokens" as *;
+
+.root {
+  background: $card-background;
+  color: $on-card;
+  margin: $m-size $ml-size;
+}

@@ -1,0 +1,10 @@
+@use "src/styles/tokens" as *;
+
+.root {
+  background: inherit;
+  color: inherit;
+  border: none;
+  border-radius: 3px;
+  font-size: $font-size-l;
+  font-weight: 300;
+}

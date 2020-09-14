@@ -1,0 +1,35 @@
+/* Background Color */
+$background: #16161a;
+$on-background-muted: #5e5d59;
+
+/* Primary Color */
+$primary: #ffd803;
+$on-primary: #272343;
+
+/* Secondary Color */
+$secondary: #f25f4c;
+$on-secondary: $on-primary;
+
+/* Card Colors */
+$card-background: #242629;
+$on-card: #c3c2b9;
+$on-card-muted: $on-background-muted;
+
+/* Font Sizes */
+$font-size-xl: 2.3rem;
+$font-size-l: 1.8rem;
+$font-size-m: 1.6rem;
+$font-size-s: 1.4rem;
+$font-size-xs: 1.2rem;
+
+/* Spacing */
+$xs-size: 0.8rem;
+$s-size: 1.2rem;
+$sh-size: calc(#{$s-size} / 2);
+$m-size: 1.6rem;
+$mh-size: calc(#{$s-size} / 2);
+$ml-size: 2.4rem;
+$mlh-size: calc(#{2.4rem} / 2);
+$l-size: 3.2rem;
+$xl-size: 4.8rem;
+$desktop-breakpoint: 45rem;

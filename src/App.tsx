@@ -2,8 +2,8 @@ import React from "react";
 import logo from "./logo.svg";
 import { Counter } from "./features/counter/Counter";
 import "./App.css";
-import Header from "./components/header/header";
 import Timer from "./components/timer/timer";
+import { Header } from "./components";
 
 function App() {
   return (

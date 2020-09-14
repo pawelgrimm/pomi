@@ -1,0 +1,17 @@
+import React from "react";
+import styles from './{{pascalCase name}}.module.scss';
+
+interface Props {
+  children?: React.ReactNode;
+}
+
+const {{pascalCase name}}: React.FC<Props> = ({ children }) => {
+  return (
+    <div className={styles.root}>
+      {{pascalCase name}}
+      {children}
+    </div>
+  );
+};
+
+export default {{pascalCase name}};

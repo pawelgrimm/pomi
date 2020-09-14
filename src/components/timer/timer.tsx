@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ProjectSearch from "../project-search/project-search";
-import Button from "../button/button";
 import { useTimeKeeper } from "../timekeeper/timekeeper";
+import { ProjectSearch, PrimaryButton, SecondaryButton } from "../index";
 
 const Timer = () => {
   const [time, setTime] = useState<number>(15 * 60);
@@ -34,12 +33,12 @@ const Timer = () => {
       <ProjectSearch />
       <div id="timer">{`${Math.floor(time / 60)}:${Math.abs(time % 60)}`}</div>
       <div id="buttons">
-        <Button onClick={onStartStopClick}>
+        <PrimaryButton onClick={onStartStopClick}>
           {inProgress ? "Stop" : "Start"}
-        </Button>
-        <Button onClick={onToggleClick}>
+        </PrimaryButton>
+        <SecondaryButton onClick={onToggleClick}>
           {inProgress ? "Pause" : "Resume"}
-        </Button>
+        </SecondaryButton>
       </div>
     </div>
   );

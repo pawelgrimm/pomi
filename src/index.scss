@@ -1,0 +1,15 @@
+@use "src/styles/tokens" as *;
+@use "src/styles/fonts" as *;
+
+body {
+  background-color: $background;
+  margin: 0;
+  font-family: $font-stack;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}

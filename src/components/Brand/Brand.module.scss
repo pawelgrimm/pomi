@@ -1,0 +1,8 @@
+@use "src/styles/tokens" as *;
+
+.root {
+  font-size: $font-size-xl;
+  background-color: $primary;
+  color: $on-primary;
+  font-weight: 500;
+}
