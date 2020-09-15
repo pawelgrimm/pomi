@@ -1,0 +1,7 @@
+@use "src/styles/tokens" as *;
+
+.timer {
+  text-align: center;
+  margin: $xs-size;
+  font-size: $font-size-xl;
+}
