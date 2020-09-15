@@ -2,7 +2,7 @@
 const workerSelf: Worker = self as any;
 
 // @ts-ignore
-const DEBUG = true;
+const DEBUG = false;
 declare function setInterval(cb: () => void, to: number): number;
 
 enum TimerError {

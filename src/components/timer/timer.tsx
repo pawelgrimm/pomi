@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTimeKeeper } from "../timekeeper/timekeeper";
 import {
   ProjectSearch,
@@ -7,43 +7,74 @@ import {
   TimerDisplay,
   ButtonGroup,
 } from "../index";
+import useSession from "./useSession";
 
 const Timer = () => {
   const [time, setTime] = useState<number>(15 * 60);
-  // const [sessionStart, setSessionStart] = useState<number>(0);
-  const [inProgress, setInProgress] = useState<boolean>(false);
+  const [isInProgress, setIsInProgress] = useState<boolean>(false);
+  const [isPaused, setIsPaused] = useState<boolean>(true);
+  const [buttonText, setButtonText] = useState<string>("Start");
   const [clock, startTimer, pauseTimer] = useTimeKeeper();
+  const { startSession, endSession } = useSession();
+  const [description, setDescription] = useState("");
+  const [project, setProject] = useState("");
 
+  // Main clock effect
   useEffect(() => {
-    if (inProgress) {
+    if (isInProgress) {
       setTime((prev) => prev - 1);
     }
-  }, [clock, inProgress]);
+  }, [clock, isInProgress]);
 
-  useEffect(() => {});
-
-  const onStartStopClick = () => {
-    if (inProgress) {
+  const onStartPauseResumeClick = () => {
+    if (!isInProgress) {
+      // Start Timer
       setTime(15 * 60);
+      startTimer();
+      setIsInProgress(true);
+      setIsPaused(false);
+      setButtonText("Pause");
+      startSession(15 * 60, description);
+    } else if (!isPaused) {
+      // Pause Timer
+      pauseTimer();
+      setIsPaused(true);
+      setButtonText("Resume");
+    } else {
+      // Resume Timer
+      startTimer();
+      setIsPaused(false);
+      setButtonText("Pause");
     }
-    onToggleClick();
   };
 
-  const onToggleClick = () => {
-    inProgress ? pauseTimer() : startTimer();
-    setInProgress((prev) => !prev);
+  const onStopClick = () => {
+    setIsInProgress(false);
+    setIsPaused(false);
+    setButtonText("Start");
+    console.log(endSession(time));
   };
 
   return (
     <div id="timer">
-      <ProjectSearch />
+      <ProjectSearch
+        setValue={setProject}
+        value={project}
+        readOnly={isInProgress}
+      />
+      <ProjectSearch
+        setValue={setDescription}
+        value={description}
+        readOnly={isInProgress}
+        placeholder={"Enter a description"}
+      />
       <TimerDisplay time={time} />
       <ButtonGroup>
-        <PrimaryButton onClick={onStartStopClick}>
-          {inProgress ? "Stop" : "Start"}
+        <PrimaryButton onClick={onStartPauseResumeClick}>
+          {buttonText}
         </PrimaryButton>
-        <SecondaryButton onClick={onToggleClick}>
-          {inProgress ? "Pause" : "Resume"}
+        <SecondaryButton disabled={!isInProgress} onClick={onStopClick}>
+          Stop
         </SecondaryButton>
       </ButtonGroup>
     </div>

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Worker from "worker-loader!./worker-script";
 //const workerPath = "./worker-script";
 
-const DEBUG = true;
+const DEBUG = false;
 
 declare function setInterval(cb: () => void, to: number): number;
 
@@ -77,11 +77,6 @@ export const useTimeKeeper = (
   ]);
 
   useEffect(() => {
-    console.log("useTimeKeeper render");
-  });
-
-  useEffect(() => {
-    console.log("timekeeper effect ran");
     listenToWorker(worker, ({ clock, error }) => {
       if (error) {
         postDebugMessage(error);
