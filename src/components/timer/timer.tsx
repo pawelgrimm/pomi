@@ -5,6 +5,7 @@ import {
   PrimaryButton,
   SecondaryButton,
   TimerDisplay,
+  ButtonGroup,
 } from "../index";
 
 const Timer = () => {
@@ -37,14 +38,14 @@ const Timer = () => {
     <div id="timer">
       <ProjectSearch />
       <TimerDisplay time={time} />
-      <div id="buttons">
+      <ButtonGroup>
         <PrimaryButton onClick={onStartStopClick}>
           {inProgress ? "Stop" : "Start"}
         </PrimaryButton>
         <SecondaryButton onClick={onToggleClick}>
           {inProgress ? "Pause" : "Resume"}
         </SecondaryButton>
-      </div>
+      </ButtonGroup>
     </div>
   );
 };

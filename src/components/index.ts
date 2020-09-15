@@ -1,4 +1,5 @@
 /* PLOP_INJECT_IMPORT */
+import ButtonGroup from "./ButtonGroup";
 import TimerDisplay from "./TimerDisplay";
 import App from "./App";
 import ProjectSearch from "./ProjectSearch";
@@ -9,6 +10,7 @@ import { PrimaryButton, SecondaryButton } from "./Button";
 
 export {
   /* PLOP_INJECT_EXPORT */
+	ButtonGroup,
 	TimerDisplay,
 	App,
 	ProjectSearch,

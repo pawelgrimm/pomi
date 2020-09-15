@@ -10,9 +10,14 @@
   font-variant: all-small-caps;
   font-weight: 300;
   letter-spacing: 0.5px;
-  line-height: 1;
+  line-height: 1.2;
   padding: $s-size;
   text-decoration: none;
+  cursor: pointer;
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
 }
 
 .primary {
