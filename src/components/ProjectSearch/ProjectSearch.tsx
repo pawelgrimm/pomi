@@ -4,9 +4,9 @@ import { Card } from "../index";
 
 const ProjectSearch: React.FC = () => {
   return (
-    <Card>
+    <Card flex="column">
       <input
-        className={styles.root}
+        className={styles.input}
         type="text"
         placeholder="Enter a project"
       />

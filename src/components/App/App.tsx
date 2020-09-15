@@ -7,7 +7,9 @@ const App: React.FC = () => {
   return (
     <div className={styles.app}>
       <Header />
-      <Timer />
+      <div className={styles.mainContent}>
+        <Timer />
+      </div>
     </div>
   );
 };

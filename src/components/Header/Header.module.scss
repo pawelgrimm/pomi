@@ -1,5 +1,13 @@
 @use "src/styles/tokens" as *;
 
-.root {
-
+.header {
+  align-items: center;
+  background-color: $primary;
+  color: $on-primary;
+  display: flex;
+  justify-content: space-between;
+  padding: $m-size;
+  @media (max-width: $desktop-breakpoint) {
+    padding: $m-size;
+  }
 }

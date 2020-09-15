@@ -8,7 +8,7 @@ interface Props {
 
 const Header: React.FC<Props> = ({ children }) => {
   return (
-    <header className={styles.root}>
+    <header className={styles.header}>
       <Brand />
       {children}
     </header>
