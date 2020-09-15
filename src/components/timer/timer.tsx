@@ -6,13 +6,14 @@ import {
   SecondaryButton,
   TimerDisplay,
   ButtonGroup,
+  TextArea,
 } from "../index";
 import useSession from "./useSession";
 
 const Timer = () => {
   const [time, setTime] = useState<number>(15 * 60);
   const [isInProgress, setIsInProgress] = useState<boolean>(false);
-  const [isPaused, setIsPaused] = useState<boolean>(true);
+  // const [isPaused, setIsPaused] = useState<boolean>(true);
   const [buttonText, setButtonText] = useState<string>("Start");
   const [clock, startTimer, pauseTimer] = useTimeKeeper();
   const { startSession, endSession } = useSession();
@@ -26,33 +27,19 @@ const Timer = () => {
     }
   }, [clock, isInProgress]);
 
-  const onStartPauseResumeClick = () => {
+  const onStartStopClick = () => {
     if (!isInProgress) {
       // Start Timer
       setTime(15 * 60);
       startTimer();
       setIsInProgress(true);
-      setIsPaused(false);
-      setButtonText("Pause");
-      startSession(15 * 60, description);
-    } else if (!isPaused) {
-      // Pause Timer
-      pauseTimer();
-      setIsPaused(true);
-      setButtonText("Resume");
+      setButtonText("Stop");
+      startSession(Date.now(), project, description);
     } else {
-      // Resume Timer
-      startTimer();
-      setIsPaused(false);
-      setButtonText("Pause");
+      setIsInProgress(false);
+      setButtonText("Start");
+      console.log(endSession(Date.now()));
     }
-  };
-
-  const onStopClick = () => {
-    setIsInProgress(false);
-    setIsPaused(false);
-    setButtonText("Start");
-    console.log(endSession(time));
   };
 
   return (
@@ -60,22 +47,20 @@ const Timer = () => {
       <ProjectSearch
         setValue={setProject}
         value={project}
-        readOnly={isInProgress}
+        disabled={isInProgress}
       />
-      <ProjectSearch
+      <TextArea
         setValue={setDescription}
         value={description}
-        readOnly={isInProgress}
+        disabled={isInProgress}
         placeholder={"Enter a description"}
       />
       <TimerDisplay time={time} />
       <ButtonGroup>
-        <PrimaryButton onClick={onStartPauseResumeClick}>
-          {buttonText}
-        </PrimaryButton>
-        <SecondaryButton disabled={!isInProgress} onClick={onStopClick}>
-          Stop
-        </SecondaryButton>
+        <PrimaryButton onClick={onStartStopClick}>{buttonText}</PrimaryButton>
+        {/*<SecondaryButton disabled={!isInProgress} onClick={onStopClick}>*/}
+        {/*  Stop*/}
+        {/*</SecondaryButton>*/}
       </ButtonGroup>
     </div>
   );

@@ -3,10 +3,12 @@ import React, { useCallback, useState } from "react";
 const useSession = () => {
   const [startTime, setStartTime] = useState(0);
   const [description, setDescription] = useState("");
+  const [project, setProject] = useState("");
 
   const startSession = useCallback(
-    (currentTime: number, description: string = "") => {
+    (currentTime: number, project: string = "", description: string = "") => {
       setStartTime(currentTime);
+      setProject(project);
       setDescription(description);
     },
     []
@@ -14,13 +16,14 @@ const useSession = () => {
 
   const endSession = useCallback(
     (endTime: number) => {
-      const duration = startTime - endTime;
       return {
-        duration,
+        startTime,
+        endTime,
+        project,
         description,
       };
     },
-    [description, startTime]
+    [description, project, startTime]
   );
 
   return { startSession, endSession };

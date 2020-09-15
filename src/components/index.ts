@@ -1,4 +1,5 @@
 /* PLOP_INJECT_IMPORT */
+import TextArea from "./TextArea";
 import ButtonGroup from "./ButtonGroup";
 import TimerDisplay from "./TimerDisplay";
 import App from "./App";
@@ -10,6 +11,7 @@ import { PrimaryButton, SecondaryButton } from "./Button";
 
 export {
   /* PLOP_INJECT_EXPORT */
+	TextArea,
 	ButtonGroup,
 	TimerDisplay,
 	App,

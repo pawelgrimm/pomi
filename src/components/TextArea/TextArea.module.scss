@@ -1,0 +1,17 @@
+@use "src/styles/tokens" as *;
+
+.textArea {
+  background: inherit;
+  color: inherit;
+  border: none;
+  border-radius: 3px;
+  font-size: $font-size-s;
+  font-family: inherit;
+  font-weight: 300;
+  outline: none;
+  padding: $xs-size;
+  text-align: center;
+  &:focus {
+    box-shadow: 0 0 0 2px $primary;
+  }
+}
