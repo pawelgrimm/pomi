@@ -1,14 +1,13 @@
 import React from "react";
-import styles from "./TextArea.module.scss";
-import { Card } from "../index";
+import styles from "../Inputs.module.scss";
+import { Card } from "../../index";
 
-interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  value: string;
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   setValue: (value: any) => void;
-  placeholder: string;
+  value: string;
 }
 
-const TextArea: React.FC<Props> = ({
+const Input: React.FC<InputProps> = ({
   value,
   setValue,
   placeholder,
@@ -16,8 +15,9 @@ const TextArea: React.FC<Props> = ({
 }) => {
   return (
     <Card flex="column">
-      <textarea
-        className={styles.textArea}
+      <input
+        className={styles.input}
+        type="text"
         placeholder={placeholder || "Enter a project"}
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -27,4 +27,4 @@ const TextArea: React.FC<Props> = ({
   );
 };
 
-export default TextArea;
+export default Input;

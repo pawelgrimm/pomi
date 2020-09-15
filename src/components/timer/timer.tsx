@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTimeKeeper } from "../timekeeper/timekeeper";
 import {
-  ProjectSearch,
+  Input,
   PrimaryButton,
-  SecondaryButton,
   TimerDisplay,
   ButtonGroup,
   TextArea,
@@ -44,11 +43,7 @@ const Timer = () => {
 
   return (
     <div id="timer">
-      <ProjectSearch
-        setValue={setProject}
-        value={project}
-        disabled={isInProgress}
-      />
+      <Input setValue={setProject} value={project} disabled={isInProgress} />
       <TextArea
         setValue={setDescription}
         value={description}

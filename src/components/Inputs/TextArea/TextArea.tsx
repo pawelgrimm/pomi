@@ -1,13 +1,14 @@
 import React from "react";
-import styles from "./ProjectSearch.module.scss";
-import { Card } from "../index";
+import styles from "../Inputs.module.scss";
+import { Card } from "../../index";
 
-interface PSProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  setValue: (value: any) => void;
+interface Props extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   value: string;
+  setValue: (value: any) => void;
+  placeholder: string;
 }
 
-const ProjectSearch: React.FC<PSProps> = ({
+const TextArea: React.FC<Props> = ({
   value,
   setValue,
   placeholder,
@@ -15,9 +16,8 @@ const ProjectSearch: React.FC<PSProps> = ({
 }) => {
   return (
     <Card flex="column">
-      <input
+      <textarea
         className={styles.input}
-        type="text"
         placeholder={placeholder || "Enter a project"}
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -27,4 +27,4 @@ const ProjectSearch: React.FC<PSProps> = ({
   );
 };
 
-export default ProjectSearch;
+export default TextArea;

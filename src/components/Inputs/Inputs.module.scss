@@ -1,4 +1,4 @@
-@use "src/styles/tokens" as *;
+@use "../../styles/tokens" as *;
 
 .input {
   background: inherit;
@@ -6,7 +6,7 @@
   border: none;
   border-radius: 3px;
   font-size: $font-size-s;
-  font-weight: 300;
+  font-family: inherit;
   outline: none;
   padding: $xs-size;
   text-align: center;
