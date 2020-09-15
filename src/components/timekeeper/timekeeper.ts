@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import * as workerPath from "file-loader?name=[name].js!./worker-script";
+import Worker from "worker-loader!./worker-script";
+//const workerPath = "./worker-script";
 
 const DEBUG = true;
 
@@ -66,7 +67,7 @@ const pauseWorker = (worker: Worker): void => {
 export const useTimeKeeper = (
   interval: number = 100
 ): [number, () => void, () => void] => {
-  const worker = useMemo(() => new Worker(workerPath), []);
+  const worker = useMemo(() => new Worker(), []);
   const [time, setTime] = useState<number>(Date.now());
 
   const pause = useCallback(() => pauseWorker(worker), [worker]);

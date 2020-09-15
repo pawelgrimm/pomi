@@ -1,10 +1,5 @@
-// import {
-//   startNewTimer,
-//   postDebugMessage,
-//   postCurrentTime,
-//   //postMessage,
-//   TimerError,
-// } from "./timekeeper";
+// eslint-disable-next-line no-restricted-globals
+const workerSelf: Worker = self as any;
 
 // @ts-ignore
 const DEBUG = true;
@@ -58,7 +53,7 @@ const clearTimer = () => {
  * Send a message to the main thread with the current time
  */
 const postCurrentTime = () => {
-  postMessage({ clock: Date.now() });
+  workerSelf.postMessage({ clock: Date.now() });
 };
 
 let currentIntervalId: number | undefined;
@@ -67,7 +62,7 @@ let currentIntervalId: number | undefined;
  * Add an onmessage listener to set a new timer
  */
 // eslint-disable-next-line no-restricted-globals
-addEventListener("message", ({ data: action }) => {
+workerSelf.addEventListener("message", ({ data: action }) => {
   postDebugMessage(
     `Action ${action.type} requested${
       action.payload ? "with payload: " + action.payload : ""
@@ -82,7 +77,7 @@ addEventListener("message", ({ data: action }) => {
       const interval = action.payload;
 
       if (typeof interval !== "number") {
-        postMessage({ error: TimerError.INTERVAL_NOT_NUMBER });
+        workerSelf.postMessage({ error: TimerError.INTERVAL_NOT_NUMBER });
       }
       startNewTimer(interval);
       break;
@@ -94,3 +89,5 @@ addEventListener("message", ({ data: action }) => {
 });
 
 postDebugMessage("New worker created");
+
+export {};

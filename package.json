@@ -18,7 +18,8 @@
     "react-redux": "^7.2.0",
     "react-scripts": "3.4.3",
     "sass": "1.26.10",
-    "typescript": "~3.8.2"
+    "typescript": "~3.8.2",
+    "worker-loader": "3.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -41,5 +42,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "moduleNameMapper": {
+      "^worker-loader(.*)$": "<rootDir>/src/__mocks__/Worker"
+    }
   }
 }
