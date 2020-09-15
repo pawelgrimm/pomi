@@ -1,10 +1,8 @@
 import React from "react";
 import "@testing-library/jest-dom";
 import { render } from "@testing-library/react";
-import Button from './Button';
+import Brand from "../Brand";
 
-describe("Button", () => {
-  it("renders without error", () => {
-
-  });
+describe("Brand", () => {
+  it("renders without error", () => {});
 });

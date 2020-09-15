@@ -18,7 +18,8 @@ module.exports = function (plop) {
       {
         // Test
         type: "add",
-        path: "src/components/{{pascalCase name}}/{{pascalCase name}}.test.tsx",
+        path:
+          "src/components/{{pascalCase name}}/test/{{pascalCase name}}.test.tsx",
         templateFile: "plop-templates/Component/Component.test.tsx.hbs",
       },
       {
