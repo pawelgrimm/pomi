@@ -37,7 +37,7 @@ const Timer = () => {
     } else {
       setIsInProgress(false);
       setButtonText("Start");
-      console.log(endSession(Date.now()));
+      alert(JSON.stringify(endSession(Date.now()), null, 5));
     }
   };
 

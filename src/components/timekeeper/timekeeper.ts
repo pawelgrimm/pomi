@@ -65,7 +65,7 @@ const pauseWorker = (worker: Worker): void => {
  * @return the current time
  */
 export const useTimeKeeper = (
-  interval: number = 100
+  interval: number = 1000
 ): [number, () => void, () => void] => {
   const worker = useMemo(() => new Worker(), []);
   const [time, setTime] = useState<number>(Date.now());

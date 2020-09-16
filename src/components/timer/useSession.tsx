@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from "react";
+import { format } from "date-fns";
 
 const useSession = () => {
   const [startTime, setStartTime] = useState(0);
@@ -17,8 +18,8 @@ const useSession = () => {
   const endSession = useCallback(
     (endTime: number) => {
       return {
-        startTime,
-        endTime,
+        startTime: format(new Date(startTime), "kkmm"),
+        endTime: format(new Date(endTime), "kkmm"),
         project,
         description,
       };
