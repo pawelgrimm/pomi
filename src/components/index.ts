@@ -1,4 +1,5 @@
 /* PLOP_INJECT_IMPORT */
+import EditSession from "./EditSession";
 import { Input, TextArea } from "./Inputs";
 import ButtonGroup from "./ButtonGroup";
 import TimerDisplay from "./TimerDisplay";
@@ -11,6 +12,7 @@ import { PrimaryButton, SecondaryButton } from "./Button";
 
 export {
   /* PLOP_INJECT_EXPORT */
+	EditSession,
   Input,
   TextArea,
   ButtonGroup,

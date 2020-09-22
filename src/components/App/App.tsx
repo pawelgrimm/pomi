@@ -1,16 +1,26 @@
 import React from "react";
 import styles from "./App.module.scss";
-import { Header } from "../index";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { EditSession, Header } from "../index";
 import Timer from "../timer/timer";
 
 const App: React.FC = () => {
   return (
-    <div className={styles.app}>
-      <Header />
-      <div className={styles.mainContent}>
-        <Timer />
+    <Router>
+      <div className={styles.app}>
+        <Header />
+        <div className={styles.mainContent}>
+          <Switch>
+            <Route path="/fudge">
+              <EditSession />
+            </Route>
+            <Route path="/">
+              <Timer />
+            </Route>
+          </Switch>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 };
 
