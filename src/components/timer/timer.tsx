@@ -8,6 +8,7 @@ import {
   TextArea,
 } from "../index";
 import useSession from "./useSession";
+import { formatSeconds } from "../../utils";
 
 const Timer = () => {
   const [time, setTime] = useState<number>(15 * 60);
@@ -25,6 +26,15 @@ const Timer = () => {
       setTime((prev) => prev - 1);
     }
   }, [clock, isInProgress]);
+
+  // Document Title updates
+  useEffect(() => {
+    if (isInProgress) {
+      document.title = formatSeconds(time).join(":");
+    } else {
+      document.title = "Pomi";
+    }
+  }, [isInProgress, time]);
 
   const onStartStopClick = () => {
     if (!isInProgress) {
