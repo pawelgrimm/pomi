@@ -8,7 +8,7 @@ import {
   TextArea,
 } from "../index";
 import useSession from "./useSession";
-import { formatSeconds } from "../../utils";
+import { formatSeconds, getUnixTime } from "../../utils";
 
 const Timer = () => {
   const [time, setTime] = useState<number>(15 * 60);
@@ -47,7 +47,16 @@ const Timer = () => {
     } else {
       setIsInProgress(false);
       setButtonText("Start");
-      alert(JSON.stringify(endSession(Date.now()), null, 5));
+      // TODO: This needs to get refactored and go elsewhere
+      const endTime = Date.now();
+      const newSession = endSession(endTime);
+      const newId = getUnixTime(newSession.date, newSession.startTime);
+      const savedSessions = JSON.parse(
+        window.localStorage.getItem("sessions") || "{}"
+      );
+      savedSessions[newId] = newSession;
+      window.localStorage.setItem("sessions", JSON.stringify(savedSessions));
+      alert(JSON.stringify({ [newId]: newSession }, null, 5));
     }
   };
 

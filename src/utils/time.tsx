@@ -1,3 +1,5 @@
+import { parse } from "date-fns";
+
 /**
  * Time-related utility functions
  */
@@ -13,4 +15,22 @@ const formatSeconds = (seconds: number): [string, string] => {
   return [minutesPart, secondsPart.padStart(2, "0")];
 };
 
-export { formatSeconds };
+/**
+ * Convert a date and time into a Unix time
+ * @param date a date in the format M/dd/yy (e.g. 9/22/20)
+ * @param time a time in the format kmm (e.g. 955 or 1356)
+ * @returns the Unix time that corresponds to the specified date and time
+ */
+const getUnixTime = (date: string, time: number): number => {
+  const unixTime = parse(
+    `${date} ${time}`,
+    "M/dd/yy kmm",
+    Date.now()
+  ).valueOf();
+  if (isNaN(unixTime)) {
+    throw new RangeError(`${date} ${time} is not a valid instance.`);
+  }
+  return unixTime;
+};
+
+export { formatSeconds, getUnixTime };
