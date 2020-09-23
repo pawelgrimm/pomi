@@ -4,10 +4,11 @@
 # Pomi
 Functional Specification
 
-Version 0.1
+Version 1.0
 
-Pawel Grimm </br>
-Last Updated: September 2, 2020
+Pawel Grimm
+
+Last Updated: September 23, 2020
 
 ---
 # Overview
@@ -23,11 +24,10 @@ Pomi is a web application that allows users to track and log their time using th
 
 # Features
 
-- Web client
-- Desktop notifications
-- Logging an estimated time for a task
-- Completing tasks
-- Tracking session and break overflow
+ - [x] Web client
+ - [x] Start/stop timer and log session to DB
+ - [x] Edit session after logging
+ - [x] View list of sessions (with links to edit)
 
 # Scenarios
 ### Scenario 1: Sarah
@@ -39,12 +39,17 @@ Lucas is a junior software developer that struggles to spend his time productive
 # Non Goals
 This version will not support the following features:
 
- - Splitting a session between multiple tasks
- - Prompting user to take a long session
- - Todoist integration (associate session with task)
- - Mobile notifications
- - Changing alarm tone
- - Offline mode
+ - [ ] Desktop notifications
+ - [ ] Viewing a report of time spent
+ - [ ] Logging an estimated time for a task
+ - [ ] Todoist integration (associate session with task or project)
+ - [ ] Completing linked tasks
+ - [ ] Tracking session and break overflow
+ - [ ] Splitting a session between multiple tasks
+ - [ ] Prompting user to take a long break
+ - [ ] Mobile notifications
+ - [ ] Audible alarm tone
+ - [ ] Offline mode
 
 # Flowchart
 
