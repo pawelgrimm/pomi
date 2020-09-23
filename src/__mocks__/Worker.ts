@@ -1,5 +1,7 @@
 //import WebpackWorker from "../components/timekeeper/worker-loader";
 
+declare type Listener = (this: Worker, ev: MessageEvent) => any;
+
 export default class MyWorker {
   onmessage: ((this: Worker, ev: MessageEvent) => any) | null;
 
@@ -11,8 +13,7 @@ export default class MyWorker {
 
   terminate(): void {}
 
-  addEventListener(
-    type: "message",
-    listener: (this: Worker, ev: MessageEvent) => any
-  ): void {}
+  addEventListener(type: "message", listener: Listener): void {}
+
+  removeEventListener(type: "message", listener: Listener): void {}
 }
