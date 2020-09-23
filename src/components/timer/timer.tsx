@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTimeKeeper } from "../timekeeper/timekeeper";
 import {
   Input,
@@ -15,7 +15,7 @@ const Timer = () => {
   const [isInProgress, setIsInProgress] = useState<boolean>(false);
   // const [isPaused, setIsPaused] = useState<boolean>(true);
   const [buttonText, setButtonText] = useState<string>("Start");
-  const [clock, startTimer, pauseTimer] = useTimeKeeper();
+  const [clock, startTimer] = useTimeKeeper();
   const { startSession, endSession } = useSession();
   const [description, setDescription] = useState("");
   const [project, setProject] = useState("");

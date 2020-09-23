@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import styles from "./EditSession.module.scss";
-import { ButtonGroup, Card, Input, PrimaryButton, TextArea } from "../index";
-import Button from "../Button/Button";
+import { ButtonGroup, Input, PrimaryButton, TextArea } from "../index";
 import { Session } from "../../models";
 import { getUnixTime } from "../../utils";
 import { format } from "date-fns";

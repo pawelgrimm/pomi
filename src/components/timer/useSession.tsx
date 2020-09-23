@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { format } from "date-fns";
 import { Session } from "../../models";
 
