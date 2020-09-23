@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useTimeKeeper } from "../timekeeper/timekeeper";
 import {
   Input,
   PrimaryButton,
@@ -9,13 +8,18 @@ import {
 } from "../index";
 import useSession from "./useSession";
 import { formatSeconds, getUnixTime } from "../../utils";
+import useClock from "../../hooks/useClock/useClock";
+import { format } from "date-fns";
+
+const timeNow = () => {
+  return format(Date.now(), "s.SSS");
+};
 
 const Timer = () => {
   const [time, setTime] = useState<number>(15 * 60);
   const [isInProgress, setIsInProgress] = useState<boolean>(false);
-  // const [isPaused, setIsPaused] = useState<boolean>(true);
   const [buttonText, setButtonText] = useState<string>("Start");
-  const [clock, startTimer] = useTimeKeeper();
+  const { start, stop, ticks } = useClock();
   const { startSession, endSession } = useSession();
   const [description, setDescription] = useState("");
   const [project, setProject] = useState("");
@@ -25,7 +29,8 @@ const Timer = () => {
     if (isInProgress) {
       setTime((prev) => prev - 1);
     }
-  }, [clock, isInProgress]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ticks]);
 
   // Document Title updates
   useEffect(() => {
@@ -40,13 +45,15 @@ const Timer = () => {
     if (!isInProgress) {
       // Start Timer
       setTime(15 * 60);
-      startTimer();
+      start();
       setIsInProgress(true);
       setButtonText("Stop");
       startSession(Date.now(), project, description);
     } else {
       setIsInProgress(false);
       setButtonText("Start");
+      stop();
+      setTime(60 * 15);
       // TODO: This needs to get refactored and go elsewhere
       const endTime = Date.now();
       const newSession = endSession(endTime);

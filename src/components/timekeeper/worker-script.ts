@@ -29,9 +29,9 @@ const postDebugMessage = (message: string): void => {
 };
 
 /**
- * Start a new timer for the given interval. Clears previous timer if one exists.
+ * Start a new useClock for the given interval. Clears previous useClock if one exists.
  * @param interval the length of the new interval in milliseconds
- * @param currentIntervalId the ID of the previous timer
+ * @param currentIntervalId the ID of the previous useClock
  * @return the new interval ID
  */
 const startNewTimer = (interval: number): void => {
@@ -59,7 +59,7 @@ const postCurrentTime = () => {
 let currentIntervalId: number | undefined;
 
 /**
- * Add an onmessage listener to set a new timer
+ * Add an onmessage listener to set a new useClock
  */
 // eslint-disable-next-line no-restricted-globals
 workerSelf.addEventListener("message", ({ data: action }) => {

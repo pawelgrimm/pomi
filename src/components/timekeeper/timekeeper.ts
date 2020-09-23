@@ -39,7 +39,9 @@ export function listenToWorker(
   worker: Worker,
   cb: (data: TimerWorkerMessage) => void
 ): void {
-  worker.addEventListener("message", ({ data }) => cb(data));
+  worker.addEventListener("message", ({ data }) => {
+    cb(data);
+  });
 }
 
 /**
@@ -52,7 +54,7 @@ const startWorker = (worker: Worker, interval: number): void => {
 };
 
 /**
- * Instruct the worker to stop running the timer
+ * Instruct the worker to stop running the useClock
  * @param worker the worker
  */
 const pauseWorker = (worker: Worker): void => {
