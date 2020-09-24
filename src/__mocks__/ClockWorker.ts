@@ -1,5 +1,3 @@
-//import WebpackWorker from "../components/timekeeper/worker-loader";
-
 declare type Listener = (this: Worker, ev: MessageEvent) => any;
 
 export default class MyWorker {
@@ -9,7 +7,7 @@ export default class MyWorker {
     this.onmessage = () => {};
   }
 
-  postMessage(message: any): void {}
+  postCurrentTime(): void {}
 
   terminate(): void {}
 

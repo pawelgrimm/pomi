@@ -1,26 +1,13 @@
-import { startClock, stopClock, emitTick } from "./actions";
+/**
+ * This file is passed to a Worker constructor
+ */
 import Clock from "./Clock";
+import { getClockReducer, postCurrentTime } from "./clockWorkerFunctions";
 
 // eslint-disable-next-line no-restricted-globals
 const workerSelf: Worker = self as any;
 
-/**
- * Send a message to the main thread with the current time
- */
-const postCurrentTime = (): void => {
-  workerSelf.postMessage(emitTick());
-};
-
-const clock = new Clock(postCurrentTime);
+const clock = new Clock(postCurrentTime.bind(workerSelf));
 
 // @ts-ignore
-workerSelf.addEventListener("message", ({ data: action }) => {
-  switch (action.type) {
-    case startClock.toString():
-      clock.start(action.payload);
-      break;
-    case stopClock.toString():
-      clock.stop();
-      break;
-  }
-});
+workerSelf.addEventListener("message", getClockReducer(clock));

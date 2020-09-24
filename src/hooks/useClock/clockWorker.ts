@@ -1,8 +1,11 @@
 // eslint-disable-next-line import/no-webpack-loader-syntax
-import Worker from "worker-loader!./clockWorker-script";
+import ClockWorker from "worker-loader!./clockWorker-script";
 import { Action, createWorker } from "./workerKit/workerKit";
 
-const createClockWorker = () => createWorker(Worker);
+/**
+ * Instantiates a ClockWorker
+ */
+const createClockWorker = () => createWorker(ClockWorker);
 
 /**
  * Add a listener to the worker's message event.
@@ -10,7 +13,7 @@ const createClockWorker = () => createWorker(Worker);
  * @param callback the function to execute
  */
 export const subscribeToWorker = (
-  worker: Worker,
+  worker: ClockWorker,
   callback: (data: Action) => void
 ): (() => void) => {
   const listener = ({ data }: { data: Action }) => callback(data);
