@@ -17,6 +17,9 @@ const theme = createMuiTheme({
       contrastText: "#272343",
     },
   },
+  typography: {
+    fontFamily: "Work Sans, Roboto, Helvetica, Arial, sans-serif",
+  },
 });
 
 const App: React.FC = () => {
