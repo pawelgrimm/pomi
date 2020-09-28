@@ -1,3 +1,3 @@
-import { PrimaryButton, SecondaryButton } from "./Button";
+import StyledButton from "./Button";
 
-export { PrimaryButton, SecondaryButton };
+export default StyledButton;

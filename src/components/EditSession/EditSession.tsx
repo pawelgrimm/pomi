@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ButtonGroup, Input, PrimaryButton, TextArea } from "../index";
+import { ButtonGroup, Input, StyledButton, TextArea } from "../index";
 import { Session } from "../../models";
 import { getUnixTime } from "../../utils";
 import { format } from "date-fns";
@@ -39,7 +39,7 @@ const EditSession: React.FC<Props> = ({ children }) => {
         placeholder="Description"
       />
       <ButtonGroup>
-        <PrimaryButton onClick={onClick}>Add</PrimaryButton>
+        <StyledButton onClick={onClick}>Add</StyledButton>
       </ButtonGroup>
     </>
   );

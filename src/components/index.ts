@@ -7,7 +7,7 @@ import App from "./App";
 import ProjectSearch from "./Inputs/Input";
 import Card from "./Card";
 import Header from "./Header";
-import { PrimaryButton, SecondaryButton } from "./Button";
+import StyledButton from "./Button";
 
 export {
   /* PLOP_INJECT_EXPORT */
@@ -20,6 +20,5 @@ export {
   ProjectSearch,
   Card,
   Header,
-  PrimaryButton,
-  SecondaryButton,
+  StyledButton,
 };
