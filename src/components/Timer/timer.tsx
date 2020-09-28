@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Input,
-  StyledButton,
-  TimerDisplay,
-  //  ButtonGroup,
-  TextArea,
-} from "../index";
+import { Input, TimerDisplay, TextArea } from "../index";
 import useSession from "./useSession";
 import { formatSeconds, getUnixTime } from "../../utils";
 import useClock from "../../hooks/useClock/useClock";
 import { format } from "date-fns";
-import { ButtonGroup } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 
 const timeNow = () => {
   return format(Date.now(), "s.SSS");
@@ -79,13 +73,9 @@ const Timer = () => {
       />
       <TimerDisplay time={time} />
       <ButtonGroup fullWidth orientation="vertical">
-        <StyledButton
-          variant="contained"
-          color="primary"
-          onClick={onStartStopClick}
-        >
+        <Button variant="contained" color="primary" onClick={onStartStopClick}>
           {buttonText}
-        </StyledButton>
+        </Button>
       </ButtonGroup>
       {/*<ButtonGroup>*/}
       {/*  */}
