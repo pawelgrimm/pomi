@@ -17,7 +17,7 @@ const EditSession: React.FC<Props> = ({ children }) => {
 
   const onClick = () => {
     const session: Session = {
-      date: "",
+      date: date,
       startTime: Number.parseInt(startTime),
       endTime: Number.parseInt(endTime),
       project,
