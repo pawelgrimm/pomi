@@ -7,6 +7,7 @@ import App from "./App";
 import ProjectSearch from "./Inputs/Input";
 import Card from "./Card";
 import Header from "./Header";
+import { DescriptionField, ProjectField } from "./Inputs";
 
 export {
   /* PLOP_INJECT_EXPORT */
@@ -19,4 +20,6 @@ export {
   ProjectSearch,
   Card,
   Header,
+  DescriptionField,
+  ProjectField,
 };

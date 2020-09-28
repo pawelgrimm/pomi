@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Input, TimerDisplay, TextArea } from "../index";
+import {
+  Input,
+  TimerDisplay,
+  TextArea,
+  DescriptionField,
+  ProjectField,
+} from "../index";
 import useSession from "./useSession";
 import { formatSeconds, getUnixTime } from "../../utils";
 import useClock from "../../hooks/useClock/useClock";
@@ -64,24 +70,12 @@ const Timer = () => {
 
   return (
     <div id="timer">
-      <TextField
-        id="project"
-        label="Project"
-        variant="filled"
-        fullWidth
-        autoComplete="pomi project"
+      <ProjectField
         value={project}
         onChange={(e) => setProject(e.target.value)}
         disabled={isInProgress}
       />
-
-      <TextField
-        label="Description"
-        variant="filled"
-        multiline
-        fullWidth
-        rows={3}
-        rowsMax={3}
+      <DescriptionField
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         disabled={isInProgress}
@@ -92,12 +86,6 @@ const Timer = () => {
           {buttonText}
         </Button>
       </ButtonGroup>
-      {/*<ButtonGroup>*/}
-      {/*  */}
-      {/*  /!*<SecondaryButton disabled={!isInProgress} onClick={onStopClick}>*!/*/}
-      {/*  /!*  Stop*!/*/}
-      {/*  /!*</SecondaryButton>*!/*/}
-      {/*</ButtonGroup>*/}
     </div>
   );
 };
