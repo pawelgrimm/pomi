@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./App.module.scss";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { EditSession, Header } from "../index";
-import Timer from "../timer/timer";
+import Timer from "../Timer/timer";
 
 const App: React.FC = () => {
   return (
