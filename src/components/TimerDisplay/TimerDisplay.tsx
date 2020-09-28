@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card } from "../index";
-import { formatSeconds } from "../../utils";
-import { FilledInput, InputBase, TextField } from "@material-ui/core";
-import TimeField from "react-simple-timefield";
+import { FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import TimeField from "react-simple-timefield";
+import { formatSeconds } from "../../utils";
 
 interface Props {
   time: number;

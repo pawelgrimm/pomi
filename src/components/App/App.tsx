@@ -1,8 +1,7 @@
 import React from "react";
 import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { EditSession, Header } from "../index";
-import Timer from "../Timer/timer";
+import { EditSession, Header, Timer } from "../../components";
 import styles from "./App.module.scss";
 import theme from "../../styles/theme";
 
