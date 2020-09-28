@@ -1,19 +1,69 @@
-import React from "react";
-import styles from "./TimerDisplay.module.scss";
+import React, { useEffect, useState } from "react";
 import { Card } from "../index";
 import { formatSeconds } from "../../utils";
+import { FilledInput, InputBase, TextField } from "@material-ui/core";
+import TimeField from "react-simple-timefield";
+import { makeStyles } from "@material-ui/core/styles";
 
 interface Props {
   time: number;
+  isInProgress: boolean;
+  setTime: React.Dispatch<React.SetStateAction<number>>;
 }
 
-const TimerDisplay: React.FC<Props> = ({ time }) => {
-  const [minutes, seconds] = formatSeconds(time);
+const useStyles = makeStyles({
+  root: {
+    padding: "15px 10px",
+    marginBottom: "14px",
+  },
+  input: {
+    fontSize: "64px",
+    padding: 0,
+    textAlign: "center",
+  },
+});
+
+const TimeInput = ({ ...rest }) => {
+  const classes = useStyles();
 
   return (
-    <Card flex="column">
-      <div className={styles.timer}>{`${minutes}:${seconds}`}</div>
-    </Card>
+    <FilledInput
+      classes={{
+        root: classes.root,
+        input: classes.input,
+      }}
+      id="timer-display"
+      fullWidth
+      {...rest}
+    />
+  );
+};
+
+const TimerDisplay: React.FC<Props> = ({
+  time,
+  setTime,
+  isInProgress = false,
+}) => {
+  const timeTokens = formatSeconds(time);
+  const [formattedTime, setFormattedTime] = useState(timeTokens.join(":"));
+
+  useEffect(() => {
+    setFormattedTime(timeTokens.join(":"));
+  }, [timeTokens]);
+
+  if (isInProgress) {
+    return <TimeInput disabled value={formattedTime} />;
+  }
+  return (
+    <TimeField
+      value={formattedTime}
+      onChange={(e, value) => {
+        const tokens = value.split(":").map((token) => Number.parseInt(token));
+        setTime(tokens[0] * 3600 + tokens[1] * 60 + tokens[2]);
+      }}
+      input={<TimeInput />}
+      showSeconds
+    />
   );
 };
 

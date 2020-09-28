@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Input,
-  TimerDisplay,
-  TextArea,
-  DescriptionField,
-  ProjectField,
-} from "../index";
+import { TimerDisplay, DescriptionField, ProjectField } from "../index";
 import useSession from "./useSession";
 import { formatSeconds, getUnixTime } from "../../utils";
 import useClock from "../../hooks/useClock/useClock";
@@ -45,7 +39,7 @@ const Timer = () => {
   const onStartStopClick = () => {
     if (!isInProgress) {
       // Start Timer
-      setTime(15 * 60);
+      //setTime(15 * 60);
       start();
       setIsInProgress(true);
       setButtonText("Stop");
@@ -80,7 +74,7 @@ const Timer = () => {
         onChange={(e) => setDescription(e.target.value)}
         disabled={isInProgress}
       />
-      <TimerDisplay time={time} />
+      <TimerDisplay time={time} setTime={setTime} isInProgress={isInProgress} />
       <ButtonGroup fullWidth orientation="vertical">
         <Button variant="contained" color="primary" onClick={onStartStopClick}>
           {buttonText}
