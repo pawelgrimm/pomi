@@ -6,13 +6,13 @@ import TimerDisplay from "./TimerDisplay";
 import App from "./App";
 import ProjectSearch from "./Inputs/Input";
 import Card from "./Card";
-import Brand from "./Brand";
 import Header from "./Header";
-import { PrimaryButton, SecondaryButton } from "./Button";
+import { DescriptionField, ProjectField } from "./Inputs";
+import { Timer } from "./Timer";
 
 export {
   /* PLOP_INJECT_EXPORT */
-	EditSession,
+  EditSession,
   Input,
   TextArea,
   ButtonGroup,
@@ -20,8 +20,8 @@ export {
   App,
   ProjectSearch,
   Card,
-  Brand,
   Header,
-  PrimaryButton,
-  SecondaryButton,
+  DescriptionField,
+  ProjectField,
+  Timer,
 };

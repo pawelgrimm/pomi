@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "4.11.0",
     "@reduxjs/toolkit": "^1.2.5",
     "@testing-library/dom": "7.24.2",
     "@testing-library/jest-dom": "^4.2.4",
@@ -26,6 +27,7 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.3",
+    "react-simple-timefield": "3.2.3",
     "react-test-renderer": "16.13.1",
     "react-use-comlink": "2.0.1",
     "sass": "1.26.10",

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { ButtonGroup, Input, PrimaryButton, TextArea } from "../index";
+import { Input, TextArea } from "../index";
 import { Session } from "../../models";
 import { getUnixTime } from "../../utils";
 import { format } from "date-fns";
+import { Button, ButtonGroup } from "@material-ui/core";
 
 interface Props {
   children?: React.ReactNode;
@@ -39,7 +40,7 @@ const EditSession: React.FC<Props> = ({ children }) => {
         placeholder="Description"
       />
       <ButtonGroup>
-        <PrimaryButton onClick={onClick}>Add</PrimaryButton>
+        <Button onClick={onClick}>Add</Button>
       </ButtonGroup>
     </>
   );

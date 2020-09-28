@@ -29,7 +29,7 @@ const useSession = () => {
     [description, project, startTime]
   );
 
-  return { startSession, endSession };
+  return { startSession, getSession: endSession };
 };
 
 export default useSession;

@@ -9,10 +9,19 @@ import { parse } from "date-fns";
  * @param seconds duration in seconds
  * @returns [minutes, seconds] with the seconds part padded with 0s to 2 digits
  */
-const formatSeconds = (seconds: number): [string, string] => {
-  const secondsPart = Math.abs(seconds % 60).toString();
-  const minutesPart = Math.floor(seconds / 60).toString();
-  return [minutesPart, secondsPart.padStart(2, "0")];
+const formatSeconds = (seconds: number): [string, string, string] => {
+  const hoursPart = Math.floor(seconds / 3600)
+    .toString()
+    .padStart(2, "0");
+  seconds %= 3600;
+  const minutesPart = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, "0");
+  const secondsPart = Math.abs(seconds % 60)
+    .toString()
+    .padStart(2, "0");
+
+  return [hoursPart, minutesPart, secondsPart];
 };
 
 /**
