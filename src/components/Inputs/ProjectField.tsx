@@ -12,7 +12,7 @@ const ProjectField = (props: {
       label="Project"
       variant="filled"
       fullWidth
-      autoComplete="pomi project"
+      autoComplete="pomi-project"
       value={props.value}
       onChange={props.onChange}
       disabled={props.disabled}

@@ -12,6 +12,7 @@ const DescriptionField = (props: {
       variant="filled"
       multiline
       fullWidth
+      autoComplete="pomi-description"
       rows={3}
       rowsMax={3}
       value={props.value}
