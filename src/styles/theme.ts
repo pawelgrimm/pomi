@@ -31,6 +31,28 @@ const theme = createMuiTheme({
         padding: "2px 4px",
       },
     },
+    MuiFormControl: {
+      root: {
+        marginBottom: "14px",
+      },
+    },
+    MuiInputBase: {
+      root: {
+        fontSize: "1.1rem",
+        color: "#c3c2b9",
+      },
+    },
+    MuiFormLabel: {
+      root: {
+        fontSize: "1.1rem",
+        color: "#797976",
+      },
+    },
+    MuiFilledInput: {
+      root: {
+        backgroundColor: "#242629",
+      },
+    },
   },
 });
 

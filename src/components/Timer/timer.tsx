@@ -4,7 +4,7 @@ import useSession from "./useSession";
 import { formatSeconds, getUnixTime } from "../../utils";
 import useClock from "../../hooks/useClock/useClock";
 import { format } from "date-fns";
-import { Button, ButtonGroup } from "@material-ui/core";
+import { Button, ButtonGroup, TextField } from "@material-ui/core";
 
 const timeNow = () => {
   return format(Date.now(), "s.SSS");
@@ -64,12 +64,27 @@ const Timer = () => {
 
   return (
     <div id="timer">
-      <Input setValue={setProject} value={project} disabled={isInProgress} />
-      <TextArea
-        setValue={setDescription}
-        value={description}
+      <TextField
+        id="project"
+        label="Project"
+        variant="filled"
+        fullWidth
+        autoComplete="pomi project"
+        value={project}
+        onChange={(e) => setProject(e.target.value)}
         disabled={isInProgress}
-        placeholder={"Enter a description"}
+      />
+
+      <TextField
+        label="Description"
+        variant="filled"
+        multiline
+        fullWidth
+        rows={3}
+        rowsMax={3}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        disabled={isInProgress}
       />
       <TimerDisplay time={time} />
       <ButtonGroup fullWidth orientation="vertical">
