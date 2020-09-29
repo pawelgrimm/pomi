@@ -5,20 +5,8 @@ import { useClock, useSession } from "../../hooks";
 import { formatSeconds, getUnixTime } from "../../utils";
 import { Session } from "../../models";
 
-function saveSession(getSession: (endTime: number) => Session) {
-  const endTime = Date.now();
-  const newSession = getSession(endTime);
-  const newId = getUnixTime(newSession.date, newSession.startTime);
-  const savedSessions = JSON.parse(
-    window.localStorage.getItem("sessions") || "{}"
-  );
-  savedSessions[newId] = newSession;
-  window.localStorage.setItem("sessions", JSON.stringify(savedSessions));
-  alert(JSON.stringify({ [newId]: newSession }, null, 5));
-}
-
 const Timer = ({ defaultTime = 15 * 60 }) => {
-  const { startSession, getSession } = useSession();
+  const { startSession, saveSession } = useSession();
   const [time, setTime] = useState<number>(defaultTime);
   const [isInProgress, setIsInProgress] = useState<boolean>(false);
   const { start, stop, ticks } = useClock();
@@ -53,7 +41,7 @@ const Timer = ({ defaultTime = 15 * 60 }) => {
       setIsInProgress(false);
       stop();
       setTime(defaultTime);
-      saveSession(getSession);
+      saveSession(Date.now());
     }
   };
 

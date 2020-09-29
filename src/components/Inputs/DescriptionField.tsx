@@ -8,6 +8,8 @@ const DescriptionField = (props: {
 }) => {
   return (
     <TextField
+      id="description"
+      name="description"
       label="Description"
       variant="filled"
       multiline

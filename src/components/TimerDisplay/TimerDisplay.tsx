@@ -31,7 +31,8 @@ const TimeInput = ({ ...rest }) => {
         root: classes.root,
         input: classes.input,
       }}
-      id="timer-display"
+      id="time"
+      name="time"
       fullWidth
       {...rest}
     />
