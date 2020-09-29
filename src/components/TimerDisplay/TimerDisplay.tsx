@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 import { FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import TimeField from "react-simple-timefield";
-import { formatSeconds } from "../../utils";
+import {
+  secondsToFormattedTime,
+  formattedTimeToSeconds,
+} from "../../utils/time";
 
 interface Props {
   time: number;
@@ -31,7 +34,8 @@ const TimeInput = ({ ...rest }) => {
         root: classes.root,
         input: classes.input,
       }}
-      id="timer-display"
+      id="time"
+      name="time"
       fullWidth
       {...rest}
     />
@@ -43,12 +47,11 @@ const TimerDisplay: React.FC<Props> = ({
   setTime,
   isInProgress = false,
 }) => {
-  const timeTokens = formatSeconds(time);
-  const [formattedTime, setFormattedTime] = useState(timeTokens.join(":"));
+  const [formattedTime, setFormattedTime] = useState("");
 
   useEffect(() => {
-    setFormattedTime(timeTokens.join(":"));
-  }, [timeTokens]);
+    setFormattedTime(secondsToFormattedTime(time));
+  }, [time]);
 
   if (isInProgress) {
     return <TimeInput disabled value={formattedTime} />;
@@ -57,8 +60,7 @@ const TimerDisplay: React.FC<Props> = ({
     <TimeField
       value={formattedTime}
       onChange={(e, value) => {
-        const tokens = value.split(":").map((token) => Number.parseInt(token));
-        setTime(tokens[0] * 3600 + tokens[1] * 60 + tokens[2]);
+        setTime(formattedTimeToSeconds(value));
       }}
       input={<TimeInput />}
       showSeconds

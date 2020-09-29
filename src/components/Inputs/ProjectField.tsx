@@ -9,6 +9,7 @@ const ProjectField = (props: {
   return (
     <TextField
       id="project"
+      name="project"
       label="Project"
       variant="filled"
       fullWidth

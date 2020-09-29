@@ -1,6 +1,10 @@
-export const mockDispatch = jest.fn();
+const mockWorker = {};
+const mockDispatch = jest.fn();
+const mockSubscribeToWorker = jest.fn();
 
-export const mockWorker = {};
+let ticks = 0;
+let setTicks: () => {};
+const tickMockClock = () => setTicks();
 
 const createClockWorker = () => {
   return {
@@ -9,16 +13,16 @@ const createClockWorker = () => {
   };
 };
 
-let ticks = 0;
-let setTicks: () => {};
-
-export const tickMockClock = () => setTicks();
-
-export const mockSubscribeToWorker = jest.fn();
-
-export const subscribeToWorker = (worker: any, callback: () => {}) => {
+const subscribeToWorker = (worker: any, callback: () => {}) => {
   mockSubscribeToWorker();
   setTicks = callback;
 };
 
-export default createClockWorker;
+export {
+  createClockWorker as default,
+  subscribeToWorker,
+  mockWorker,
+  mockDispatch,
+  mockSubscribeToWorker,
+  tickMockClock,
+};

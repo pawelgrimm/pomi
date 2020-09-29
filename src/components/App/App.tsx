@@ -1,5 +1,5 @@
 import React from "react";
-import { createMuiTheme, CssBaseline, ThemeProvider } from "@material-ui/core";
+import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { EditSession, Header, Timer } from "../../components";
 import styles from "./App.module.scss";
