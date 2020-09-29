@@ -1,0 +1,17 @@
+@use "src/styles/tokens" as *;
+
+.card {
+  background: $card-background;
+  color: $on-card;
+  margin: $xs-size 0;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+}
