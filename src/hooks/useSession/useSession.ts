@@ -2,6 +2,10 @@ import { useCallback, useState } from "react";
 import { format } from "date-fns";
 import { Session } from "../../models";
 import { getUnixTime } from "../../utils";
+import {
+  getDateFromUnixTime,
+  getHoursMinutesFromUnixTime,
+} from "../../utils/time";
 
 const useSession = () => {
   const [startTime, setStartTime] = useState(0);
@@ -20,9 +24,9 @@ const useSession = () => {
   const endSession = useCallback(
     (endTime: number): Session => {
       return {
-        date: format(new Date(startTime), "MM/dd/yy"),
-        startTime: Number.parseInt(format(new Date(startTime), "kkmm")),
-        endTime: Number.parseInt(format(new Date(endTime), "kkmm")),
+        date: getDateFromUnixTime(startTime),
+        startTime: getHoursMinutesFromUnixTime(startTime),
+        endTime: getHoursMinutesFromUnixTime(endTime),
         project,
         description,
       };

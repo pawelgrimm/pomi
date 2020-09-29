@@ -4,13 +4,18 @@ import "@testing-library/user-event";
 import { fireEvent, render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { format } from "date-fns";
-import { formatSeconds } from "../../../utils";
+import { secondsToParts } from "../../../utils";
 import Timer from "../Timer";
 
 import * as useSession from "../../../hooks/useSession/useSession";
 import MockedUseSession from "../../../hooks/useSession/__mocks__/MockedUseSession";
 import * as clockWorker from "../../../hooks/useClock/clockWorker";
 import MockedClockWorker from "../../../hooks/useClock/__mocks__/MockedClockWorker";
+import {
+  getDateFromUnixTime,
+  getHoursMinutesFromUnixTime,
+  secondsToFormattedTime,
+} from "../../../utils/time";
 
 const mockedUseSession = (useSession as unknown) as jest.Mocked<
   MockedUseSession
@@ -38,16 +43,16 @@ describe("Timer - Integration Test", () => {
     mockedUseSession.setEndTime(1601391780000);
 
     const ticksElapsed = (endTime - startTime) / 1000;
-    const expectedFormattedEndTime = formatSeconds(
+    const expectedFormattedEndTime = secondsToFormattedTime(
       defaultTime - ticksElapsed
-    ).join(":");
+    );
 
     const expectedSession = {
       project: "test project",
       description: "test description",
-      startTime: Number.parseInt(format(new Date(startTime), "kkmm")),
-      endTime: Number.parseInt(format(new Date(endTime), "kkmm")),
-      date: format(new Date(startTime), "MM/dd/yy"),
+      startTime: getHoursMinutesFromUnixTime(startTime),
+      endTime: getHoursMinutesFromUnixTime(endTime),
+      date: getDateFromUnixTime(startTime),
     };
 
     render(<Timer defaultTime={defaultTime} />);

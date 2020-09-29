@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, ButtonGroup } from "@material-ui/core";
 import { TimerDisplay, DescriptionField, ProjectField } from "../../components";
 import { useClock, useSession } from "../../hooks";
-import { formatSeconds, getUnixTime } from "../../utils";
-import { Session } from "../../models";
+import { secondsToFormattedTime } from "../../utils/time";
 
 const Timer = ({ defaultTime = 15 * 60 }) => {
   const { startSession, saveSession } = useSession();
@@ -24,9 +23,7 @@ const Timer = ({ defaultTime = 15 * 60 }) => {
   // Update document title as needed
   useEffect(() => {
     document.title = isInProgress
-      ? formatSeconds(time)
-          .filter((token, i) => i > 0 || token !== "00")
-          .join(":")
+      ? secondsToFormattedTime(time, { trimmed: true })
       : "Pomi";
   }, [isInProgress, time]);
 
