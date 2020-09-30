@@ -8,6 +8,10 @@
       <option name="ENFORCE_TRAILING_COMMA" value="WhenMultiline" />
       <option name="CHAINED_CALL_DOT_ON_NEW_LINE" value="false" />
     </JSCodeStyleSettings>
+    <PostgresCodeStyleSettings version="2">
+      <option name="KEYWORD_CASE" value="0" />
+      <option name="TYPE_CASE" value="0" />
+    </PostgresCodeStyleSettings>
     <codeStyleSettings language="JavaScript">
       <option name="RIGHT_MARGIN" value="80" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />

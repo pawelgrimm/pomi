@@ -20,6 +20,7 @@
     "classnames": "2.2.6",
     "comlink": "4.3.0",
     "date-fns": "2.16.1",
+    "pg-migrator": "1.0.5",
     "plop": "2.7.4",
     "prettier": "2.1.1",
     "react": "^16.13.1",
@@ -39,7 +40,9 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate": "plop"
+    "generate": "plop",
+    "upgrade-db": "run(){(cd server/db/migrations && pg-migrator postgres://pomi:root@localhost/pomi_dev $1)}; run",
+    "dump-db": "pg_dump postgres://pomi:root@localhost/pomi_dev > pomi_dev.sql"
   },
   "eslintConfig": {
     "extends": "react-app"
