@@ -24,6 +24,5 @@ CREATE TABLE sessions
     description     TEXT,
     edited          BOOLEAN DEFAULT FALSE,
     retro_added     BOOLEAN DEFAULT FALSE,
-    date            DATE,
     FOREIGN KEY (task_id, user_id) REFERENCES tasks (id, user_id)
 );

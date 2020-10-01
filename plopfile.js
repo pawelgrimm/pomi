@@ -54,4 +54,39 @@ module.exports = function (plop) {
       },
     ],
   });
+  plop.setGenerator("route", {
+    description: "Create a reusable route",
+    prompts: [
+      {
+        type: "input",
+        name: "name",
+        message: "what model does this route concern?",
+      },
+    ],
+    actions: [
+      {
+        type: "add",
+        path: "server/routes/{{snakeCase name}}.js",
+        templateFile: "plop-templates/Route/route.js.hbs",
+      },
+      {
+        type: "add",
+        path: "server/routes/index.js",
+        templateFile: "plop-templates/Route/injectable-index.js.hbs",
+        skipIfExists: true,
+      },
+      {
+        type: "append",
+        path: "server/routes/index.js",
+        pattern: "/* PLOP_INJECT_REQUIRE */",
+        template: 'const {{snakeCase name}} = require("./{{snakeCase name}}");',
+      },
+      {
+        type: "append",
+        path: "server/routes/index.js",
+        pattern: "/* PLOP_INJECT_MOUNT */",
+        template: '  app.use("/{{kebabCase name}}s", {{snakeCase name}});',
+      },
+    ],
+  });
 };
