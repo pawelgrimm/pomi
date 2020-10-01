@@ -36,6 +36,7 @@
     "react-test-renderer": "16.13.1",
     "react-use-comlink": "2.0.1",
     "sass": "1.26.10",
+    "supertest": "5.0.0",
     "typescript": "~3.8.2",
     "worker-loader": "3.0.2"
   },
@@ -45,8 +46,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate": "plop",
-    "upgrade-db": "run(){(cd server/db/migrations && pg-migrator postgres://pomi:root@localhost/pomi_dev $1)}; run",
-    "dump-db": "pg_dump postgres://pomi:root@localhost/pomi_dev > pomi_dev.sql"
+    "migrate-db": "sh server/db/migrations/migrate.sh",
+    "test:server": "yarn run prepare-test-db && jest --config server/jest.config.js",
+    "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn run migrate-db test"
   },
   "eslintConfig": {
     "extends": "react-app"
