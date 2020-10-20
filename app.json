@@ -1,0 +1,8 @@
+{
+  "$schema": "https://github.com/app-json/app.json/blob/master/lib/schema.js",
+  "scripts": {
+    "dokku": {
+      "release": "yarn run migrate-db"
+    }
+  }
+}
