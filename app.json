@@ -1,5 +1,11 @@
 {
   "$schema": "https://github.com/app-json/app.json/blob/master/lib/schema.js",
+  "name": "Pomi",
+  "dokku": {
+    "plugins": [
+      "postgres"
+    ]
+  },
   "scripts": {
     "dokku": {
       "release": "yarn run migrate-db"
