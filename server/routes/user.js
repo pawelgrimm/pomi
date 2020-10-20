@@ -9,14 +9,15 @@ module.exports = router;
 /*      NEW USER      */
 router.post("/", async (req, res) => {
   const { username } = req.body;
-  const { rows } = await users.create({ username });
+  const rows = await users.create({ username });
   res.status(201).send(rows);
 });
 
 /*      GET ALL USERS     */
 // TODO: Protect
 router.get("/", async (req, res) => {
-  const { rows } = await users.getAll();
+  const rows = await users.getAll();
+  console.log(rows);
   res.status(200).send(rows);
 });
 
@@ -24,6 +25,6 @@ router.get("/", async (req, res) => {
 // TODO: Protect
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const { rows } = await users.getById(id);
+  const rows = await users.getById(id);
   res.status(200).send(rows);
 });

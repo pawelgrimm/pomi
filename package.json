@@ -19,6 +19,7 @@
     "@types/react-router-dom": "5.1.5",
     "classnames": "2.2.6",
     "comlink": "4.3.0",
+    "concurrently": "5.3.0",
     "date-fns": "2.16.1",
     "dotenv": "8.2.0",
     "express": "4.17.1",
@@ -41,6 +42,7 @@
     "worker-loader": "3.0.2"
   },
   "scripts": {
+    "develop": "concurrently \"yarn run start\" \"node server/index.js\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -50,6 +52,7 @@
     "test:server": "yarn run prepare-test-db && jest --config server/jest.config.js",
     "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn run migrate-db test"
   },
+  "proxy": "http://localhost:3001",
   "eslintConfig": {
     "extends": "react-app"
   },

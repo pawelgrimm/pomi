@@ -85,7 +85,7 @@ module.exports = function (plop) {
         type: "append",
         path: "server/routes/index.js",
         pattern: "/* PLOP_INJECT_MOUNT */",
-        template: '  app.use("/{{kebabCase name}}s", {{snakeCase name}});',
+        template: '  app.use("/api/{{kebabCase name}}s", {{snakeCase name}});',
       },
     ],
   });
