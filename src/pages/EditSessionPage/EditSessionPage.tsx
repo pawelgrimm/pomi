@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Input, TextArea } from "../../components";
-import { Session } from "../../models";
+import { SessionParams } from "../../models";
 import { getUnixTime } from "../../utils";
 import { format } from "date-fns";
 import { Button, ButtonGroup } from "@material-ui/core";
-import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import { fetchSession, getSession } from "../../services/session/session";
+import { useParams, useHistory } from "react-router-dom";
+import { useMutation, useQuery } from "react-query";
+import { fetchSession, putSession } from "../../services/session/session";
 import { add } from "date-fns";
 import { getHoursMinutesFromUnixTime } from "../../utils/time";
+import { useSnackbar } from "notistack";
 
 interface Props {
   children?: React.ReactNode;
@@ -21,14 +22,15 @@ const EditSessionPage: React.FC<Props> = ({ children }) => {
   const [description, setDescription] = useState("");
   const [project, setProject] = useState("");
 
+  const history = useHistory();
+
   const { id } = useParams();
-  console.log(`id is ${id}`);
 
   const { isLoading, isError, data, error } = useQuery(
     ["todo", { id }],
     fetchSession
   );
-  // console.log(sessionQuery);
+
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -45,16 +47,27 @@ const EditSessionPage: React.FC<Props> = ({ children }) => {
     }
   }, [data]);
 
+  const [updateSession] = useMutation(putSession);
+  const { enqueueSnackbar } = useSnackbar();
+
   const onClick = () => {
-    const session = {
-      date: date,
-      startTime: Number.parseInt(startTime),
-      endTime: Number.parseInt(endTime),
-      project,
+    const startTimestamp = getUnixTime(date, Number.parseInt(startTime));
+    const endTimestamp = getUnixTime(date, Number.parseInt(endTime));
+    const session: SessionParams = {
+      startTimestamp,
+      endTimestamp,
       description,
     };
-    const key = getUnixTime(date, session.startTime);
-    alert(JSON.stringify({ [key]: session }, null, 2));
+    updateSession({ id, session }).then((success) => {
+      if (success) {
+        enqueueSnackbar("Session successfully updated!", {
+          variant: "success",
+        });
+        history.push("/");
+      } else {
+        enqueueSnackbar("Session could not be updated.", { variant: "error" });
+      }
+    });
   };
 
   if (isLoading) {

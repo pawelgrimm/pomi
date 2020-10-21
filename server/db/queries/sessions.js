@@ -12,7 +12,6 @@ const bindQueries = (query) => {
       )
         .then((res) => res.rows)
         .then((rows) => rows.length > 0 && rows[0]),
-
     getAll: () =>
       query(
         "SELECT to_char(start_timestamp AT TIME ZONE 'America/New_York', 'MM/DD/YY')      date,\n" +
@@ -33,6 +32,18 @@ const bindQueries = (query) => {
           "FROM sessions WHERE id = $1",
         [id]
       ).then((res) => res.rows),
+    put: (id, { start_timestamp, duration, description = "" }) => {
+      query(
+        "UPDATE sessions \n" +
+          "SET start_timestamp = to_timestamp($2 / 1000.0),\n" +
+          "    duration = $3,\n" +
+          "    description = $4\n," +
+          "    retro_added = retro_added,\n" +
+          "    edited = true\n" +
+          "WHERE id = $1",
+        [id, start_timestamp, `${duration} milliseconds`, description]
+      ).then(() => true);
+    },
   };
 };
 

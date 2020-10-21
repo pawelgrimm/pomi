@@ -13,4 +13,17 @@ const fetchSession = (key: string, { id }: { id: number }) => {
   return getSession(id);
 };
 
-export { postSession, getSession, fetchSession };
+const putSession = ({
+  id,
+  session,
+}: {
+  id: number;
+  session: SessionParams;
+}): Promise<boolean> => {
+  return axios.put(`/api/sessions/${id}`, session).then(
+    () => true,
+    () => false
+  );
+};
+
+export { postSession, getSession, fetchSession, putSession };
