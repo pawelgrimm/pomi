@@ -17,7 +17,6 @@ router.post("/", async (req, res) => {
 // TODO: Protect
 router.get("/", async (req, res) => {
   const rows = await users.getAll();
-  console.log(rows);
   res.status(200).send(rows);
 });
 

@@ -1,0 +1,18 @@
+const bindQueries = (query) => {
+  return {
+    create: ({}) =>
+      query("INSERT INTO {{camelCase name}}s() VALUES ()", []).then(
+        (res) => res.rows
+      ),
+
+    getAll: () =>
+      query("SELECT * FROM {{camelCase name}}s").then((res) => res.rows),
+
+    getById: (id) =>
+      query("SELECT * FROM {{camelCase name}}s WHERE id = $1", [id]).then(
+        (res) => res.rows
+      ),
+  };
+};
+
+module.exports = bindQueries;

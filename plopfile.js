@@ -76,6 +76,31 @@ module.exports = function (plop) {
         skipIfExists: true,
       },
       {
+        type: "add",
+        path: "server/db/queries/{{snakeCase name}}s.js",
+        templateFile: "plop-templates/Query/queries.js.hbs",
+      },
+      {
+        type: "add",
+        path: "server/db/index.js",
+        templateFile: "plop-templates/Query/injectable-index.js.hbs",
+        skipIfExists: true,
+      },
+      {
+        type: "append",
+        path: "server/db/index.js",
+        pattern: "/* PLOP_INJECT_BIND */",
+        template:
+          'const bind{{pascalCase name}}Queries = require("./queries/{{snakeCase name}}s");\n' +
+          "const {{snakeCase name}}s = bind{{pascalCase name}}Queries(query);",
+      },
+      {
+        type: "append",
+        path: "server/db/index.js",
+        pattern: "/* PLOP_INJECT_EXPORT */",
+        template: "  {{snakeCase name}}s,",
+      },
+      {
         type: "append",
         path: "server/routes/index.js",
         pattern: "/* PLOP_INJECT_REQUIRE */",
