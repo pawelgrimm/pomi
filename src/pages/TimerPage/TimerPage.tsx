@@ -4,8 +4,9 @@ import { TimerDisplay, DescriptionField, ProjectField } from "../../components";
 import { useClock, useSession } from "../../hooks";
 import { secondsToFormattedTime } from "../../utils/time";
 import { useMutation } from "react-query";
-import { Session } from "../../models";
+import { SessionParams } from "../../models";
 import { useSnackbar } from "notistack";
+import { postSession } from "../../services/session/session";
 
 const useTimer = () => {
   const { start: startClock, stop: stopClock, ticks } = useClock();
@@ -33,18 +34,13 @@ const useTimer = () => {
 const useAddSession = () => {
   const [addSession] = useMutation(postSession);
   const { enqueueSnackbar } = useSnackbar();
-  return (session: Session) => {
+  return (session: SessionParams) => {
     addSession(session).then((id) =>
       enqueueSnackbar(`New session with id ${id} was created.`, {
         variant: "success",
       })
     );
   };
-};
-
-const postSession = (session: Session): Promise<number> => {
-  console.log(session);
-  return Promise.resolve(12);
 };
 
 const TimerPage = ({ defaultTime = 15 * 60 }) => {

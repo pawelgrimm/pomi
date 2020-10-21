@@ -1,5 +1,5 @@
 /* PLOP_INJECT_IMPORT */
-import EditSession from "./EditSession";
+import EditSession from "../pages/EditSessionPage";
 import { Input, TextArea } from "./Inputs";
 import ButtonGroup from "./ButtonGroup";
 import TimerDisplay from "./TimerDisplay";

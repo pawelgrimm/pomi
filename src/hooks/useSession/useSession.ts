@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Session } from "../../models";
+import { Session, SessionParams } from "../../models";
 import { getUnixTime } from "../../utils";
 import {
   getDateFromUnixTime,
@@ -21,11 +21,10 @@ const useSession = () => {
   );
 
   const endSession = useCallback(
-    (endTime: number): Session => {
+    (endTime: number): SessionParams => {
       return {
-        date: getDateFromUnixTime(startTime),
-        startTime: getHoursMinutesFromUnixTime(startTime),
-        endTime: getHoursMinutesFromUnixTime(endTime),
+        startTimestamp: startTime,
+        endTimestamp: endTime,
         project,
         description,
       };
@@ -33,21 +32,22 @@ const useSession = () => {
     [description, project, startTime]
   );
 
-  const saveSession = useCallback(
-    (endTime: number = Date.now()): void => {
-      const newSession = endSession(endTime);
-      const newId = getUnixTime(newSession.date, newSession.startTime);
-      const savedSessions = JSON.parse(
-        window.localStorage.getItem("sessions") || "{}"
-      );
-      savedSessions[newId] = newSession;
-      window.localStorage.setItem("sessions", JSON.stringify(savedSessions));
-      alert(JSON.stringify({ [newId]: newSession }, null, 5));
-    },
-    [endSession]
-  );
+  // const saveSession = useCallback(
+  //   (endTime: number = Date.now()): void => {
+  //     const newSession = endSession(endTime);
+  //     const newId = getUnixTime(newSession.date, newSession.startTime);
+  //     const savedSessions = JSON.parse(
+  //       window.localStorage.getItem("sessions") || "{}"
+  //     );
+  //     savedSessions[newId] = newSession;
+  //     window.localStorage.setItem("sessions", JSON.stringify(savedSessions));
+  //     alert(JSON.stringify({ [newId]: newSession }, null, 5));
+  //   },
+  //   [endSession]
+  // );
 
-  return { startSession, endSession, saveSession };
+  return { startSession, endSession };
+  // saveSession };
 };
 
 export default useSession;

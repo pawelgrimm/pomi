@@ -1,9 +1,17 @@
 interface Session {
+  id: number;
   date: string;
-  startTime: number;
-  endTime: number;
+  start_time: number;
+  duration: number;
   description: string;
-  project: string;
+  // project: string;
 }
 
-export default Session;
+interface SessionParams {
+  startTimestamp: number;
+  endTimestamp: number;
+  description?: string;
+  project?: string;
+}
+
+export type { Session, SessionParams };

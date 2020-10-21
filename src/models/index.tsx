@@ -1,3 +1,3 @@
-import Session from "./session";
+import { Session, SessionParams } from "./session";
 
-export type { Session };
+export type { Session, SessionParams };
