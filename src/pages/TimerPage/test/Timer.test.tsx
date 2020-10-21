@@ -5,7 +5,7 @@ import { fireEvent, render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { format } from "date-fns";
 import { secondsToParts } from "../../../utils";
-import Timer from "../Timer";
+import TimerPage from "../TimerPage";
 
 import * as useSession from "../../../hooks/useSession/useSession";
 import MockedUseSession from "../../../hooks/useSession/__mocks__/MockedUseSession";
@@ -33,7 +33,7 @@ const getButton = (name: string | RegExp) =>
 const queryButton = (name: string | RegExp) =>
   screen.queryByRole("button", { name });
 
-describe("Timer - Integration Test", () => {
+describe("TimerPage - Integration Test", () => {
   it("should complete timer workflow", () => {
     const defaultTime = 15 * 60;
 
@@ -55,7 +55,7 @@ describe("Timer - Integration Test", () => {
       date: getDateFromUnixTime(startTime),
     };
 
-    render(<Timer defaultTime={defaultTime} />);
+    render(<TimerPage defaultTime={defaultTime} />);
 
     // Type in project and description
     userEvent.type(

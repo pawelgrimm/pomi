@@ -3,12 +3,54 @@ import { Button, ButtonGroup } from "@material-ui/core";
 import { TimerDisplay, DescriptionField, ProjectField } from "../../components";
 import { useClock, useSession } from "../../hooks";
 import { secondsToFormattedTime } from "../../utils/time";
+import { useMutation } from "react-query";
+import { Session } from "../../models";
+import { useSnackbar } from "notistack";
 
-const Timer = ({ defaultTime = 15 * 60 }) => {
-  const { startSession, saveSession } = useSession();
-  const [time, setTime] = useState<number>(defaultTime);
+const useTimer = () => {
+  const { start: startClock, stop: stopClock, ticks } = useClock();
   const [isInProgress, setIsInProgress] = useState<boolean>(false);
-  const { start, stop, ticks } = useClock();
+
+  const { startSession, endSession } = useSession();
+
+  const addSession = useAddSession();
+
+  const start = (project: string, description: string) => {
+    startClock();
+    setIsInProgress(true);
+    startSession(Date.now(), project, description);
+  };
+
+  const stop = () => {
+    stopClock();
+    setIsInProgress(false);
+    addSession(endSession(Date.now()));
+  };
+
+  return { ticks, isInProgress, start, stop };
+};
+
+const useAddSession = () => {
+  const [addSession] = useMutation(postSession);
+  const { enqueueSnackbar } = useSnackbar();
+  return (session: Session) => {
+    addSession(session).then((id) =>
+      enqueueSnackbar(`New session with id ${id} was created.`, {
+        variant: "success",
+      })
+    );
+  };
+};
+
+const postSession = (session: Session): Promise<number> => {
+  console.log(session);
+  return Promise.resolve(12);
+};
+
+const TimerPage = ({ defaultTime = 15 * 60 }) => {
+  const { ticks, isInProgress, start, stop } = useTimer();
+
+  const [time, setTime] = useState<number>(defaultTime);
   const [description, setDescription] = useState("");
   const [project, setProject] = useState("");
 
@@ -30,15 +72,11 @@ const Timer = ({ defaultTime = 15 * 60 }) => {
   const onStartStopClick = () => {
     if (!isInProgress) {
       // Start Timer
-      start();
-      setIsInProgress(true);
-      startSession(Date.now(), project, description);
+      start(project, description);
     } else {
       // Stop Timer
-      setIsInProgress(false);
       stop();
       setTime(defaultTime);
-      saveSession(Date.now());
     }
   };
 
@@ -64,4 +102,4 @@ const Timer = ({ defaultTime = 15 * 60 }) => {
   );
 };
 
-export default Timer;
+export default TimerPage;

@@ -67,7 +67,7 @@ This version will not support the following features:
 
 <img src="./assets/mockups/Configured Session.png" width="200px" />
 
-*Figure 3. Timer In Progress*
+*Figure 3. TimerPage In Progress*
 
 ## Menu
 
@@ -79,7 +79,7 @@ This version will not support the following features:
 
 <img src="./assets/mockups/Settings/Timer.png" width="200px" />
 
-*Figure 5. Timer Settings*
+*Figure 5. TimerPage Settings*
 
 <img src="./assets/mockups/Settings/Accounts.png" width="200px" />
 
