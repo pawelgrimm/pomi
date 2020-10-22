@@ -67,8 +67,8 @@ module.exports = function (plop) {
       // ROUTE
       {
         type: "add",
-        path: "server/routes/{{snakeCase name}}.js",
-        templateFile: "plop-templates/Route/route.js.hbs",
+        path: "server/routes/{{snakeCase name}}.ts",
+        templateFile: "plop-templates/Route/route.ts.hbs",
       },
       {
         type: "add",
