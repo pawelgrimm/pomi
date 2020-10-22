@@ -1,10 +1,7 @@
-const Router = require("express-promise-router");
+import Router from "express-promise-router";
+import { sessions } from "../db";
 
-const { sessions } = require("../db");
-
-const router = new Router();
-
-module.exports = router;
+const router = Router();
 
 const clientSessionParamsToDBCols = ({
   startTimestamp,
@@ -50,3 +47,5 @@ router.patch("/:id", async (req, res) => {
     res.status(500).send(e);
   }
 });
+
+export default router;

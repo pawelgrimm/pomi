@@ -1,4 +1,4 @@
-const bindQueries = (query) => {
+const bindSessionQueries = (query) => {
   return {
     create: ({ start_timestamp, duration, description, retro_added }) =>
       query(
@@ -48,4 +48,4 @@ const bindQueries = (query) => {
   };
 };
 
-module.exports = bindQueries;
+export { bindSessionQueries };

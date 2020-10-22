@@ -1,0 +1,28 @@
+const bind{{pascalCase name}}Queries = (query) => {
+  return {
+    create: ({ /* creation params here */ }) =>
+      query(
+        `
+        INSERT INTO {{camelCase name}}s(/* creation params here */) 
+          VALUES (/* creation values here */)
+        RETURNING id;`,
+        [/* creation values here */]
+      ).then((res) => res.rows[0]),
+
+    getAll: () =>
+      query(
+        `
+        SELECT /* return cols here */ FROM {{camelCase name}}s;`
+      ).then((res) => res.rows),
+
+    getById: (id) =>
+      query(
+        `
+        SELECT /* return cols here */ FROM {{camelCase name}}s 
+        WHERE id = $1`,
+        [id]
+      ).then((res) => res.rows[0]),
+  };
+};
+
+export { bind{{pascalCase name}}Queries };

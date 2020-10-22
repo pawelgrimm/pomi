@@ -1,10 +1,7 @@
-const Router = require("express-promise-router");
+import Router from "express-promise-router";
+import { users } from "../db";
 
-const { users } = require("../db");
-
-const router = new Router();
-
-module.exports = router;
+const router = Router();
 
 /*      NEW USER      */
 router.post("/", async (req, res) => {
@@ -27,3 +24,5 @@ router.get("/:id", async (req, res) => {
   const rows = await users.getById(id);
   res.status(200).send(rows);
 });
+
+export default router;

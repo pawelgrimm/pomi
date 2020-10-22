@@ -1,9 +1,11 @@
-const path = require("path");
+import * as path from "path";
+import dotenv from "dotenv";
+
 const env = process.env.NODE_ENV || "development";
 const configPath = path.join(__dirname, `./.env.${env}`);
 
 console.log(`Loading configuration for ${env} from ${configPath}`);
-require("dotenv").config({ path: configPath });
+dotenv.config({ path: configPath });
 
 /*     POSTGRESQL      */
 const PG_USER = process.env.PG_USER || "pomi";
@@ -19,7 +21,4 @@ const PG_CONNECTION_STRING =
 /*      EXPRESS SERVER      */
 const PORT = process.env.PORT || 3000;
 
-module.exports = {
-  PG_CONNECTION_STRING,
-  PORT,
-};
+export { PG_CONNECTION_STRING, PORT };
