@@ -4,7 +4,7 @@ import React, { ChangeEvent } from "react";
 const ProjectField = (props: {
   value: string;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }) => {
   return (
     <TextField

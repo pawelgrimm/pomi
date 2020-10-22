@@ -5,8 +5,10 @@ import { useClock, useSession } from "../../hooks";
 import { secondsToFormattedTime } from "../../utils/time";
 import { useMutation } from "react-query";
 import { SessionParams } from "../../models";
-import { useSnackbar } from "notistack";
+import { SnackbarKey, useSnackbar } from "notistack";
 import { postSession } from "../../services/session/session";
+import { useHistory } from "react-router-dom";
+import { History } from "history";
 
 const useTimer = () => {
   const { start: startClock, stop: stopClock, ticks } = useClock();
@@ -33,12 +35,39 @@ const useTimer = () => {
 
 const useAddSession = () => {
   const [addSession] = useMutation(postSession);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const history = useHistory();
   return (session: SessionParams) => {
-    addSession(session).then((id) =>
-      enqueueSnackbar(`New session with id ${id} was created.`, {
-        variant: "success",
-      })
+    addSession(session).then((id) => {
+      if (id) {
+        enqueueSnackbar(`New session with id ${id} was created.`, {
+          variant: "success",
+          action: editButton(id, history, closeSnackbar),
+        });
+      } else {
+        enqueueSnackbar(`New session could not be created.`, {
+          variant: "error",
+        });
+      }
+    });
+  };
+};
+
+const editButton = (
+  id: number,
+  history: History,
+  closeSnackbar: (key?: SnackbarKey) => void
+) => {
+  return (key: SnackbarKey) => {
+    const onClick = () => {
+      closeSnackbar(key);
+      history.push(`/edit/${id}`);
+    };
+
+    return (
+      <>
+        <Button onClick={onClick}>Edit</Button>
+      </>
     );
   };
 };

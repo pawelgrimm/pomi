@@ -4,7 +4,7 @@ import { TextField } from "@material-ui/core";
 const DescriptionField = (props: {
   value: string;
   onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
-  disabled: boolean;
+  disabled?: boolean;
 }) => {
   return (
     <TextField

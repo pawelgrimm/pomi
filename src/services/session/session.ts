@@ -6,24 +6,25 @@ const postSession = (session: SessionParams): Promise<number> => {
 };
 
 const getSession = (id: number): Promise<Session> => {
-  return axios.get(`/api/sessions/${id}`).then((res) => res?.data[0]);
+  return axios.get(`/api/sessions/${id}`).then((res) => res?.data);
 };
 
 const fetchSession = (key: string, { id }: { id: number }) => {
   return getSession(id);
 };
 
-const putSession = ({
+const patchSession = ({
   id,
   session,
 }: {
   id: number;
-  session: SessionParams;
+  session: Partial<SessionParams>;
 }): Promise<boolean> => {
-  return axios.put(`/api/sessions/${id}`, session).then(
+  console.log({ id, session });
+  return axios.patch(`/api/sessions/${id}`, session).then(
     () => true,
     () => false
   );
 };
 
-export { postSession, getSession, fetchSession, putSession };
+export { postSession, getSession, fetchSession, patchSession };

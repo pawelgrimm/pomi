@@ -21,7 +21,7 @@ const App: React.FC = () => {
               <Header />
               <div className={styles.mainContent}>
                 <Switch>
-                  <Route path="/fudge/:id">
+                  <Route path="/edit/:id">
                     <EditSession />
                   </Route>
                   <Route path="/">

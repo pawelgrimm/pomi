@@ -46,17 +46,18 @@ const formattedTimeToSeconds = (formattedTime: string) => {
 };
 
 /**
- * Convert a date and time into a Unix time
+ * Convert a date and time into a Unix epoch time, or the number of seconds that have elapsed since the Unix epoch
  * @param date a date in the format M/dd/yy (e.g. 9/22/20)
  * @param time a time in the format kmm (e.g. 955 or 1356)
- * @returns the Unix time that corresponds to the specified date and time
+ * @returns the epoch time (in seconds) that corresponds to the specified date and time
  */
-const getUnixTime = (date: string, time: number): number => {
-  const unixTime = parse(
-    `${date} ${time}`,
-    "M/dd/yy kmm",
-    Date.now()
-  ).valueOf();
+const getEpochTime = (date: string, time: number): number => {
+  const unixTime =
+    parse(
+      `${date} ${time.toString().padEnd(3, "0")}`,
+      "M/dd/yy kmm",
+      Date.now()
+    ).valueOf() / 1000.0;
   if (isNaN(unixTime)) {
     throw new RangeError(`${date} ${time} is not a valid instance.`);
   }
@@ -64,28 +65,58 @@ const getUnixTime = (date: string, time: number): number => {
 };
 
 /**
- * Get the hour and minute corresponding to a Unix time
- * @param time the specified Unix time
+ * Get the hours and minutes corresponding to a Unix epoch time
+ * @param time the specified epoch time
  * @returns hours and minutes in the format kmm (e.g. 955 or 1356)
  */
-const getHoursMinutesFromUnixTime = (time: number): number => {
-  return Number.parseInt(format(new Date(time), "kkmm"));
+const getTimeFromEpochTime = (time: number): number => {
+  return getTimeFromDate(new Date(time * 1000));
 };
 
 /**
- * Get the date corresponding to a Unix time
- * @param time the specified Unix time
+ * Get the hours and minutes corresponding to a date
+ * @param date the specified Date
+ * @returns hours and minutes in the format kmm (e.g. 955 or 1356)
+ */
+const getTimeFromDate = (date: Date): number => {
+  return Number.parseInt(format(date, "kkmm"));
+};
+
+/**
+ * Get the date corresponding to a Unix epoch time
+ * @param time the specified epoch time
  * @returns date in the format M/dd/yy (e.g. 9/22/20)
  */
-const getDateFromUnixTime = (time: number): string => {
-  return format(new Date(time), "MM/dd/yy");
+const getDateStringFromEpochTime = (time: number): string => {
+  return getDateStringFromDate(new Date(time * 1000));
+};
+
+/**
+ * Get the date corresponding to a Date
+ * @param date the specified Date
+ * @returns date in the format M/dd/yy (e.g. 9/22/20)
+ */
+const getDateStringFromDate = (date: Date): string => {
+  return format(date, "MM/dd/yy");
+};
+
+/**
+ * Get the Date object from a Unix epoch time
+ * @param time the specified epoch time
+ * @returns Date object
+ */
+const getDateFromEpochTime = (time: number): Date => {
+  return new Date(time * 1000);
 };
 
 export {
   secondsToParts,
-  getUnixTime,
+  getEpochTime,
   secondsToFormattedTime,
   formattedTimeToSeconds,
-  getHoursMinutesFromUnixTime,
-  getDateFromUnixTime,
+  getTimeFromEpochTime,
+  getTimeFromDate,
+  getDateStringFromEpochTime,
+  getDateStringFromDate,
+  getDateFromEpochTime,
 };

@@ -1,63 +1,75 @@
-import React, { useEffect, useState } from "react";
-import { Input, TextArea } from "../../components";
-import { SessionParams } from "../../models";
-import { getUnixTime } from "../../utils";
-import { format } from "date-fns";
+import React, { useEffect, useReducer, useState } from "react";
+import { DescriptionField, ProjectField, TextField } from "../../components";
+import { Session, SessionParams } from "../../models";
+import { getEpochTime } from "../../utils";
 import { Button, ButtonGroup } from "@material-ui/core";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
-import { fetchSession, putSession } from "../../services/session/session";
-import { add } from "date-fns";
-import { getHoursMinutesFromUnixTime } from "../../utils/time";
+import { fetchSession, patchSession } from "../../services/session/session";
 import { useSnackbar } from "notistack";
+import { getDateStringFromDate, getTimeFromDate } from "../../utils/time";
+import { add } from "date-fns";
+import { Formik, Form, Field } from "formik";
 
 interface Props {
   children?: React.ReactNode;
 }
 
-const EditSessionPage: React.FC<Props> = ({ children }) => {
-  const [date, setDate] = useState(format(Date.now(), "M/dd/yy"));
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState(format(Date.now(), "kmm"));
-  const [description, setDescription] = useState("");
-  const [project, setProject] = useState("");
+interface SessionState {
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+  project: string;
+}
+
+const initialState: SessionState = {
+  date: "",
+  startTime: "",
+  endTime: "",
+  description: "",
+  project: "",
+};
+
+const sessionToSessionState = (session: Session): SessionState => {
+  const { start_timestamp, description, duration } = session;
+  const startDate = new Date(start_timestamp);
+  const date = getDateStringFromDate(startDate);
+  const startTime = getTimeFromDate(startDate).toString();
+  const endDate = add(startDate, {
+    seconds: duration / 1000.0,
+  });
+  const endTime = getTimeFromDate(endDate).toString();
+  return {
+    date,
+    startTime,
+    endTime,
+    description,
+    project: "",
+  };
+};
+
+const EditSessionPage: React.FC<Props> = () => {
+  const [session, setSession] = useState<SessionState>(initialState);
 
   const history = useHistory();
-
   const { id } = useParams();
 
-  const { isLoading, isError, data, error } = useQuery(
+  const { isLoading, isError, data, error } = useQuery<Session>(
     ["todo", { id }],
     fetchSession
   );
 
   useEffect(() => {
     if (data) {
-      console.log(data);
-      const { date, start_time: startTime, description, duration } = data;
-      setDate(date);
-      setStartTime(startTime.toString());
-      const startTimestamp = getUnixTime(date, startTime);
-      const endTimestamp = add(new Date(startTimestamp), {
-        seconds: duration / 1000.0,
-      });
-      const endTime = getHoursMinutesFromUnixTime(endTimestamp.valueOf());
-      setEndTime(endTime.toString());
-      setDescription(description);
+      setSession(sessionToSessionState(data));
     }
   }, [data]);
 
-  const [updateSession] = useMutation(putSession);
+  const [updateSession] = useMutation(patchSession);
   const { enqueueSnackbar } = useSnackbar();
 
   const onClick = () => {
-    const startTimestamp = getUnixTime(date, Number.parseInt(startTime));
-    const endTimestamp = getUnixTime(date, Number.parseInt(endTime));
-    const session: SessionParams = {
-      startTimestamp,
-      endTimestamp,
-      description,
-    };
     updateSession({ id, session }).then((success) => {
       if (success) {
         enqueueSnackbar("Session successfully updated!", {
@@ -79,20 +91,69 @@ const EditSessionPage: React.FC<Props> = ({ children }) => {
   }
 
   return (
-    <>
-      <Input setValue={setDate} value={date} placeholder="Date" />
-      <Input setValue={setStartTime} value={startTime} placeholder="Start" />
-      <Input setValue={setEndTime} value={endTime} placeholder="End" />
-      <Input setValue={setProject} value={project} placeholder="Project" />
-      <TextArea
-        setValue={setDescription}
-        value={description}
-        placeholder="Description"
-      />
-      <ButtonGroup>
-        <Button onClick={onClick}>Add</Button>
-      </ButtonGroup>
-    </>
+    <Formik
+      enableReinitialize={true}
+      initialValues={session}
+      onSubmit={(values, { setSubmitting }) => {
+        let sessionUpdates: SessionParams = {
+          startTimestamp: getEpochTime(
+            values.date,
+            Number.parseInt(values.startTime)
+          ),
+          endTimestamp: getEpochTime(
+            values.date,
+            Number.parseInt(values.endTime)
+          ),
+          description: values.description,
+        };
+        updateSession({ id, session: sessionUpdates }).then((success) => {
+          if (success) {
+            enqueueSnackbar("Session successfully updated!", {
+              variant: "success",
+            });
+            history.push("/");
+            setSubmitting(false);
+          } else {
+            enqueueSnackbar("Session could not be updated.", {
+              variant: "error",
+            });
+          }
+        });
+      }}
+    >
+      {({ submitForm, handleChange, values, isSubmitting }) => (
+        <Form>
+          <TextField label="Date" onChange={handleChange} value={values.date} />
+          <TextField
+            label="Start Time"
+            id="startTime"
+            onChange={handleChange}
+            value={values.startTime}
+          />
+          <TextField
+            label="End Time"
+            id="endTime"
+            onChange={handleChange}
+            value={values.endTime}
+          />
+          <ProjectField value={values.project} onChange={handleChange} />
+          <DescriptionField
+            onChange={handleChange}
+            value={values.description}
+          />
+          <ButtonGroup fullWidth orientation="vertical">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={submitForm}
+              disabled={isSubmitting}
+            >
+              Save Changes
+            </Button>
+          </ButtonGroup>
+        </Form>
+      )}
+    </Formik>
   );
 };
 

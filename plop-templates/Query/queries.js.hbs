@@ -5,10 +5,10 @@ const bindQueries = (query) => {
         (res) => res.rows
       ),
 
-    getAll: () =>
+    selectAll: () =>
       query("SELECT * FROM {{camelCase name}}s").then((res) => res.rows),
 
-    getById: (id) =>
+    selectOneById: (id) =>
       query("SELECT * FROM {{camelCase name}}s WHERE id = $1", [id]).then(
         (res) => res.rows
       ),

@@ -12,7 +12,7 @@ import MockedUseSession from "../../../hooks/useSession/__mocks__/MockedUseSessi
 import * as clockWorker from "../../../hooks/useClock/clockWorker";
 import MockedClockWorker from "../../../hooks/useClock/__mocks__/MockedClockWorker";
 import {
-  getDateFromUnixTime,
+  getDateStringFromEpochTime,
   getHoursMinutesFromUnixTime,
   secondsToFormattedTime,
 } from "../../../utils/time";
@@ -52,7 +52,7 @@ describe("TimerPage - Integration Test", () => {
       description: "test description",
       startTime: getHoursMinutesFromUnixTime(startTime),
       endTime: getHoursMinutesFromUnixTime(endTime),
-      date: getDateFromUnixTime(startTime),
+      date: getDateStringFromEpochTime(startTime),
     };
 
     render(<TimerPage defaultTime={defaultTime} />);

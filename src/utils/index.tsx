@@ -1,3 +1,3 @@
-import { secondsToParts, getUnixTime } from "./time";
+import { secondsToParts, getEpochTime } from "./time";
 
-export { secondsToParts, getUnixTime };
+export { secondsToParts, getEpochTime };

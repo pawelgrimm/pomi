@@ -6,7 +6,7 @@ import TimerDisplay from "./TimerDisplay";
 import ProjectSearch from "./Inputs/Input";
 import Card from "./Card";
 import Header from "./Header";
-import { DescriptionField, ProjectField } from "./Inputs";
+import { DescriptionField, ProjectField, TextField } from "./Inputs";
 
 export {
   /* PLOP_INJECT_EXPORT */
@@ -20,4 +20,5 @@ export {
   Header,
   DescriptionField,
   ProjectField,
+  TextField,
 };

@@ -10,43 +10,41 @@ const clientSessionParamsToDBCols = ({
   startTimestamp,
   endTimestamp,
   description,
+  retro_added = false,
 }) => {
   return {
-    start_timestamp: startTimestamp,
+    start_timestamp: new Date(startTimestamp * 1000),
     duration: endTimestamp - startTimestamp,
     description,
-    retro_added: false,
+    retro_added,
   };
 };
 
 /*      NEW SESSION      */
-// TODO: Add creation fields
 router.post("/", async (req, res) => {
   const session = clientSessionParamsToDBCols(req.body);
-  const rows = await sessions.create(session);
-  res.status(201).send(rows);
+  const row = await sessions.create(session);
+  res.status(201).send(row);
 });
 
 /*      GET ALL SESSIONS     */
-// TODO: Add return fields
 router.get("/", async (req, res) => {
-  const rows = await sessions.getAll();
+  const rows = await sessions.selectAll();
   res.status(200).send(rows);
 });
 
 /*      GET SESSION BY ID    */
-// TODO: Add return fields
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const rows = await sessions.getById(id);
+  const rows = await sessions.selectOneById(id);
   res.status(200).send(rows);
 });
 
-router.put("/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const id = req.params.id;
   const session = clientSessionParamsToDBCols(req.body);
   try {
-    const success = await sessions.put(id, session);
+    const success = await sessions.update(id, session);
     res.status(200).send(success);
   } catch (e) {
     res.status(500).send(e);

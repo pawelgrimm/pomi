@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
 /*      GET ALL {{constantCase name}}S     */
 // TODO: Add return fields
 router.get("/", async (req, res) => {
-  const rows = await {{snakeCase name}}s.getAll();
+  const rows = await {{snakeCase name}}s.selectAll();
   res.status(200).send(rows);
 });
 
@@ -27,6 +27,6 @@ router.get("/", async (req, res) => {
 // TODO: Add return fields
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const rows = await {{snakeCase name}}s.getById(id);
+  const rows = await {{snakeCase name}}s.selectOneById(id);
   res.status(200).send(rows);
 });

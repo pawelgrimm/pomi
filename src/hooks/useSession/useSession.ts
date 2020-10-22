@@ -1,10 +1,5 @@
 import { useCallback, useState } from "react";
-import { Session, SessionParams } from "../../models";
-import { getUnixTime } from "../../utils";
-import {
-  getDateFromUnixTime,
-  getHoursMinutesFromUnixTime,
-} from "../../utils/time";
+import { SessionParams } from "../../models";
 
 const useSession = () => {
   const [startTime, setStartTime] = useState(0);
@@ -35,7 +30,7 @@ const useSession = () => {
   // const saveSession = useCallback(
   //   (endTime: number = Date.now()): void => {
   //     const newSession = endSession(endTime);
-  //     const newId = getUnixTime(newSession.date, newSession.startTime);
+  //     const newId = getEpochTime(newSession.date, newSession.startTime);
   //     const savedSessions = JSON.parse(
   //       window.localStorage.getItem("sessions") || "{}"
   //     );

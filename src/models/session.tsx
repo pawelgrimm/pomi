@@ -1,7 +1,6 @@
 interface Session {
   id: number;
-  date: string;
-  start_time: number;
+  start_timestamp: number;
   duration: number;
   description: string;
   // project: string;
