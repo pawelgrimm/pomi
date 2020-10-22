@@ -9,13 +9,13 @@ const bind{{pascalCase name}}Queries = (query) => {
         [/* creation values here */]
       ).then((res) => res.rows[0]),
 
-    getAll: () =>
+    selectAll: () =>
       query(
         `
         SELECT /* return cols here */ FROM {{camelCase name}}s;`
       ).then((res) => res.rows),
 
-    getById: (id) =>
+    selectOneById: (id) =>
       query(
         `
         SELECT /* return cols here */ FROM {{camelCase name}}s 

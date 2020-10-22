@@ -131,7 +131,7 @@ module.exports = function (plop) {
         type: "append",
         path: "server/routes/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
-        template: 'import {{snakeCase name}} from "./{{snakeCase name}}");',
+        template: 'import {{snakeCase name}} from "./{{snakeCase name}}";',
       },
       {
         type: "append",
