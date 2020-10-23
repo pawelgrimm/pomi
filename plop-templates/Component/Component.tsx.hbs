@@ -1,17 +1,13 @@
 import React from "react";
-import styles from './{{pascalCase name}}.module.scss';
+import { WithStyles, withStyles } from "@material-ui/core";
 
-interface Props {
-  children?: React.ReactNode;
-}
+const styles = () => ({
+  root: {},
+});
 
-const {{pascalCase name}}: React.FC<Props> = ({ children }) => {
-  return (
-    <div className={ styles.{{camelCase name}} }>
-      {{pascalCase name}}
-      {children}
-    </div>
-  );
+const {{pascalCase name}}: React.FC<WithStyles<typeof styles>> = (props) => {
+  const { classes, ...rest } = props;
+  return <div {...rest} />;
 };
 
-export default {{pascalCase name}};
+export default withStyles(styles, { name: "{{pascalCase name}}" })({{pascalCase name}});

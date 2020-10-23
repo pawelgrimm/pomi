@@ -23,12 +23,6 @@ module.exports = function (plop) {
         templateFile: "plop-templates/Component/Component.test.tsx.hbs",
       },
       {
-        type: "add",
-        path:
-          "src/components/{{pascalCase name}}/{{pascalCase name}}.module.scss",
-        templateFile: "plop-templates/Component/Component.module.scss.hbs",
-      },
-      {
         // Index
         type: "add",
         path: "src/components/{{pascalCase name}}/index.ts",
