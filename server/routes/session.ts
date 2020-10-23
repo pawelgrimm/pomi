@@ -1,30 +1,42 @@
 import Router from "express-promise-router";
 import { sessions } from "../db";
 // @ts-ignore
-import { SessionParamsRaw } from "../../src/models/session";
+import { SessionParamsClient, SessionParamsDB } from "../../shared/models";
+import { validateSession } from "../../shared/validators";
+import { start } from "repl";
 
 const router = Router();
 
-const clientSessionParamsToDBCols = ({
-  startTimestamp,
-  endTimestamp,
-  description,
-  retro_added = false,
-}: SessionParamsRaw) => {
+const clientSessionParamsToDBCols = (
+  session: SessionParamsClient
+): SessionParamsDB => {
+  const {
+    startTimestamp,
+    endTimestamp,
+    description,
+    retroAdded = false,
+  } = session;
   return {
     start_timestamp: startTimestamp,
-    duration: endTimestamp - startTimestamp,
+    duration: `${
+      new Date(endTimestamp).valueOf() - new Date(startTimestamp).valueOf()
+    } milliseconds`,
     description,
-    retro_added,
+    retro_added: retroAdded,
   };
 };
 
 /*      NEW SESSION      */
 router.post("/", async (req, res) => {
-  const session = clientSessionParamsToDBCols(req.body);
-  console.log(session);
-  const row = await sessions.create(session);
-  res.status(201).send(row);
+  try {
+    const clientSession = validateSession(req.body);
+    const session = clientSessionParamsToDBCols(clientSession);
+    const row = await sessions.create(session);
+    res.status(201).send(row);
+  } catch (e) {
+    console.log(e);
+    res.status(500).send();
+  }
 });
 
 /*      GET ALL SESSIONS     */

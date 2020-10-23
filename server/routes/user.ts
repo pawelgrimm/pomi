@@ -1,6 +1,6 @@
 import Router from "express-promise-router";
 import { users } from "../db";
-import { validateUser, ValidationError } from "../validators";
+import { validateUser, ValidationError } from "../../shared/validators";
 
 const router = Router();
 

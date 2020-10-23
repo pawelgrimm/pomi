@@ -1,15 +1,17 @@
+import { SessionParamsDB } from "../../../shared/models";
+
 const bindSessionQueries = (query) => {
   return {
-    create: ({ start_timestamp, duration, description, retro_added }) =>
-      query(
+    create: (session: SessionParamsDB) => {
+      const { start_timestamp, duration, description, retro_added } = session;
+      return query(
         `
         INSERT INTO sessions(start_timestamp, duration, description, retro_added) 
-            VALUES (to_timestamp($1) , $2, $3, $4) 
-        RETURNING id`,
-        [start_timestamp, `${duration} seconds`, description, retro_added]
-      )
-        .then((res) => res.rows)
-        .then((rows) => rows.length > 0 && rows[0]),
+            VALUES ($1 , $2, $3, $4) 
+        RETURNING id;`,
+        [start_timestamp, duration, description, retro_added]
+      ).then((res) => res.rows[0]);
+    },
     // TODO: take time zone as a param
     selectAll: () =>
       query(`
@@ -32,17 +34,18 @@ const bindSessionQueries = (query) => {
       `,
         [id]
       ).then((res) => res.rows[0]),
-    update: (id, { start_timestamp, duration, description }) => {
+    update: (id, session: Partial<SessionParamsDB>) => {
+      const { start_timestamp, duration, description } = session;
       query(
         `
         UPDATE sessions
-        SET start_timestamp = coalesce(to_timestamp($2), start_timestamp),
+        SET start_timestamp = coalesce($2, start_timestamp),
             duration = coalesce($3, duration),
             description = coalesce($4, description),
             edited = TRUE
         WHERE id = $1;
       `,
-        [id, start_timestamp, `${duration} seconds`, description]
+        [id, start_timestamp, duration, description]
       ).then(() => true);
     },
   };

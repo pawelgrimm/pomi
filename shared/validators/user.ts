@@ -1,4 +1,4 @@
-import { UserParams } from "../../shared/models";
+import { UserParams } from "../models";
 
 import Joi from "joi";
 
