@@ -1,2 +1,9 @@
-// This just sets <rootDir> to this directory
-module.exports = {};
+module.exports = {
+  preset: "ts-jest",
+  testEnvironment: "node",
+  globals: {
+    "ts-jest": {
+      tsconfig: "server/tsconfig.json",
+    },
+  },
+};

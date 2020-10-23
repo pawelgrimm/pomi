@@ -66,6 +66,11 @@ module.exports = function (plop) {
       },
       {
         type: "add",
+        path: "server/routes/tests/{{snakeCase name}}.test.ts",
+        templateFile: "plop-templates/Route/test.ts.hbs",
+      },
+      {
+        type: "add",
         path: "server/routes/index.ts",
         templateFile: "plop-templates/Route/injectable-index.ts.hbs",
         skipIfExists: true,

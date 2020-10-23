@@ -1,10 +1,13 @@
 import * as path from "path";
 import dotenv from "dotenv";
+import debug from "debug";
+
+const logger = debug("config");
 
 const env = process.env.NODE_ENV || "development";
 const configPath = path.join(__dirname, `./.env.${env}`);
 
-console.log(`Loading configuration for ${env} from ${configPath}`);
+logger(`Loading configuration for ${env} from ${configPath}`);
 dotenv.config({ path: configPath });
 
 /*     POSTGRESQL      */

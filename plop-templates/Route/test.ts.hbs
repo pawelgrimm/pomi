@@ -1,0 +1,29 @@
+import request from "supertest";
+import app from "../../server";
+import { {{camelCase name}s, close } from "../../db";
+
+afterAll(() => {
+  close().then();
+});
+
+const {{camelCase name} = {
+/* creation params here */
+};
+
+describe("{{titleCase name} create tests", () => {
+it("should create a {{camelCase name}", async (done) => {
+const { body } = await request(app)
+.post("/api/{{camelCase name}s")
+.send({{camelCase name})
+.expect(201);
+
+expect(await {{camelCase name}s.selectAll()).toContainEqual({ id: body.id, ...{{camelCase name} });
+done();
+});
+it("should not create a {{camelCase name}", async (done) => {
+const res = await request(app).post("/api/{{camelCase name}s").expect(400);
+
+expect(res.body.errors.length).toBeGreaterThanOrEqual(1);
+done();
+});
+});
