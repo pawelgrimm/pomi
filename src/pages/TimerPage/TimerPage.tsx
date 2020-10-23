@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, ButtonGroup } from "@material-ui/core";
-import { TimerDisplay, DescriptionField, ProjectField } from "../../components";
+import { ButtonGroup } from "@material-ui/core";
+import {
+  TimerDisplay,
+  DescriptionField,
+  ProjectField,
+  ActionButton,
+} from "../../components";
 import { useClock, useSession } from "../../hooks";
 import { secondsToFormattedTime } from "../../utils/time";
 import { useMutation } from "react-query";
@@ -66,7 +71,7 @@ const editButton = (
 
     return (
       <>
-        <Button onClick={onClick}>Edit</Button>
+        <ActionButton onClick={onClick}>Edit</ActionButton>
       </>
     );
   };
@@ -119,9 +124,9 @@ const TimerPage = ({ defaultTime = 15 * 60 }) => {
       />
       <TimerDisplay time={time} setTime={setTime} isInProgress={isInProgress} />
       <ButtonGroup fullWidth orientation="vertical">
-        <Button variant="contained" color="primary" onClick={onStartStopClick}>
+        <ActionButton onClick={onStartStopClick}>
           {isInProgress ? "Stop" : "Start"}
-        </Button>
+        </ActionButton>
       </ButtonGroup>
     </form>
   );

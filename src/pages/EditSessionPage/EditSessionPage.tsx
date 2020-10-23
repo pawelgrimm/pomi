@@ -1,15 +1,20 @@
-import React, { useEffect, useReducer, useState } from "react";
-import { DescriptionField, ProjectField, TextField } from "../../components";
+import React, { useEffect, useState } from "react";
+import {
+  DescriptionField,
+  ProjectField,
+  TextField,
+  ActionButton,
+} from "../../components";
 import { Session, SessionParams } from "../../models";
 import { getEpochTime } from "../../utils";
-import { Button, ButtonGroup } from "@material-ui/core";
+import { ButtonGroup } from "@material-ui/core";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { fetchSession, patchSession } from "../../services/session/session";
 import { useSnackbar } from "notistack";
 import { getDateStringFromDate, getTimeFromDate } from "../../utils/time";
 import { add } from "date-fns";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form } from "formik";
 
 interface Props {
   children?: React.ReactNode;
@@ -68,19 +73,6 @@ const EditSessionPage: React.FC<Props> = () => {
 
   const [updateSession] = useMutation(patchSession);
   const { enqueueSnackbar } = useSnackbar();
-
-  const onClick = () => {
-    updateSession({ id, session }).then((success) => {
-      if (success) {
-        enqueueSnackbar("Session successfully updated!", {
-          variant: "success",
-        });
-        history.push("/");
-      } else {
-        enqueueSnackbar("Session could not be updated.", { variant: "error" });
-      }
-    });
-  };
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -142,14 +134,9 @@ const EditSessionPage: React.FC<Props> = () => {
             value={values.description}
           />
           <ButtonGroup fullWidth orientation="vertical">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={submitForm}
-              disabled={isSubmitting}
-            >
+            <ActionButton onClick={submitForm} disabled={isSubmitting}>
               Save Changes
-            </Button>
+            </ActionButton>
           </ButtonGroup>
         </Form>
       )}

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "develop": "concurrently \"yarn run start\" \"nodemon server/index.ts\"",
+    "develop": "concurrently \"yarn run start\" \"nodemon --exec ts-node --project server/tsconfig.json server/index.ts\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

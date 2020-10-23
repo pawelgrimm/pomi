@@ -20,17 +20,8 @@ const theme = createMuiTheme({
       "Arial",
       "sans-serif",
     ].join(","),
-    button: {
-      fontWeight: 400,
-      fontSize: "1.5rem",
-    },
   },
   overrides: {
-    MuiButton: {
-      root: {
-        padding: "2px 4px",
-      },
-    },
     MuiFormControl: {
       root: {
         marginBottom: "14px",
