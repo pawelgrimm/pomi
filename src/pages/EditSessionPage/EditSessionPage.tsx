@@ -96,7 +96,6 @@ const EditSessionPage: React.FC<Props> = () => {
           endDate: getDate(values.date, Number.parseInt(values.endTime)),
           description: values.description,
         };
-        console.log({ values, sessionUpdates });
         updateSession({ id, session: sessionUpdates }).then((success) => {
           if (success) {
             enqueueSnackbar("Session successfully updated!", {
