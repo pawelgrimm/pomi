@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ButtonGroup } from "@material-ui/core";
+import { Button, ButtonGroup } from "@material-ui/core";
 import {
   TimerDisplay,
   DescriptionField,
@@ -26,13 +26,13 @@ const useTimer = () => {
   const start = (project: string, description: string) => {
     startClock();
     setIsInProgress(true);
-    startSession(Date.now(), project, description);
+    startSession(new Date(), project, description);
   };
 
   const stop = () => {
     stopClock();
     setIsInProgress(false);
-    addSession(endSession(Date.now()));
+    addSession(endSession(new Date()));
   };
 
   return { ticks, isInProgress, start, stop };
@@ -58,7 +58,7 @@ const useAddSession = () => {
   };
 };
 
-const editButton = (
+export const editButton = (
   id: number,
   history: History,
   closeSnackbar: (key?: SnackbarKey) => void
@@ -71,7 +71,7 @@ const editButton = (
 
     return (
       <>
-        <ActionButton onClick={onClick}>Edit</ActionButton>
+        <Button onClick={onClick}>Edit</Button>
       </>
     );
   };

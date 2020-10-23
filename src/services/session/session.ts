@@ -1,8 +1,10 @@
 import axios from "axios";
 import { Session, SessionParams } from "../../models";
+import { sessionParamsToRaw } from "../../models/session";
 
 const postSession = (session: SessionParams): Promise<number> => {
-  return axios.post("/api/sessions", session).then((res) => res?.data?.id);
+  const rawSession = sessionParamsToRaw(session);
+  return axios.post("/api/sessions", rawSession).then((res) => res?.data?.id);
 };
 
 const getSession = (id: number): Promise<Session> => {
@@ -18,10 +20,11 @@ const patchSession = ({
   session,
 }: {
   id: number;
-  session: Partial<SessionParams>;
+  session: SessionParams;
 }): Promise<boolean> => {
-  console.log({ id, session });
-  return axios.patch(`/api/sessions/${id}`, session).then(
+  const rawSession = sessionParamsToRaw(session);
+  console.log({ session, rawSession });
+  return axios.patch(`/api/sessions/${id}`, rawSession).then(
     () => true,
     () => false
   );

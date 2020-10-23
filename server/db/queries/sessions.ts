@@ -4,9 +4,9 @@ const bindSessionQueries = (query) => {
       query(
         `
         INSERT INTO sessions(start_timestamp, duration, description, retro_added) 
-            VALUES (to_timestamp($1 / 1000.0) , $2, $3, $4) 
+            VALUES (to_timestamp($1) , $2, $3, $4) 
         RETURNING id`,
-        [start_timestamp, `${duration} milliseconds`, description, retro_added]
+        [start_timestamp, `${duration} seconds`, description, retro_added]
       )
         .then((res) => res.rows)
         .then((rows) => rows.length > 0 && rows[0]),
@@ -36,13 +36,13 @@ const bindSessionQueries = (query) => {
       query(
         `
         UPDATE sessions
-        SET start_timestamp = coalesce($2, start_timestamp),
+        SET start_timestamp = coalesce(to_timestamp($2), start_timestamp),
             duration = coalesce($3, duration),
             description = coalesce($4, description),
             edited = TRUE
         WHERE id = $1;
       `,
-        [id, start_timestamp, duration, description]
+        [id, start_timestamp, `${duration} seconds`, description]
       ).then(() => true);
     },
   };

@@ -6,15 +6,19 @@ import {
   ActionButton,
 } from "../../components";
 import { Session, SessionParams } from "../../models";
-import { getEpochTime } from "../../utils";
 import { ButtonGroup } from "@material-ui/core";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { fetchSession, patchSession } from "../../services/session/session";
 import { useSnackbar } from "notistack";
-import { getDateStringFromDate, getTimeFromDate } from "../../utils/time";
+import {
+  getDate,
+  getDateStringFromDate,
+  getTimeFromDate,
+} from "../../utils/time";
 import { add } from "date-fns";
 import { Formik, Form } from "formik";
+import { editButton } from "../TimerPage/TimerPage";
 
 interface Props {
   children?: React.ReactNode;
@@ -72,7 +76,7 @@ const EditSessionPage: React.FC<Props> = () => {
   }, [data]);
 
   const [updateSession] = useMutation(patchSession);
-  const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   if (isLoading) {
     return <span>Loading...</span>;
@@ -88,23 +92,18 @@ const EditSessionPage: React.FC<Props> = () => {
       initialValues={session}
       onSubmit={(values, { setSubmitting }) => {
         let sessionUpdates: SessionParams = {
-          startTimestamp: getEpochTime(
-            values.date,
-            Number.parseInt(values.startTime)
-          ),
-          endTimestamp: getEpochTime(
-            values.date,
-            Number.parseInt(values.endTime)
-          ),
+          startDate: getDate(values.date, Number.parseInt(values.startTime)),
+          endDate: getDate(values.date, Number.parseInt(values.endTime)),
           description: values.description,
         };
+        console.log({ values, sessionUpdates });
         updateSession({ id, session: sessionUpdates }).then((success) => {
           if (success) {
             enqueueSnackbar("Session successfully updated!", {
               variant: "success",
+              action: editButton(id, history, closeSnackbar),
             });
             history.push("/");
-            setSubmitting(false);
           } else {
             enqueueSnackbar("Session could not be updated.", {
               variant: "error",

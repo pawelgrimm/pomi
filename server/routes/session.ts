@@ -1,5 +1,7 @@
 import Router from "express-promise-router";
 import { sessions } from "../db";
+// @ts-ignore
+import { SessionParamsRaw } from "../../src/models/session";
 
 const router = Router();
 
@@ -8,9 +10,9 @@ const clientSessionParamsToDBCols = ({
   endTimestamp,
   description,
   retro_added = false,
-}) => {
+}: SessionParamsRaw) => {
   return {
-    start_timestamp: new Date(startTimestamp * 1000),
+    start_timestamp: startTimestamp,
     duration: endTimestamp - startTimestamp,
     description,
     retro_added,
@@ -20,6 +22,7 @@ const clientSessionParamsToDBCols = ({
 /*      NEW SESSION      */
 router.post("/", async (req, res) => {
   const session = clientSessionParamsToDBCols(req.body);
+  console.log(session);
   const row = await sessions.create(session);
   res.status(201).send(row);
 });

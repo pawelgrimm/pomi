@@ -52,16 +52,25 @@ const formattedTimeToSeconds = (formattedTime: string) => {
  * @returns the epoch time (in seconds) that corresponds to the specified date and time
  */
 const getEpochTime = (date: string, time: number): number => {
-  const unixTime =
-    parse(
-      `${date} ${time.toString().padEnd(3, "0")}`,
-      "M/dd/yy kmm",
-      Date.now()
-    ).valueOf() / 1000.0;
+  const unixTime = getDate(date, time).valueOf() / 1000.0;
   if (isNaN(unixTime)) {
     throw new RangeError(`${date} ${time} is not a valid instance.`);
   }
   return unixTime;
+};
+
+/**
+ * Convert a date and time into a Date object
+ * @param date a date in the format M/dd/yy (e.g. 9/22/20)
+ * @param time a time in the format kmm (e.g. 955 or 1356)
+ * @returns the Date that corresponds to the specified date and time
+ */
+const getDate = (date: string, time: number): Date => {
+  return parse(
+    `${date} ${time.toString().padEnd(3, "0")}`,
+    "M/dd/yy kmm",
+    Date.now()
+  );
 };
 
 /**
@@ -112,6 +121,7 @@ const getDateFromEpochTime = (time: number): Date => {
 export {
   secondsToParts,
   getEpochTime,
+  getDate,
   secondsToFormattedTime,
   formattedTimeToSeconds,
   getTimeFromEpochTime,
