@@ -78,6 +78,7 @@
     "ts-jest": "26.4.2",
     "ts-node": "9.0.0",
     "typescript": "~3.8.2",
+    "use-notification-hook": "0.0.4",
     "worker-loader": "3.0.2"
   },
   "proxy": "http://localhost:3001",
