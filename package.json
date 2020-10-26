@@ -3,25 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "develop": "concurrently \"yarn run start\" \"nodemon\"",
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "develop": "concurrently \"yarn dev:server\" \"yarn:dev:client\"",
+    "dev": "concurrently -p name -c \"yellow,magenta,blue\" -n \"webpack-server,nodemon-server,CRA\" \"yarn dev:server:webpack\" \"yarn dev:server:nodemon\" \"yarn dev:client\"",
+    "dev:server:webpack": "yarn webpack:server --watch --env dev",
+    "dev:server:nodemon": "rm -f build/server.js && wait-on -l build/server.js && nodemon build/server.js",
+    "dev:server": "concurrently -p name -c \"yellow,magenta\" -n \"webpack-server,nodemon-server\" \"yarn dev:server:webpack\" \"yarn dev:server:nodemon\"",
+    "dev:client": "wait-on -l tcp:3001 && react-scripts start",
+    "build": "yarn build:client && yarn build:backend",
+    "build:server": "yarn webpack:server --env prod",
+    "build:client": "react-scripts build",
+    "webpack:server": "webpack --config webpack.config.server.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate": "plop",
-    "migrate-db": "sh server/db/migrations/migrate.sh",
-    "test:server": "yarn run prepare-test-db && jest --config server/jest.config.js",
-    "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn run migrate-db test"
-  },
-  "nodemonConfig": {
-    "exec": "ts-node --project server/tsconfig.json --transpile-only server/index.ts",
-    "env": {
-      "NODE_ENV": "development"
-    },
-    "ext": "ts, tsx",
-    "watch": [
-      "server"
-    ]
+    "migrate-db": "sh src/server/db/migrations/migrate.sh",
+    "test:server": "yarn prepare-test-db && jest --config src/server/jest.config.js",
+    "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn migrate-db test"
   },
   "dependencies": {
     "@material-ui/core": "4.11.0",
@@ -35,8 +32,8 @@
     "@types/date-fns": "2.6.0",
     "@types/debug": "4.1.5",
     "@types/express": "4.17.8",
+    "@types/hapi__joi": "17.1.6",
     "@types/jest": "^24.0.0",
-    "@types/joi": "14.3.4",
     "@types/node": "14.14.2",
     "@types/pg": "7.14.5",
     "@types/react": "16.9.49",
@@ -51,6 +48,7 @@
     "date-fns": "2.16.1",
     "debug": "4.2.0",
     "dotenv": "8.2.0",
+    "dotenv-webpack": "4.0.0",
     "express": "4.17.1",
     "express-promise-router": "4.0.1",
     "formik": "2.2.0",
@@ -76,9 +74,13 @@
     "sass": "1.26.10",
     "supertest": "5.0.0",
     "ts-jest": "26.4.2",
+    "ts-loader": "8.0.7",
     "ts-node": "9.0.0",
     "typescript": "~3.8.2",
     "use-notification-hook": "0.0.4",
+    "wait-on": "5.2.0",
+    "webpack-cli": "4.1.0",
+    "webpack-node-externals": "2.5.2",
     "worker-loader": "3.0.2"
   },
   "proxy": "http://localhost:3001",

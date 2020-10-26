@@ -1,0 +1,10 @@
+@use "tokens" as *;
+
+@mixin content-container {
+  margin: 0 auto;
+  padding: $xs-size 54px;
+  max-width: 1140px;
+  @media (max-width: $desktop-breakpoint) {
+    padding: $s-size;
+  }
+}
