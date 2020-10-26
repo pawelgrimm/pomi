@@ -8,8 +8,8 @@ afterAll(() => {
 });
 
 const session: ClientSessionModel = {
-  startTimestamp: "2020-10-23T19:59:29.853Z",
-  endTimestamp: "2020-10-24T23:46:09.853Z",
+  startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
+  endTimestamp: new Date("2020-10-24T23:46:09.853Z"),
   description: "Test session",
 };
 

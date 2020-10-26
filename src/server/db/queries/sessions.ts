@@ -1,6 +1,7 @@
 import { DatabaseSessionModel } from "../../../shared/models";
+import { PGQuery } from "../index";
 
-const bindSessionQueries = (query) => {
+const bindSessionQueries = (query: PGQuery) => {
   return {
     create: (session: DatabaseSessionModel) => {
       const { start_timestamp, duration, description, retro_added } = session;
@@ -22,7 +23,7 @@ const bindSessionQueries = (query) => {
         FROM sessions
       `).then((res) => res.rows),
 
-    selectOneById: (id) =>
+    selectOneById: (id: string) =>
       query(
         `
         SELECT  id,
@@ -34,7 +35,7 @@ const bindSessionQueries = (query) => {
       `,
         [id]
       ).then((res) => res.rows[0]),
-    update: (id, session: Partial<DatabaseSessionModel>) => {
+    update: (id: string, session: Partial<DatabaseSessionModel>) => {
       const { start_timestamp, duration, description } = session;
       query(
         `

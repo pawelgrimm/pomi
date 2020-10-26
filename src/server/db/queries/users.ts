@@ -1,6 +1,7 @@
 import { UserModel } from "../../../shared/models";
+import { PGQuery } from "../index";
 
-const bindUserQueries = (query) => {
+const bindUserQueries = (query: PGQuery) => {
   return {
     create: ({ username, email }: UserModel) =>
       query(
@@ -17,7 +18,7 @@ const bindUserQueries = (query) => {
         SELECT id, username, email FROM users;`
       ).then((res) => res.rows),
 
-    selectOneById: (id) =>
+    selectOneById: (id: string) =>
       query(
         `
         SELECT id, username, email FROM users 

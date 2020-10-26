@@ -16,13 +16,17 @@ const pool = new Pool({ connectionString: PG_CONNECTION_STRING });
  */
 const close = () => pool.end();
 
+export type PGQuery = (
+  queryText: string,
+  values?: any[]
+) => Promise<QueryResult>;
+
 /**
  * Execute a query against the application database
  * @param queryText the query to execute
  * @param values values to substitute into the query
  */
-const query = (queryText: string, values: any[]): Promise<QueryResult> =>
-  pool.query(queryText, values);
+const query: PGQuery = (queryText, values) => pool.query(queryText, values);
 
 // Bind object-specific queries to query and expose them as an export
 /* PLOP_INJECT_BIND */
