@@ -3,8 +3,7 @@ import { useHistory } from "react-router-dom";
 import { History } from "history";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useMutation } from "react-query";
-import { secondsToFormattedTime } from "../../../shared/utils/time/time";
-import { SessionParams } from "../../models";
+import { secondsToFormattedTime } from "../../../shared/utils";
 import { useClock, useSession } from "../../hooks";
 import { postSession } from "../../services/session/session";
 import { Button, ButtonGroup } from "@material-ui/core";
@@ -123,7 +122,7 @@ const TimerPage = ({ defaultTime = 25 * 60 }) => {
     time: defaultTime,
   });
 
-  const { notify, close } = useNotification("Timer complete", {
+  const { notify } = useNotification("Timer complete", {
     tag: "timer-complete",
   });
 

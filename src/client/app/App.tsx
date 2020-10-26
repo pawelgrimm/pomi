@@ -1,8 +1,8 @@
 import React from "react";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { TimerPage } from "../pages";
-import { EditSession, Header } from "../components";
+import { TimerPage, EditSessionPage } from "../pages";
+import { Header } from "../components";
 import styles from "./App.module.scss";
 import theme from "../styles/theme";
 import { QueryCache, ReactQueryCacheProvider } from "react-query";
@@ -22,7 +22,7 @@ const App: React.FC = () => {
               <div className={styles.mainContent}>
                 <Switch>
                   <Route path="/edit/:id">
-                    <EditSession />
+                    <EditSessionPage />
                   </Route>
                   <Route path="/">
                     <TimerPage />

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { SessionParams } from "../../models";
+import { ClientSessionModel } from "../../../shared/models";
 
 const useSession = () => {
   const [startTime, setStartTime] = useState<Date>(new Date());
@@ -16,15 +16,14 @@ const useSession = () => {
   );
 
   const endSession = useCallback(
-    (endTime: Date): SessionParams => {
+    (endTime: Date): ClientSessionModel => {
       return {
-        startDate: startTime,
-        endDate: endTime,
-        project,
+        startTimestamp: startTime,
+        endTimestamp: endTime,
         description,
       };
     },
-    [description, project, startTime]
+    [description, startTime]
   );
 
   return { startSession, endSession };

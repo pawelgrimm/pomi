@@ -1,6 +1,5 @@
+import Joi from "joi";
 import { ClientSessionModel, DatabaseSessionModel } from "../models";
-
-import Joi, { bool } from "joi";
 
 /**
  * Schemas listed as optional are always optional.

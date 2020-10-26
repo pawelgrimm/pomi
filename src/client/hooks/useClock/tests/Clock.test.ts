@@ -1,6 +1,6 @@
 import Clock from "../Clock";
 
-const FUDGE = 0.5;
+const FUDGE = 0.01;
 
 describe("Clock", () => {
   it("ticks 3 times", (done) => {
@@ -15,7 +15,7 @@ describe("Clock", () => {
       clock.stop();
       expect(callback).toBeCalledTimes(numTicks);
       done();
-    }, numTicks * 1.01 * interval);
+    }, numTicks * (1 + FUDGE) * interval);
   });
 
   it("doesn't tick", (done) => {

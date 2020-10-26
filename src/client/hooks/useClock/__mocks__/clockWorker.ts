@@ -2,7 +2,6 @@ const mockWorker = {};
 const mockDispatch = jest.fn();
 const mockSubscribeToWorker = jest.fn();
 
-let ticks = 0;
 let setTicks: () => {};
 const tickMockClock = () => setTicks();
 

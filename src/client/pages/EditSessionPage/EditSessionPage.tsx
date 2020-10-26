@@ -5,7 +5,7 @@ import {
   TextField,
   ActionButton,
 } from "../../components";
-import { Session, SessionParams } from "../../models";
+import { SessionParams } from "../../models";
 import { ButtonGroup } from "@material-ui/core";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
@@ -15,10 +15,11 @@ import {
   getDate,
   getDateStringFromDate,
   getTimeFromDate,
-} from "../../../shared/utils/time/time";
+} from "../../../shared/utils";
 import { add } from "date-fns";
 import { Formik, Form } from "formik";
 import { editButton } from "../TimerPage/TimerPage";
+import { ClientSessionModel } from "../../../shared/models";
 
 interface Props {
   children?: React.ReactNode;
@@ -40,15 +41,11 @@ const initialState: SessionState = {
   project: "",
 };
 
-const sessionToSessionState = (session: Session): SessionState => {
-  const { start_timestamp, description, duration } = session;
-  const startDate = new Date(start_timestamp);
-  const date = getDateStringFromDate(startDate);
-  const startTime = getTimeFromDate(startDate).toString();
-  const endDate = add(startDate, {
-    seconds: duration / 1000.0,
-  });
-  const endTime = getTimeFromDate(endDate).toString();
+const sessionToSessionState = (session: ClientSessionModel): SessionState => {
+  const { startTimestamp, endTimestamp, description = "" } = session;
+  const date = getDateStringFromDate(startTimestamp);
+  const startTime = getTimeFromDate(startTimestamp).toString();
+  const endTime = getTimeFromDate(endTimestamp).toString();
   return {
     date,
     startTime,
@@ -64,7 +61,7 @@ const EditSessionPage: React.FC<Props> = () => {
   const history = useHistory();
   const { id } = useParams();
 
-  const { isLoading, isError, data, error } = useQuery<Session>(
+  const { isLoading, isError, data, error } = useQuery<ClientSessionModel>(
     ["todo", { id }],
     fetchSession
   );
@@ -91,9 +88,12 @@ const EditSessionPage: React.FC<Props> = () => {
       enableReinitialize={true}
       initialValues={session}
       onSubmit={(values, { setSubmitting }) => {
-        let sessionUpdates: SessionParams = {
-          startDate: getDate(values.date, Number.parseInt(values.startTime)),
-          endDate: getDate(values.date, Number.parseInt(values.endTime)),
+        let sessionUpdates: Partial<ClientSessionModel> = {
+          startTimestamp: getDate(
+            values.date,
+            Number.parseInt(values.startTime)
+          ),
+          endTimestamp: getDate(values.date, Number.parseInt(values.endTime)),
           description: values.description,
         };
         updateSession({ id, session: sessionUpdates }).then((success) => {
@@ -142,4 +142,4 @@ const EditSessionPage: React.FC<Props> = () => {
   );
 };
 
-export default EditSessionPage;
+export { EditSessionPage };

@@ -1,3 +1,3 @@
-import EditSessionPage from "./EditSessionPage";
+import { EditSessionPage } from "./EditSessionPage";
 
-export default EditSessionPage;
+export { EditSessionPage };

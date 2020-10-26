@@ -1,3 +1,5 @@
+import { ClientSessionModel } from "../../shared/models";
+
 interface Session {
   id: number;
   start_timestamp: number;
@@ -22,13 +24,15 @@ interface SessionParamsRaw {
   retro_added?: boolean;
 }
 
-const sessionParamsToRaw = (session: SessionParams): SessionParamsRaw => {
+const sessionParamsToRaw = (
+  session: ClientSessionModel
+): ClientSessionModel => {
   return {
-    startTimestamp: session.startDate.valueOf() / 1000.0,
-    endTimestamp: session.endDate.valueOf() / 1000.0,
+    startTimestamp: session.startTimestamp,
+    endTimestamp: session.endTimestamp,
     description: session.description?.trim(),
-    project: session.project?.trim(),
-    retro_added: session.retro_added,
+    // project: session.project?.trim(),
+    retroAdded: session.retroAdded,
   };
 };
 
