@@ -1,4 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { History } from "history";
+import { SnackbarKey, useSnackbar } from "notistack";
+import { useMutation } from "react-query";
+import { secondsToFormattedTime } from "../../utils/time";
+import { SessionParams } from "../../models";
+import { useClock, useSession } from "../../hooks";
+import { postSession } from "../../services/session/session";
 import { Button, ButtonGroup } from "@material-ui/core";
 import {
   TimerDisplay,
@@ -6,14 +14,6 @@ import {
   ProjectField,
   ActionButton,
 } from "../../components";
-import { useClock, useSession } from "../../hooks";
-import { secondsToFormattedTime } from "../../utils/time";
-import { useMutation } from "react-query";
-import { SessionParams } from "../../models";
-import { SnackbarKey, useSnackbar } from "notistack";
-import { postSession } from "../../services/session/session";
-import { useHistory } from "react-router-dom";
-import { History } from "history";
 
 const useTimer = () => {
   const { start: startClock, stop: stopClock, ticks } = useClock();
@@ -23,17 +23,20 @@ const useTimer = () => {
 
   const addSession = useAddSession();
 
-  const start = (project: string, description: string) => {
-    startClock();
-    setIsInProgress(true);
-    startSession(new Date(), project, description);
-  };
+  const start = useCallback(
+    (project: string, description: string) => {
+      startClock();
+      setIsInProgress(true);
+      startSession(new Date(), project, description);
+    },
+    [startClock, startSession]
+  );
 
-  const stop = () => {
+  const stop = useCallback(() => {
     stopClock();
     setIsInProgress(false);
     addSession(endSession(new Date()));
-  };
+  }, [addSession, endSession, stopClock]);
 
   return { ticks, isInProgress, start, stop };
 };
@@ -77,12 +80,32 @@ export const editButton = (
   };
 };
 
-const TimerPage = ({ defaultTime = 15 * 60 }) => {
+interface TimerState {
+  time: number;
+  description: string;
+  project: string;
+}
+
+const useTimerState = (initialState: Partial<TimerState>) => {
+  const [time, setTime] = useState<number>(initialState.time || 25 * 60);
+  const [description, setDescription] = useState(
+    initialState.description || ""
+  );
+  const [project, setProject] = useState(initialState.project || "");
+  return {
+    state: { time, description, project },
+    setTime,
+    setDescription,
+    setProject,
+  };
+};
+
+const TimerPage = ({ defaultTime = 25 * 60 }) => {
   const { ticks, isInProgress, start, stop } = useTimer();
 
-  const [time, setTime] = useState<number>(defaultTime);
-  const [description, setDescription] = useState("");
-  const [project, setProject] = useState("");
+  const { state, setTime, setDescription, setProject } = useTimerState({
+    time: defaultTime,
+  });
 
   // Keep track of elapsed time
   useEffect(() => {
@@ -95,14 +118,14 @@ const TimerPage = ({ defaultTime = 15 * 60 }) => {
   // Update document title as needed
   useEffect(() => {
     document.title = isInProgress
-      ? secondsToFormattedTime(time, { trimmed: true })
+      ? secondsToFormattedTime(state.time, { trimmed: true })
       : "Pomi";
-  }, [isInProgress, time]);
+  }, [isInProgress, state.time]);
 
   const onStartStopClick = () => {
     if (!isInProgress) {
       // Start Timer
-      start(project, description);
+      start(state.project, state.description);
     } else {
       // Stop Timer
       stop();
@@ -113,16 +136,20 @@ const TimerPage = ({ defaultTime = 15 * 60 }) => {
   return (
     <form>
       <ProjectField
-        value={project}
+        value={state.project}
         onChange={(e) => setProject(e.target.value)}
         disabled={isInProgress}
       />
       <DescriptionField
-        value={description}
+        value={state.description}
         onChange={(e) => setDescription(e.target.value)}
         disabled={isInProgress}
       />
-      <TimerDisplay time={time} setTime={setTime} isInProgress={isInProgress} />
+      <TimerDisplay
+        time={state.time}
+        setTime={setTime}
+        isInProgress={isInProgress}
+      />
       <ButtonGroup fullWidth orientation="vertical">
         <ActionButton onClick={onStartStopClick}>
           {isInProgress ? "Stop" : "Start"}
