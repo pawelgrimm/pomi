@@ -3,11 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "develop": "concurrently \"yarn dev:server\" \"yarn:dev:client\"",
-    "dev": "concurrently -p name -c \"yellow,magenta,blue\" -n \"webpack-server,nodemon-server,CRA\" \"yarn dev:server:webpack\" \"yarn dev:server:nodemon\" \"yarn dev:client\"",
+    "develop": "concurrently -p name -c \"blue,red,yellow\" -n \"webpack-server,server,react\" \"yarn dev:server:webpack\" \"yarn dev:server:nodemon\" \"yarn dev:client\"",
     "dev:server:webpack": "yarn webpack:server --watch --env dev",
     "dev:server:nodemon": "rm -f build/server.js && wait-on -l build/server.js && nodemon build/server.js",
-    "dev:server": "concurrently -p name -c \"yellow,magenta\" -n \"webpack-server,nodemon-server\" \"yarn dev:server:webpack\" \"yarn dev:server:nodemon\"",
+    "dev:server": "concurrently -p name -c \"blue,red\" -n \"webpack-server,server\" \"yarn dev:server:webpack\" \"yarn dev:server:nodemon\"",
     "dev:client": "wait-on -l tcp:3001 && react-scripts start",
     "build": "yarn build:client && yarn build:backend",
     "build:server": "yarn webpack:server --env prod",
@@ -103,5 +102,12 @@
     "moduleNameMapper": {
       "worker-loader!./clockWorker-script": "<rootDir>/src/__mocks__/ClockWorker"
     }
+  },
+  "nodemonConfig": {
+    "watch": [
+      "src/server",
+      "src/shared"
+    ],
+    "ext": "ts,json"
   }
 }

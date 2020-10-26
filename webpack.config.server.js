@@ -7,7 +7,7 @@ const entry = { server: "./src/server/index.ts" };
 
 module.exports = (env) => {
   const mode = env.prod ? "production" : "development";
-  console.log("Webpack mode: ", mode);
+  console.log("Mode:", mode);
 
   return {
     mode,
