@@ -30,7 +30,7 @@ const query: PGQuery = (queryText, values) => pool.query(queryText, values);
 
 // Bind object-specific queries to query and expose them as an export
 /* PLOP_INJECT_BIND */
-export const sessions = bindSessionQueries(query);
-export const users = bindUserQueries(query);
+export const Sessions = bindSessionQueries(query);
+export const Users = bindUserQueries(query);
 
 export { query, close };

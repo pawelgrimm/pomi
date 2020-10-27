@@ -1,5 +1,5 @@
 import Router from "express-promise-router";
-import { users } from "../db";
+import { Users } from "../db";
 import { validateUser, ValidationError } from "../../shared/validators";
 
 const router = Router();
@@ -8,7 +8,7 @@ const router = Router();
 router.post("/", async (req, res) => {
   try {
     const user = validateUser(req.body);
-    const row = await users.create(user);
+    const row = await Users.create(user);
     res.status(201).send(row);
   } catch (e) {
     if (e instanceof ValidationError) {
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 /*      GET ALL USERS     */
 // TODO: Protect
 router.get("/", async (req, res) => {
-  const rows = await users.selectAll();
+  const rows = await Users.selectAll();
   res.status(200).send(rows);
 });
 
@@ -30,7 +30,7 @@ router.get("/", async (req, res) => {
 // TODO: Protect
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const row = await users.selectOneById(id);
+  const row = await Users.selectOneById(id);
   res.status(200).send(row);
 });
 
