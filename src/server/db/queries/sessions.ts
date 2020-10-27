@@ -10,9 +10,15 @@ const bindSessionQueries = (query: PGQuery) => {
         INSERT INTO sessions(start_timestamp, duration, description, retro_added) 
             VALUES ($1 , $2, $3, $4) 
         RETURNING id;`,
-        [start_timestamp, duration, description, retro_added]
+        [
+          start_timestamp,
+          duration && `${duration} milliseconds`,
+          description,
+          retro_added,
+        ]
       ).then((res) => res.rows[0]);
     },
+
     // TODO: take time zone as a param
     selectAll: () =>
       query(`
@@ -22,7 +28,15 @@ const bindSessionQueries = (query: PGQuery) => {
                 description
         FROM sessions
       `).then((res) => res.rows),
-
+    selectAllToday: () =>
+      query(`
+        SELECT  id,
+                start_timestamp,
+                extract('epoch' from duration) * 1000.0   duration,
+                description
+        FROM sessions
+        WHERE start_timestamp > current_date;
+      `).then((res) => res.rows),
     selectOneById: (id: string) =>
       query(
         `
