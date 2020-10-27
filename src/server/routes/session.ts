@@ -1,37 +1,19 @@
 import Router from "express-promise-router";
-import { sessions } from "../db";
-// @ts-ignore
-import { ClientSessionModel, DatabaseSessionModel } from "../../shared/models";
+import { Sessions } from "../db";
 import { validateClientSession } from "../../shared/validators";
-import { start } from "repl";
+import {
+  convertClientSessionModel,
+  convertDatabaseSessionModel,
+} from "../../shared/models/session";
 
 const router = Router();
-
-const clientSessionParamsToDBCols = (
-  session: ClientSessionModel
-): DatabaseSessionModel => {
-  const {
-    startTimestamp,
-    endTimestamp,
-    description,
-    retroAdded = false,
-  } = session;
-  return {
-    start_timestamp: startTimestamp,
-    duration: `${
-      new Date(endTimestamp).valueOf() - new Date(startTimestamp).valueOf()
-    } milliseconds`,
-    description,
-    retro_added: retroAdded,
-  };
-};
 
 /*      NEW SESSION      */
 router.post("/", async (req, res) => {
   try {
     const clientSession = validateClientSession(req.body);
-    const session = clientSessionParamsToDBCols(clientSession);
-    const row = await sessions.create(session);
+    const session = convertClientSessionModel(clientSession);
+    const row = await Sessions.create(session);
     res.status(201).send(row);
   } catch (e) {
     console.log(e);
@@ -41,22 +23,31 @@ router.post("/", async (req, res) => {
 
 /*      GET ALL SESSIONS     */
 router.get("/", async (req, res) => {
-  const rows = await sessions.selectAll();
-  res.status(200).send(rows);
+  const rows = await Sessions.selectAll();
+  const sessions = rows.map((session) => convertDatabaseSessionModel(session));
+  res.status(200).send(sessions);
+});
+/*      GET ALL OF TODAY'S SESSIONS     */
+router.get("/today", async (req, res) => {
+  const rows = await Sessions.selectAllToday();
+  const sessions = rows.map((session) => convertDatabaseSessionModel(session));
+  res.status(200).send(sessions);
 });
 
 /*      GET SESSION BY ID    */
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const rows = await sessions.selectOneById(id);
-  res.status(200).send(rows);
+  const row = await Sessions.selectOneById(id);
+  const session = convertDatabaseSessionModel(row);
+  res.status(200).send(session);
 });
 
 router.patch("/:id", async (req, res) => {
   const id = req.params.id;
-  const session = clientSessionParamsToDBCols(req.body);
+  const clientSession = validateClientSession(req.body, { isPartial: true });
+  const session = convertClientSessionModel(clientSession);
   try {
-    const success = await sessions.update(id, session);
+    const success = await Sessions.update(id, session);
     res.status(200).send(success);
   } catch (e) {
     res.status(500).send(e);
