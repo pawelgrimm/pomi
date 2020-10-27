@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ClientSessionModel } from "../../../shared/models";
 import { validateClientSession } from "../../../shared/validators";
+import { hydrateClientSession } from "../../../shared/models/session";
 
 const postSession = (session: ClientSessionModel): Promise<number> => {
   session = validateClientSession(session);
@@ -8,7 +9,10 @@ const postSession = (session: ClientSessionModel): Promise<number> => {
 };
 
 const getSession = (id: number): Promise<ClientSessionModel> => {
-  return axios.get(`/api/sessions/${id}`).then((res) => res?.data);
+  return axios
+    .get(`/api/sessions/${id}`)
+    .then((res) => res?.data)
+    .then((session) => hydrateClientSession(session));
 };
 
 const fetchSession = (key: string, { id }: { id: number }) => {
