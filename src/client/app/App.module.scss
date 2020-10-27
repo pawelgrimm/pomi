@@ -8,9 +8,6 @@
   margin: 0 auto;
   padding: 0;
   max-width: 360px;
-  @media (max-width: $desktop-breakpoint) {
-    padding: $s-size;
-  }
 }
 
 .mainContent {
