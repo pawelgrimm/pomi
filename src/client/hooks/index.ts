@@ -1,4 +1,4 @@
 import useClock from "./useClock/useClock";
-import useSession from "./useSession/useSession";
+import useAddSession from "./useAddSession/useAddSession";
 
-export { useClock, useSession };
+export { useClock, useAddSession };

@@ -1,24 +1,35 @@
 import { TextField as MUITextField } from "@material-ui/core";
-import React, { ChangeEvent } from "react";
+import React from "react";
+import { fieldToTextField, TextFieldProps } from "formik-material-ui";
 
-const TextField = (props: {
-  label: string;
-  id?: string;
-  value: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-  disabled?: boolean;
-}) => {
+interface Props {
+  multiline?: boolean;
+}
+
+const multilineProps = (isMultiline: boolean | undefined) => {
+  if (isMultiline) {
+    return {
+      fullWidth: true,
+      rows: 3,
+      rowsMax: 3,
+    };
+  }
+  return {};
+};
+
+const TextField = (props: Props & TextFieldProps) => {
+  const {
+    field: { name },
+    multiline,
+  } = props;
+
   return (
     <MUITextField
-      id={props.id || props.label.toLowerCase()}
-      name={props.id || props.label.toLowerCase()}
-      label={props.label}
+      {...fieldToTextField(props)}
+      {...multilineProps(multiline)}
       variant="filled"
       fullWidth
-      autoComplete={`pomi-${props.id || props.label.toLowerCase()}`}
-      value={props.value}
-      onChange={props.onChange}
-      disabled={props.disabled}
+      autoComplete={`pomi-${name}`}
     />
   );
 };

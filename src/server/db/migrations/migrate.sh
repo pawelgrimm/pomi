@@ -27,4 +27,4 @@ fi
 SCHEMA_VERSION=$2
 [ -z $SCHEMA_VERSION ] && echo "Migrating $CONNECTION_URL to newest version" || echo "Migrating $CONNECTION_URL to version $SCHEMA_VERSION"
 
-(cd server/db/migrations && pg-migrator $CONNECTION_URL $SCHEMA_VERSION)
+(cd src/server/db/migrations && pg-migrator $CONNECTION_URL $SCHEMA_VERSION)

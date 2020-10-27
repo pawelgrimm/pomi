@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { FilledInput } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -5,13 +6,8 @@ import TimeField from "react-simple-timefield";
 import {
   secondsToFormattedTime,
   formattedTimeToSeconds,
-} from "../../../shared/utils/time/time";
-
-interface Props {
-  time: number;
-  isInProgress: boolean;
-  setTime: React.Dispatch<React.SetStateAction<number>>;
-}
+} from "../../../shared/utils";
+import { useClock } from "../../hooks";
 
 const useStyles = makeStyles({
   root: {
@@ -42,16 +38,44 @@ const TimeInput = ({ ...rest }) => {
   );
 };
 
+interface Props {
+  timerStartValue: number;
+  isInProgress: boolean;
+}
+
 const TimerDisplay: React.FC<Props> = ({
-  time,
-  setTime,
   isInProgress = false,
+  timerStartValue,
 }) => {
-  const [formattedTime, setFormattedTime] = useState("");
+  const [time, setTime] = useState(timerStartValue + 2);
+  const { start, stop, ticks } = useClock();
 
   useEffect(() => {
-    setFormattedTime(secondsToFormattedTime(time));
-  }, [time]);
+    if (isInProgress) {
+      // Timer was started
+      start();
+    } else {
+      // Timer was stopped
+      stop();
+      setTime(timerStartValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInProgress]);
+
+  useEffect(() => {
+    if (!isInProgress) {
+      setTime(timerStartValue);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timerStartValue]);
+
+  useEffect(() => {
+    if (isInProgress) {
+      setTime((prev) => prev - 1);
+    }
+  }, [ticks]);
+
+  const formattedTime = secondsToFormattedTime(time);
 
   if (isInProgress) {
     return <TimeInput disabled value={formattedTime} />;

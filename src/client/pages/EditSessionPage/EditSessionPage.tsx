@@ -5,7 +5,6 @@ import {
   TextField,
   ActionButton,
 } from "../../components";
-import { SessionParams } from "../../models";
 import { ButtonGroup } from "@material-ui/core";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
@@ -16,9 +15,8 @@ import {
   getDateStringFromDate,
   getTimeFromDate,
 } from "../../../shared/utils";
-import { add } from "date-fns";
-import { Formik, Form } from "formik";
-import { editButton } from "../TimerPage/TimerPage";
+import { Formik, Form, Field } from "formik";
+import { editButton } from "../../hooks/useAddSession/useAddSession";
 import { ClientSessionModel } from "../../../shared/models";
 
 interface Props {
@@ -29,20 +27,28 @@ interface SessionState {
   date: string;
   startTime: string;
   endTime: string;
-  description: string;
   project: string;
+  task: string;
+  notes: string;
 }
 
 const initialState: SessionState = {
   date: "",
   startTime: "",
   endTime: "",
-  description: "",
   project: "",
+  task: "",
+  notes: "",
 };
 
 const sessionToSessionState = (session: ClientSessionModel): SessionState => {
-  const { startTimestamp, endTimestamp, description = "" } = session;
+  const {
+    startTimestamp,
+    endTimestamp,
+    project = "",
+    task,
+    notes = "",
+  } = session;
   const date = getDateStringFromDate(startTimestamp);
   const startTime = getTimeFromDate(startTimestamp).toString();
   const endTime = getTimeFromDate(endTimestamp).toString();
@@ -50,8 +56,9 @@ const sessionToSessionState = (session: ClientSessionModel): SessionState => {
     date,
     startTime,
     endTime,
-    description,
-    project: "",
+    project,
+    task,
+    notes,
   };
 };
 
@@ -88,13 +95,14 @@ const EditSessionPage: React.FC<Props> = () => {
       enableReinitialize={true}
       initialValues={session}
       onSubmit={(values, { setSubmitting }) => {
+        const { date, startTime, endTime, ...rest } = values;
         let sessionUpdates: Partial<ClientSessionModel> = {
           startTimestamp: getDate(
             values.date,
             Number.parseInt(values.startTime)
           ),
           endTimestamp: getDate(values.date, Number.parseInt(values.endTime)),
-          description: values.description,
+          ...rest,
         };
         updateSession({ id, session: sessionUpdates }).then((success) => {
           if (success) {
@@ -111,26 +119,14 @@ const EditSessionPage: React.FC<Props> = () => {
         });
       }}
     >
-      {({ submitForm, handleChange, values, isSubmitting }) => (
+      {({ submitForm, isSubmitting }) => (
         <Form>
-          <TextField label="Date" onChange={handleChange} value={values.date} />
-          <TextField
-            label="Start Time"
-            id="startTime"
-            onChange={handleChange}
-            value={values.startTime}
-          />
-          <TextField
-            label="End Time"
-            id="endTime"
-            onChange={handleChange}
-            value={values.endTime}
-          />
-          <ProjectField value={values.project} onChange={handleChange} />
-          <DescriptionField
-            onChange={handleChange}
-            value={values.description}
-          />
+          <Field component={TextField} name="date" label="Date" />
+          <Field component={TextField} name="startTime" label="Start Time" />
+          <Field component={TextField} name="endTime" label="End Time" />
+          <Field component={TextField} name="project" label="Project" />
+          <Field component={TextField} name="task" label="Task" />
+          <Field component={TextField} multiline name="notes" label="Notes" />
           <ButtonGroup fullWidth orientation="vertical">
             <ActionButton onClick={submitForm} disabled={isSubmitting}>
               Save Changes

@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../../server";
-import { users, close } from "../../db";
+import { Users, close } from "../../db";
 
 afterAll(() => {
   close().then();
@@ -18,7 +18,7 @@ describe("User create tests", () => {
       .send(user)
       .expect(201);
 
-    expect(await users.selectAll()).toContainEqual({ id: body.id, ...user });
+    expect(await Users.selectAll()).toContainEqual({ id: body.id, ...user });
     done();
   });
 

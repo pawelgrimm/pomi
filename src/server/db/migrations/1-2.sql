@@ -22,7 +22,9 @@ CREATE TABLE sessions
 --     task_id         SERIAL                  NOT NULL,
     start_timestamp TIMESTAMPTZ             NOT NULL,
     duration        INTERVAL             NOT NULL,
-    description     TEXT,
+    project         TEXT,
+    task            TEXT,
+    notes           TEXT,
     edited          BOOLEAN DEFAULT FALSE,
     retro_added     BOOLEAN DEFAULT FALSE
 --     FOREIGN KEY (task_id, user_id) REFERENCES tasks (id, user_id)

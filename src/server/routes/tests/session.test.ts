@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../../server";
-import { sessions, close } from "../../db";
+import { Sessions, close } from "../../db";
 import { ClientSessionModel } from "../../../shared/models";
 
 afterAll(() => {
@@ -10,7 +10,8 @@ afterAll(() => {
 const session: ClientSessionModel = {
   startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
   endTimestamp: new Date("2020-10-24T23:46:09.853Z"),
-  description: "Test session",
+  task: "Test session",
+  type: "session",
 };
 
 describe("Session create tests", () => {
@@ -20,10 +21,10 @@ describe("Session create tests", () => {
       .send(session)
       .expect(201);
 
-    expect(await sessions.selectAll()).toContainEqual({
+    expect(await Sessions.selectAll()).toContainEqual({
       id: body.id,
       start_timestamp: new Date(session.startTimestamp),
-      description: session.description,
+      task: session.task,
       duration:
         new Date(session.endTimestamp).valueOf() -
         new Date(session.startTimestamp).valueOf(),

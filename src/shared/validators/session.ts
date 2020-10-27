@@ -10,7 +10,9 @@ import { ClientSessionModel, DatabaseSessionModel } from "../models";
 const clientSessionSchema = Joi.object({
   startTimestamp: Joi.date().iso(),
   endTimestamp: Joi.date().iso(),
-  description: Joi.string().optional(),
+  task: Joi.string().trim(),
+  project: Joi.string().trim().optional(),
+  notes: Joi.string().trim().optional(),
   retroAdded: Joi.boolean().optional(),
 });
 
@@ -30,7 +32,9 @@ export const validateClientSession = (
 const databaseSessionSchema = Joi.object({
   start_timestamp: Joi.date().iso(),
   duration: Joi.string().pattern(/^\d+ (milli)?seconds$/),
-  description: Joi.string().optional(),
+  task: Joi.string().trim(),
+  project: Joi.string().trim().optional(),
+  notes: Joi.string().trim().optional(),
   retro_added: Joi.boolean().optional(),
 });
 
