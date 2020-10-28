@@ -18,6 +18,7 @@
     "generate": "plop",
     "migrate-db": "sh src/server/db/migrations/migrate.sh",
     "test:server": "yarn prepare-test-db && jest --config src/server/jest.config.js",
+    "test:shared": "jest --config src/shared/jest.config.js",
     "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn migrate-db test",
     "killnode": "kill -9 $(lsof -t -i:3001)"
   },

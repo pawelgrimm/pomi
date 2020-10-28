@@ -17,22 +17,21 @@ const getSessionType = (value: number): SessionType => {
 
 interface ClientSessionModel {
   id?: number;
+  userId: number;
+  taskId: number;
   startTimestamp: Date;
   endTimestamp: Date;
-  project?: string;
-  task: string;
   notes?: string;
-  retroAdded?: boolean;
   type: SessionType;
+  retroAdded?: boolean;
 }
 
 interface DatabaseSessionModel {
   id?: number;
+  user_id: number;
+  task_id: number;
   start_timestamp: Date;
   duration: number;
-  description?: string;
-  project?: string;
-  task: string;
   notes?: string;
   type: SessionType;
   retro_added?: boolean;
@@ -71,9 +70,4 @@ const convertDatabaseSessionModel = (
 };
 
 export type { ClientSessionModel, DatabaseSessionModel, SessionType };
-export {
-  convertClientSessionModel,
-  convertDatabaseSessionModel,
-  hydrateClientSession,
-  getSessionType,
-};
+export { convertDatabaseSessionModel, hydrateClientSession, getSessionType };
