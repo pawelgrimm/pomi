@@ -1,0 +1,11 @@
+import { {{pascalCase name}}Model } from "../models";
+
+import Joi from "joi";
+
+const {{snakeCase name}}Schema = Joi.object({
+  id: Joi.number().optional()
+});
+
+export const validate{{pascalCase name}} = ({{snakeCase name}}: any): {{pascalCase name}}Model => {
+  return Joi.attempt({{snakeCase name}}, {{snakeCase name}}Schema) as {{pascalCase name}}Model;
+};
