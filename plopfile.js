@@ -12,129 +12,174 @@ module.exports = function (plop) {
       {
         // Component
         type: "add",
-        path: "src/components/{{pascalCase name}}/{{pascalCase name}}.tsx",
+        path:
+          "src/client/components/{{pascalCase name}}/{{pascalCase name}}.tsx",
         templateFile: "plop-templates/Component/Component.tsx.hbs",
       },
       {
         // Test
         type: "add",
         path:
-          "src/components/{{pascalCase name}}/test/{{pascalCase name}}.test.tsx",
+          "src/client/components/{{pascalCase name}}/test/{{pascalCase name}}.test.tsx",
         templateFile: "plop-templates/Component/Component.test.tsx.hbs",
       },
       {
         // Index
         type: "add",
-        path: "src/components/{{pascalCase name}}/index.ts",
+        path: "src/client/components/{{pascalCase name}}/index.ts",
         templateFile: "plop-templates/Component/index.ts.hbs",
       },
       {
         type: "add",
-        path: "src/components/index.ts",
+        path: "src/client/components/index.ts",
         templateFile: "plop-templates/injectable-index.ts.hbs",
         skipIfExists: true,
       },
       {
         type: "append",
-        path: "src/components/index.ts",
+        path: "src/client/components/index.ts",
         pattern: `/* PLOP_INJECT_IMPORT */`,
         template: `import {{pascalCase name}} from "./{{pascalCase name}}";`,
       },
       {
         type: "append",
-        path: "src/components/index.ts",
+        path: "src/client/components/index.ts",
         pattern: `/* PLOP_INJECT_EXPORT */`,
         template: `\t{{pascalCase name}},`,
       },
     ],
   });
-  plop.setGenerator("route", {
-    description: "Create a reusable route",
+  plop.setGenerator("model", {
+    description: "Create a reusable model",
     prompts: [
       {
         type: "input",
         name: "name",
-        message: "what model does this route concern?",
+        message: "what is the model name (singular)?",
       },
     ],
     actions: [
-      // ROUTE
-      {
-        type: "add",
-        path: "server/routes/{{snakeCase name}}.ts",
-        templateFile: "plop-templates/Route/route.ts.hbs",
-      },
-      {
-        type: "add",
-        path: "server/routes/tests/{{snakeCase name}}.test.ts",
-        templateFile: "plop-templates/Route/test.ts.hbs",
-      },
-      {
-        type: "add",
-        path: "server/routes/index.ts",
-        templateFile: "plop-templates/Route/injectable-index.ts.hbs",
-        skipIfExists: true,
-      },
       // QUERY
       {
         type: "add",
-        path: "server/db/queries/{{snakeCase name}}s.ts",
+        path: "src/server/db/queries/{{snakeCase name}}s.ts",
         templateFile: "plop-templates/Database/Query/queries.ts.hbs",
       },
       {
         type: "add",
-        path: "server/db/queries/index.ts",
+        path: "src/server/db/queries/index.ts",
         templateFile: "plop-templates/Database/Query/injectable-index.ts.hbs",
         skipIfExists: true,
       },
       {
         type: "append",
-        path: "server/db/queries/index.ts",
+        path: "src/server/db/queries/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
         template:
           'import { bind{{pascalCase name}}Queries } from "./{{snakeCase name}}s";',
       },
       {
         type: "append",
-        path: "server/db/queries/index.ts",
+        path: "src/server/db/queries/index.ts",
         pattern: "/* PLOP_INJECT_EXPORT */",
         template: "  bind{{pascalCase name}}Queries,",
       },
+      // DB
       {
         type: "add",
-        path: "server/db/index.ts",
+        path: "src/server/db/index.ts",
         templateFile: "plop-templates/Database/injectable-index.ts.hbs",
         skipIfExists: true,
       },
       {
         type: "append",
-        path: "server/db/index.ts",
+        path: "src/server/db/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
         template: "  bind{{pascalCase name}}Queries,",
       },
-
       {
         type: "append",
-        path: "server/db/index.ts",
+        path: "src/server/db/index.ts",
         pattern: "/* PLOP_INJECT_BIND */",
         template:
-          "export const {{snakeCase name}}s = bind{{pascalCase name}}Queries(query);",
+          "export const {{pascalCase name}}s = bind{{pascalCase name}}Queries(query);",
+      },
+      // MODEL
+      {
+        type: "add",
+        path: "src/shared/models/{{snakeCase name}}.ts",
+        templateFile: "plop-templates/Model/model.ts.hbs",
       },
       {
         type: "add",
-        path: "server/routes/index.ts",
+        path: "src/shared/models/index.ts",
+        templateFile: "plop-templates/injectable-index.ts.hbs",
+        skipIfExists: true,
+      },
+      {
+        type: "append",
+        path: "src/shared/models/index.ts",
+        pattern: "/* PLOP_INJECT_IMPORT */",
+        template:
+          'import { {{pascalCase name}}Model } from "./{{snakeCase name}}";',
+      },
+      {
+        type: "append",
+        path: "src/shared/models/index.ts",
+        pattern: "/* PLOP_INJECT_EXPORT */",
+        template: "  {{pascalCase name}}Model,",
+      },
+      // VALIDATORS
+      {
+        type: "add",
+        path: "src/shared/validators/{{snakeCase name}}.ts",
+        templateFile: "plop-templates/Validator/validator.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "src/shared/validators/index.ts",
+        templateFile: "plop-templates/injectable-index.ts.hbs",
+        skipIfExists: true,
+      },
+      {
+        type: "append",
+        path: "src/shared/validators/index.ts",
+        pattern: "/* PLOP_INJECT_IMPORT */",
+        template:
+          'import { validate{{pascalCase name}} } from "./{{snakeCase name}}";',
+      },
+      {
+        type: "append",
+        path: "src/shared/validators/index.ts",
+        pattern: "/* PLOP_INJECT_EXPORT */",
+        template: "  validate{{pascalCase name}},",
+      },
+      // ROUTE
+      {
+        type: "add",
+        path: "src/server/routes/{{snakeCase name}}.ts",
+        templateFile: "plop-templates/Route/route.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "src/server/routes/tests/{{snakeCase name}}.test.ts",
+        templateFile: "plop-templates/Route/test.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "src/server/routes/index.ts",
         templateFile: "plop-templates/Route/injectable-index.ts.hbs",
         skipIfExists: true,
       },
       {
         type: "append",
-        path: "server/routes/index.ts",
+        path: "src/server/routes/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
         template: 'import {{snakeCase name}} from "./{{snakeCase name}}";',
       },
       {
         type: "append",
-        path: "server/routes/index.ts",
+        path: "src/server/routes/index.ts",
         pattern: "/* PLOP_INJECT_MOUNT */",
         template: '  app.use("/api/{{kebabCase name}}s", {{snakeCase name}});',
       },

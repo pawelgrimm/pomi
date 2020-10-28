@@ -1,22 +1,24 @@
 import Router from "express-promise-router";
-import { {{snakeCase name}}s } from "../db";
+import { {{pascalCase name}}s } from "../db";
+import { validate{{pascalCase name}} } from "../../shared/validators";
 
 const router = Router();
 
 /*      NEW {{constantCase name}}      */
-// TODO: Add creation fields
 router.post("/", async (req, res) => {
-  const {
-    /* fields here */
-  } = req.body;
-  const rows = await {{snakeCase name}}s.create( /* fields here */);
-  res.status(201).send(rows);
+  try {
+    const {{snakeCase name}} = validate{{pascalCase name}}(req.body);
+    const row = await {{pascalCase name}}s.create({{snakeCase name}});
+    res.status(201).send(row);
+  } catch (e) {
+    res.status(500).send();
+  }
 });
 
 /*      GET ALL {{constantCase name}}S     */
 // TODO: Add return fields
 router.get("/", async (req, res) => {
-  const rows = await {{snakeCase name}}s.selectAll();
+  const rows = await {{pascalCase name}}s.selectAll();
   res.status(200).send(rows);
 });
 
@@ -24,7 +26,7 @@ router.get("/", async (req, res) => {
 // TODO: Add return fields
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
-  const rows = await {{snakeCase name}}s.selectOneById(id);
+  const rows = await {{pascalCase name}}s.selectOneById(id);
   res.status(200).send(rows);
 });
 

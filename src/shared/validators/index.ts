@@ -1,10 +1,12 @@
 import { ValidationError } from "joi";
-import { validateUser } from "./user";
+/* PLOP_INJECT_IMPORT */
 import { validateClientSession, validateDatabaseSession } from "./session";
+import { validateUser } from "./user";
 
 export {
-  validateUser,
+  /* PLOP_INJECT_EXPORT */
   validateClientSession,
   validateDatabaseSession,
+  validateUser,
   ValidationError,
 };

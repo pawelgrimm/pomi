@@ -1,4 +1,10 @@
-import { UserModel } from "./user";
+/* PLOP_INJECT_IMPORT */
 import { ClientSessionModel, DatabaseSessionModel } from "./session";
+import { UserModel } from "./user";
 
-export type { UserModel, ClientSessionModel, DatabaseSessionModel };
+export type {
+  /* PLOP_INJECT_EXPORT */
+  ClientSessionModel,
+  DatabaseSessionModel,
+  UserModel,
+};

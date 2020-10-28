@@ -1,0 +1,20 @@
+import { {{pascalCase name}}Model } from "../models";
+
+import Joi from "joi";
+
+const {{snakeCase name}}Schema = Joi.object({
+  id: Joi.number().optional()
+});
+
+export const validate{{pascalCase name}} = (
+{{snakeCase name}}: Partial<{{pascalCase name}}Model>,
+    options: { isPartial: boolean } = { isPartial: false }
+    ): {{pascalCase name}}Model => {
+    return Joi.attempt(
+    {{snakeCase name}},
+    {{snakeCase name}}Schema.options({
+    stripUnknown: true,
+    presence: options.isPartial ? "optional" : "required",
+    })
+    ) as {{pascalCase name}}Model;
+    };
