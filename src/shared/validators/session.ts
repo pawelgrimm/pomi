@@ -29,16 +29,16 @@ const calculateDuration = (parent: any): number | undefined => {
  */
 const databaseSessionSchema = Joi.object({
   id: Joi.number().optional(),
-  user_id: Joi.number(),
-  task_id: Joi.number(),
-  start_timestamp: Joi.date().iso(),
+  user_id: Joi.string().max(255).label("userId"),
+  task_id: Joi.number().label("taskId"),
+  start_timestamp: Joi.date().iso().label("startTimestamp"),
   duration: Joi.number().optional().default(calculateDuration),
   // end_timestamp must be after duration so that the calculation
   // occurs before end_timestamp is stripped
-  end_timestamp: Joi.date().iso().strip(),
+  end_timestamp: Joi.date().iso().strip().label("endTimestamp"),
   notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
   type: Joi.string().allow("session", "break", "long-break"),
-  retro_added: Joi.boolean().optional().default(false),
+  retro_added: Joi.boolean().optional().default(false).label("retroAdded"),
 })
   .rename("userId", "user_id")
   .rename("taskId", "task_id")
@@ -85,16 +85,16 @@ const calculateEndTimestamp = (parent: any): Date | undefined => {
  */
 const clientSessionSchema = Joi.object({
   id: Joi.number().optional(),
-  userId: Joi.number(),
-  taskId: Joi.number(),
-  startTimestamp: Joi.date(),
+  userId: Joi.string().label("user_id"),
+  taskId: Joi.number().label("task_id"),
+  startTimestamp: Joi.date().label("start_timestamp"),
   endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
   // duration must be after end_timestamp so that the calculation
   // occurs before duration is stripped
   duration: Joi.number().strip(),
   notes: Joi.string().trim().optional(),
   type: Joi.string().allow("session", "break", "long-break"),
-  retroAdded: Joi.boolean().optional(),
+  retroAdded: Joi.boolean().optional().label("retro_added"),
 })
   .rename("user_id", "userId")
   .rename("task_id", "taskId")
