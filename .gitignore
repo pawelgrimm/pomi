@@ -18,6 +18,7 @@
 # configuration
 *.env*
 !.env.example
+firebaseServiceAccountKey.json
 
 # misc
 .DS_Store
