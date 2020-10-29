@@ -1,10 +1,6 @@
 import { differenceInMilliseconds } from "date-fns";
 import { validateClientSession, hydrateDatabaseSession } from "../session";
-import {
-  ClientSessionModel,
-  DatabaseSessionModel,
-  SessionType,
-} from "../../models/session";
+import { ClientSessionModel, DatabaseSessionModel } from "../../models";
 
 let validClientSession: ClientSessionModel;
 let validDatabaseSession: Omit<DatabaseSessionModel, "start_timestamp"> & {
@@ -12,15 +8,15 @@ let validDatabaseSession: Omit<DatabaseSessionModel, "start_timestamp"> & {
 };
 beforeEach(() => {
   validClientSession = {
-    userId: 123,
+    userId: "sodf5%$32random",
     taskId: 456,
     startTimestamp: new Date("2020-10-23T15:00:00.000Z"),
     endTimestamp: new Date("2020-10-23T16:00:00.000Z"),
-    type: "break" as SessionType,
+    type: "break",
   };
   validDatabaseSession = {
     id: 123,
-    user_id: 345,
+    user_id: "sodf5%$32random",
     task_id: 457,
     start_timestamp: "2020-10-23T15:00:00.000Z",
     duration: 3600000,

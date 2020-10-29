@@ -11,7 +11,10 @@ import {
   getDateFromEpochTime,
 } from "./time/time";
 
+import { getDurationWithUnits } from "./session";
+
 export {
+  getDurationWithUnits,
   secondsToParts,
   getEpochTime,
   getDate,

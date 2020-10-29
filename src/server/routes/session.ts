@@ -1,8 +1,9 @@
 import Router from "express-promise-router";
 import { Sessions } from "../db";
-import { validateClientSession } from "../../shared/validators";
-import { convertDatabaseSessionModel } from "../../shared/models/session";
-import { hydrateDatabaseSession } from "../../shared/validators/session";
+import {
+  hydrateDatabaseSession,
+  validateClientSession,
+} from "../../shared/validators";
 
 const router = Router();
 
@@ -21,9 +22,10 @@ router.post("/", async (req, res) => {
 /*      GET ALL SESSIONS     */
 router.get("/", async (req, res) => {
   const rows = await Sessions.selectAll();
-  const sessions = rows.map((session) => convertDatabaseSessionModel(session));
+  const sessions = rows.map((session) => hydrateDatabaseSession(session));
   res.status(200).send(sessions);
 });
+
 /*      GET ALL OF TODAY'S SESSIONS     */
 router.get("/today", async (req, res) => {
   const rows = await Sessions.selectAllToday();

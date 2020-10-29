@@ -1,18 +1,22 @@
 import axios from "axios";
 import { ClientSessionModel } from "../../../shared/models";
-import { validateClientSession } from "../../../shared/validators";
-import { hydrateClientSession } from "../../../shared/models/session";
+import {
+  validateClientSession,
+  hydrateDatabaseSession,
+} from "../../../shared/validators";
 
 const postSession = (session: ClientSessionModel): Promise<number> => {
-  session = validateClientSession(session);
-  return axios.post("/api/sessions", session).then((res) => res?.data?.id);
+  const validatedSession = validateClientSession(session);
+  return axios
+    .post("/api/sessions", validatedSession)
+    .then((res) => res?.data?.id);
 };
 
 const getSession = (id: number): Promise<ClientSessionModel> => {
   return axios
     .get(`/api/sessions/${id}`)
     .then((res) => res?.data)
-    .then((session) => hydrateClientSession(session));
+    .then((session) => hydrateDatabaseSession(session));
 };
 
 const fetchSession = (key: string, { id }: { id: number }) => {

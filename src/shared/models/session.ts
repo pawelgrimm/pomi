@@ -16,7 +16,7 @@ const getSessionTypeString = (value: SessionType): SessionTypeString => {
 
 interface ClientSessionModel {
   id?: number;
-  userId: number;
+  userId: string;
   taskId: number;
   startTimestamp: Date;
   endTimestamp: Date;
@@ -27,7 +27,7 @@ interface ClientSessionModel {
 
 interface DatabaseSessionModel {
   id?: number;
-  user_id: number;
+  user_id: string;
   task_id: number;
   start_timestamp: Date;
   duration: number;

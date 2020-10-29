@@ -2,6 +2,8 @@ import Joi from "joi";
 import { ClientSessionModel, DatabaseSessionModel } from "../models";
 import { addMilliseconds, differenceInMilliseconds } from "date-fns";
 
+const NOTES_LENGTH_LIMIT = 1000;
+
 /*
  * Note: Schemas listed as optional are always optional.
  * Schemas without a presence requirement are required unless presence is set to
@@ -34,7 +36,7 @@ const databaseSessionSchema = Joi.object({
   // end_timestamp must be after duration so that the calculation
   // occurs before end_timestamp is stripped
   end_timestamp: Joi.date().iso().strip(),
-  notes: Joi.string().trim().optional(),
+  notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
   type: Joi.string().allow("session", "break", "long-break"),
   retro_added: Joi.boolean().optional().default(false),
 })
