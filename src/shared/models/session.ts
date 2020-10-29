@@ -1,18 +1,17 @@
-import { differenceInMilliseconds, addMilliseconds } from "date-fns";
+export type { ClientSessionModel, DatabaseSessionModel, SessionTypeString };
 
-type SessionType = "session" | "break" | "long-break";
+export { SessionType, getSessionTypeString };
 
-const getSessionType = (value: number): SessionType => {
-  switch (value) {
-    case 0:
-      return "session";
-    case 1:
-      return "break";
-    case 2:
-      return "long-break";
-    default:
-      return "session";
-  }
+enum SessionType {
+  session,
+  break,
+  long_break,
+}
+
+type SessionTypeString = keyof typeof SessionType;
+
+const getSessionTypeString = (value: SessionType): SessionTypeString => {
+  return SessionType[value] as SessionTypeString;
 };
 
 interface ClientSessionModel {
@@ -22,7 +21,7 @@ interface ClientSessionModel {
   startTimestamp: Date;
   endTimestamp: Date;
   notes?: string;
-  type: SessionType;
+  type: SessionTypeString;
   retroAdded?: boolean;
 }
 
@@ -33,41 +32,6 @@ interface DatabaseSessionModel {
   start_timestamp: Date;
   duration: number;
   notes?: string;
-  type: SessionType;
+  type: SessionTypeString;
   retro_added?: boolean;
 }
-
-const convertClientSessionModel = (
-  session: ClientSessionModel
-): DatabaseSessionModel => {
-  const { startTimestamp, endTimestamp, retroAdded, ...rest } = session;
-  return {
-    start_timestamp: startTimestamp,
-    duration: differenceInMilliseconds(endTimestamp, startTimestamp),
-    retro_added: retroAdded,
-    ...rest,
-  };
-};
-
-const hydrateClientSession = (session: ClientSessionModel) => {
-  return {
-    ...session,
-    startTimestamp: new Date(session.startTimestamp),
-    endTimestamp: new Date(session.endTimestamp),
-  };
-};
-
-const convertDatabaseSessionModel = (
-  session: DatabaseSessionModel
-): ClientSessionModel => {
-  const { start_timestamp, duration, retro_added, ...rest } = session;
-  return {
-    startTimestamp: start_timestamp,
-    endTimestamp: addMilliseconds(start_timestamp, Number(duration)),
-    retroAdded: retro_added,
-    ...rest,
-  };
-};
-
-export type { ClientSessionModel, DatabaseSessionModel, SessionType };
-export { convertDatabaseSessionModel, hydrateClientSession, getSessionType };

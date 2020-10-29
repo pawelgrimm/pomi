@@ -27,7 +27,7 @@ CREATE TABLE tasks
 
 CREATE INDEX tasks_user_id_idx ON tasks (user_id);
 
-CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long-break');
+CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long_break');
 
 CREATE TABLE sessions
 (
