@@ -26,8 +26,7 @@ beforeEach(() => {
 });
 
 describe("Session Validator (client to database)", () => {
-  it("Should require correct fields and return correct object", () => {
-    const validatedSession = validateClientSession(validClientSession);
+  it("Should pass validation when all required fields are provided", () => {
     const {
       userId,
       taskId,
@@ -35,7 +34,9 @@ describe("Session Validator (client to database)", () => {
       endTimestamp,
       ...rest
     } = validClientSession;
-    expect(validatedSession).toMatchObject({
+
+    const validatedSession = validateClientSession(validClientSession);
+    expect(validatedSession).toEqual({
       ...rest,
       user_id: userId,
       task_id: taskId,
@@ -44,7 +45,20 @@ describe("Session Validator (client to database)", () => {
       duration: expect.any(Number),
     });
   });
-  it("Should strip extra fields", () => {
+  it("should not pass validation when a required field is missing", () => {
+    const { userId, ...rest } = validClientSession;
+    expect(() => validateClientSession({ ...rest })).toThrow(
+      /"userId\" is required/
+    );
+  });
+  it("Should not strip optional fields", () => {
+    const notes = "these are my notes and they are important";
+    const validSessionWithNotes = { notes, ...validClientSession };
+    const strippedSession = validateClientSession(validSessionWithNotes);
+    expect(strippedSession).toMatchObject({ notes });
+  });
+
+  it("Should strip unknown fields", () => {
     const strippedSession = validateClientSession({
       extra: "junk",
       ...validClientSession,
@@ -54,7 +68,7 @@ describe("Session Validator (client to database)", () => {
   it("Should rename fields", () => {
     const renamedSession = validateClientSession(validClientSession);
     expect(renamedSession).toMatchObject({
-      user_id: expect.any(Number),
+      user_id: expect.any(String),
       task_id: expect.any(Number),
       start_timestamp: expect.any(Date),
       retro_added: expect.any(Boolean),
@@ -65,6 +79,12 @@ describe("Session Validator (client to database)", () => {
     const calculatedSession = validateClientSession(validClientSession);
     expect(calculatedSession).toMatchObject({
       duration: differenceInMilliseconds(endTimestamp, startTimestamp),
+    });
+    expect(calculatedSession).not.toMatchObject({
+      end_timestamp: expect.any(Date),
+    });
+    expect(calculatedSession).not.toMatchObject({
+      endTimestamp: expect.any(Date),
     });
   });
   it("Shouldn't return a duration when start/end timestamp is missing", () => {
@@ -80,8 +100,7 @@ describe("Session Validator (client to database)", () => {
 });
 
 describe("Session Validator (database to client)", () => {
-  it("Should require correct fields and return correct object", () => {
-    const validatedSession = hydrateDatabaseSession(validDatabaseSession);
+  it("Should pass validation when all required fields are provided", () => {
     const {
       user_id,
       task_id,
@@ -90,11 +109,13 @@ describe("Session Validator (database to client)", () => {
       retro_added,
       ...rest
     } = validDatabaseSession;
-    expect(validatedSession).toMatchObject({
+    const validatedSession = hydrateDatabaseSession(validDatabaseSession);
+
+    expect(validatedSession).toEqual({
       ...rest,
       userId: user_id,
       taskId: task_id,
-      startTimestamp: expect.objectContaining(new Date(start_timestamp)),
+      startTimestamp: new Date(start_timestamp),
       retroAdded: retro_added,
       endTimestamp: expect.any(Date),
     });
