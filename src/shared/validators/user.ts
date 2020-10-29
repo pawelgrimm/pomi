@@ -3,7 +3,7 @@ import { UserModel } from "../models";
 
 const userSchema = Joi.object({
   id: Joi.string().required().max(255),
-  username: Joi.string().trim().min(3).max(30).required(),
+  display_name: Joi.string().trim().max(255).required(),
   email: Joi.string().email({ tlds: false }).max(255).required(),
 });
 

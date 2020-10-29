@@ -1,6 +1,6 @@
 interface UserModel {
   id: string;
-  username: string;
+  display_name: string;
   email: string;
 }
 

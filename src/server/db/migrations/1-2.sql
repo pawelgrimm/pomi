@@ -3,7 +3,7 @@
 CREATE TABLE users
 (
     id           VARCHAR(255) PRIMARY KEY,
-    display_name VARCHAR(30)  NOT NULL,
+    display_name VARCHAR(255)  NOT NULL,
     email        VARCHAR(255) NOT NULL
 );
 
