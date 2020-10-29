@@ -1,4 +1,4 @@
-import { {{pascalCase name}}Model } from "../../../shared/{{camelCase name}}";
+import { {{pascalCase name}}Model } from "../../../shared/models";
 import { PGQuery } from "../index";
 
 const RETURN_COLS = "id"
@@ -7,7 +7,7 @@ const bind{{pascalCase name}}Queries = (query: PGQuery) => {
   return {
     create: ({{camelCase name}}: {{pascalCase name}}Model ) => {
       const {/* creation params here */} = {{camelCase name}};
-      query(
+      return query(
         `
         INSERT INTO {{camelCase name}}s(/* creation params here */) 
           VALUES (/* creation values here */)

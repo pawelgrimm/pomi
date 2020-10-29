@@ -1,20 +1,19 @@
-import { {{pascalCase name}}Model } from "../models";
-
 import Joi from "joi";
+import { {{pascalCase name}}Model } from "../models";
 
 const {{camelCase name}}Schema = Joi.object({
   id: Joi.number().optional()
 });
 
 export const validate{{pascalCase name}} = (
-{{camelCase name}}: Partial<{{pascalCase name}}Model>,
-    options: { isPartial: boolean } = { isPartial: false }
-    ): {{pascalCase name}}Model => {
+  {{camelCase name}}: any,
+  options: { isPartial: boolean } = { isPartial: false }
+): {{pascalCase name}}Model => {
     return Joi.attempt(
-    {{camelCase name}},
-    {{camelCase name}}Schema.options({
-    stripUnknown: true,
-    presence: options.isPartial ? "optional" : "required",
-    })
+      {{camelCase name}},
+      {{camelCase name}}Schema.options({
+        stripUnknown: true,
+        presence: options.isPartial ? "optional" : "required",
+      })
     ) as {{pascalCase name}}Model;
-    };
+};

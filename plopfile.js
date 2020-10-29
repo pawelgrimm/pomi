@@ -137,7 +137,7 @@ module.exports = function (plop) {
       },
       {
         type: "add",
-        path: "src/shared/validators/test/{{camelCase name}}.test.ts",
+        path: "src/shared/validators/tests/{{camelCase name}}.test.ts",
         templateFile: "plop-templates/Validator/validator.test.ts.hbs",
         skipIfExists: true,
       },
