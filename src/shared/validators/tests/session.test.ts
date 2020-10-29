@@ -48,7 +48,7 @@ describe("Session Validator (client to database)", () => {
   it("should not pass validation when a required field is missing", () => {
     const { userId, ...rest } = validClientSession;
     expect(() => validateClientSession({ ...rest })).toThrow(
-      /"userId\" is required/
+      /"userId" is required/
     );
   });
   it("Should not strip optional fields", () => {
@@ -96,6 +96,16 @@ describe("Session Validator (client to database)", () => {
     expect(noDurationSession).not.toMatchObject({
       duration: expect.anything(),
     });
+  });
+  it("Shouldn't allow really long notes", () => {
+    const longNote = "".padEnd(100000, "_");
+    expect(() =>
+      console.log(
+        validateClientSession({ ...validClientSession, notes: longNote })
+      )
+    ).toThrow(
+      /"notes" length must be less than or equal to \d+ characters long/
+    );
   });
 });
 
