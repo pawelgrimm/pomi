@@ -17,6 +17,7 @@
     "eject": "react-scripts eject",
     "generate": "plop",
     "migrate-db": "sh src/server/db/migrations/migrate.sh",
+    "reset-dev-db": "yarn migrate-db dev 1 && yarn migrate-db dev",
     "test:server": "yarn prepare-test-db && jest --config src/server/jest.config.js",
     "test:shared": "jest --config src/shared/jest.config.js",
     "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn migrate-db test",
