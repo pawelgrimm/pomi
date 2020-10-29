@@ -54,6 +54,7 @@
     "dotenv-webpack": "4.0.0",
     "express": "4.17.1",
     "express-promise-router": "4.0.1",
+    "firebase-admin": "9.3.0",
     "formik": "2.2.0",
     "formik-material-ui": "3.0.0",
     "jest": "26.6.0",
