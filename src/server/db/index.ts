@@ -2,6 +2,7 @@ import { Pool, QueryResult } from "pg";
 import { PG_CONNECTION_STRING } from "../config";
 import {
   /* PLOP_INJECT_IMPORT */
+  bindProjectQueries,
   bindSessionQueries,
   bindUserQueries,
 } from "./queries";
@@ -30,6 +31,7 @@ const query: PGQuery = (queryText, values) => pool.query(queryText, values);
 
 // Bind object-specific queries to query and expose them as an export
 /* PLOP_INJECT_BIND */
+export const Projects = bindProjectQueries(query);
 export const Sessions = bindSessionQueries(query);
 export const Users = bindUserQueries(query);
 
