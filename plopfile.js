@@ -62,7 +62,7 @@ module.exports = function (plop) {
       // QUERY
       {
         type: "add",
-        path: "src/server/db/queries/{{snakeCase name}}s.ts",
+        path: "src/server/db/queries/{{camelCase name}}s.ts",
         templateFile: "plop-templates/Database/Query/queries.ts.hbs",
       },
       {
@@ -76,7 +76,7 @@ module.exports = function (plop) {
         path: "src/server/db/queries/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
         template:
-          'import { bind{{pascalCase name}}Queries } from "./{{snakeCase name}}s";',
+          'import { bind{{pascalCase name}}Queries } from "./{{camelCase name}}s";',
       },
       {
         type: "append",
@@ -107,7 +107,7 @@ module.exports = function (plop) {
       // MODEL
       {
         type: "add",
-        path: "src/shared/models/{{snakeCase name}}.ts",
+        path: "src/shared/models/{{camelCase name}}.ts",
         templateFile: "plop-templates/Model/model.ts.hbs",
       },
       {
@@ -121,7 +121,7 @@ module.exports = function (plop) {
         path: "src/shared/models/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
         template:
-          'import { {{pascalCase name}}Model } from "./{{snakeCase name}}";',
+          'import { {{pascalCase name}}Model } from "./{{camelCase name}}";',
       },
       {
         type: "append",
@@ -132,8 +132,14 @@ module.exports = function (plop) {
       // VALIDATORS
       {
         type: "add",
-        path: "src/shared/validators/{{snakeCase name}}.ts",
+        path: "src/shared/validators/{{camelCase name}}.ts",
         templateFile: "plop-templates/Validator/validator.ts.hbs",
+      },
+      {
+        type: "add",
+        path: "src/shared/validators/test/{{camelCase name}}.test.ts",
+        templateFile: "plop-templates/Validator/validator.test.ts.hbs",
+        skipIfExists: true,
       },
       {
         type: "add",
@@ -146,7 +152,7 @@ module.exports = function (plop) {
         path: "src/shared/validators/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
         template:
-          'import { validate{{pascalCase name}} } from "./{{snakeCase name}}";',
+          'import { validate{{pascalCase name}} } from "./{{camelCase name}}";',
       },
       {
         type: "append",
@@ -157,13 +163,13 @@ module.exports = function (plop) {
       // ROUTE
       {
         type: "add",
-        path: "src/server/routes/{{snakeCase name}}.ts",
+        path: "src/server/routes/{{camelCase name}}.ts",
         templateFile: "plop-templates/Route/route.ts.hbs",
       },
       {
         type: "add",
-        path: "src/server/routes/tests/{{snakeCase name}}.test.ts",
-        templateFile: "plop-templates/Route/test.ts.hbs",
+        path: "src/server/routes/tests/{{camelCase name}}.test.ts",
+        templateFile: "plop-templates/Route/route.test.ts.hbs",
       },
       {
         type: "add",
@@ -175,13 +181,13 @@ module.exports = function (plop) {
         type: "append",
         path: "src/server/routes/index.ts",
         pattern: "/* PLOP_INJECT_IMPORT */",
-        template: 'import {{snakeCase name}} from "./{{snakeCase name}}";',
+        template: 'import {{camelCase name}} from "./{{camelCase name}}";',
       },
       {
         type: "append",
         path: "src/server/routes/index.ts",
         pattern: "/* PLOP_INJECT_MOUNT */",
-        template: '  app.use("/api/{{kebabCase name}}s", {{snakeCase name}});',
+        template: '  app.use("/api/{{kebabCase name}}s", {{camelCase name}});',
       },
     ],
   });

@@ -7,8 +7,8 @@ const router = Router();
 /*      NEW {{constantCase name}}      */
 router.post("/", async (req, res) => {
   try {
-    const {{snakeCase name}} = validate{{pascalCase name}}(req.body);
-    const row = await {{pascalCase name}}s.create({{snakeCase name}});
+    const {{camelCase name}} = validate{{pascalCase name}}(req.body);
+    const row = await {{pascalCase name}}s.create({{camelCase name}});
     res.status(201).send(row);
   } catch (e) {
     res.status(500).send();
