@@ -22,9 +22,10 @@ CREATE TABLE users
 CREATE TABLE projects
 (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id       VARCHAR(255) REFERENCES users         NOT NULL,
+    user_id       VARCHAR(255) REFERENCES users              NOT NULL,
     title         VARCHAR(255),
-    last_modified TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
+    is_archived   BOOLEAN          DEFAULT FALSE             NOT NULL,
+    last_modified TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
 
 CREATE TRIGGER update_projects_last_modified
@@ -40,11 +41,11 @@ CLUSTER projects USING projects_user_idx;
 CREATE TABLE tasks
 (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id       VARCHAR(255) REFERENCES users         NOT NULL,
-    project_id    UUID REFERENCES projects            NOT NULL,
+    user_id       VARCHAR(255) REFERENCES users              NOT NULL,
+    project_id    UUID REFERENCES projects                   NOT NULL,
     title         VARCHAR(255),
-    completed     BOOLEAN     DEFAULT FALSE,
-    last_modified TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
+    is_completed  BOOLEAN          DEFAULT FALSE,
+    last_modified TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
 
 CREATE TRIGGER update_tasks_last_modified
@@ -63,13 +64,13 @@ CREATE TABLE sessions
 (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         VARCHAR(255) REFERENCES users NOT NULL,
-    task_id         UUID REFERENCES tasks       NOT NULL,
+    task_id         UUID REFERENCES tasks         NOT NULL,
     start_timestamp TIMESTAMPTZ                   NOT NULL,
     duration        INTERVAL                      NOT NULL,
     notes           TEXT,
-    type            SESSION_TYPE DEFAULT 'session',
-    edited          BOOLEAN      DEFAULT FALSE,
-    retro_added     BOOLEAN      DEFAULT FALSE,
+    type            SESSION_TYPE     DEFAULT 'session',
+    is_edited       BOOLEAN          DEFAULT FALSE,
+    is_retro_added  BOOLEAN          DEFAULT FALSE,
     last_modified   TIMESTAMPTZ                   NOT NULL
 );
 
