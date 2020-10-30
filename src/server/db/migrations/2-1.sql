@@ -5,4 +5,6 @@ DROP TABLE tasks;
 DROP TABLE projects;
 DROP TABLE users;
 
+DROP FUNCTION IF EXISTS update_last_modified_column CASCADE;
+
 
