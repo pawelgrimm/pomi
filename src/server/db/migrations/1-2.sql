@@ -22,9 +22,9 @@ CREATE TABLE users
 CREATE TABLE projects
 (
     id            SERIAL PRIMARY KEY,
-    user_id       VARCHAR(255) REFERENCES users NOT NULL,
+    user_id       VARCHAR(255) REFERENCES users         NOT NULL,
     title         VARCHAR(255),
-    last_modified TIMESTAMPTZ                   NOT NULL
+    last_modified TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
 );
 
 CREATE TRIGGER update_projects_last_modified
@@ -38,11 +38,11 @@ CREATE INDEX projects_user_id_idx ON projects (user_id);
 CREATE TABLE tasks
 (
     id            SERIAL PRIMARY KEY,
-    user_id       VARCHAR(255) REFERENCES users NOT NULL,
-    project_id    SERIAL REFERENCES projects    NOT NULL,
+    user_id       VARCHAR(255) REFERENCES users         NOT NULL,
+    project_id    SERIAL REFERENCES projects            NOT NULL,
     title         VARCHAR(255),
-    completed     BOOLEAN DEFAULT FALSE,
-    last_modified TIMESTAMPTZ                   NOT NULL
+    completed     BOOLEAN     DEFAULT FALSE,
+    last_modified TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
 );
 
 CREATE TRIGGER update_tasks_last_modified
@@ -66,7 +66,7 @@ CREATE TABLE sessions
     type            SESSION_TYPE DEFAULT 'session',
     edited          BOOLEAN      DEFAULT FALSE,
     retro_added     BOOLEAN      DEFAULT FALSE,
-    last_modified   TIMESTAMPTZ NOT NULL
+    last_modified   TIMESTAMPTZ                   NOT NULL
 );
 
 CREATE TRIGGER update_sessions_last_modified
