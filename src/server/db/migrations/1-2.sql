@@ -33,7 +33,9 @@ CREATE TRIGGER update_projects_last_modified
     FOR EACH ROW
 EXECUTE PROCEDURE update_last_modified_column();
 
-CREATE INDEX projects_user_id_idx ON projects (user_id);
+CREATE INDEX projects_user_idx ON projects (user_id);
+
+CLUSTER projects USING projects_user_idx;
 
 CREATE TABLE tasks
 (
@@ -51,7 +53,9 @@ CREATE TRIGGER update_tasks_last_modified
     FOR EACH ROW
 EXECUTE PROCEDURE update_last_modified_column();
 
-CREATE INDEX tasks_user_id_idx ON tasks (user_id);
+CREATE INDEX tasks_user_idx ON tasks (user_id);
+
+CLUSTER tasks USING tasks_user_idx;
 
 CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long_break');
 
@@ -75,4 +79,6 @@ CREATE TRIGGER update_sessions_last_modified
     FOR EACH ROW
 EXECUTE PROCEDURE update_last_modified_column();
 
-CREATE INDEX sessions_user_id_idx ON sessions (user_id);
+CREATE INDEX sessions_user_idx ON sessions (user_id);
+
+CLUSTER sessions USING sessions_user_idx;
