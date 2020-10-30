@@ -21,7 +21,7 @@ CREATE TABLE users
 
 CREATE TABLE projects
 (
-    id            SERIAL PRIMARY KEY,
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id       VARCHAR(255) REFERENCES users         NOT NULL,
     title         VARCHAR(255),
     last_modified TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
@@ -39,9 +39,9 @@ CLUSTER projects USING projects_user_idx;
 
 CREATE TABLE tasks
 (
-    id            SERIAL PRIMARY KEY,
+    id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id       VARCHAR(255) REFERENCES users         NOT NULL,
-    project_id    SERIAL REFERENCES projects            NOT NULL,
+    project_id    UUID REFERENCES projects            NOT NULL,
     title         VARCHAR(255),
     completed     BOOLEAN     DEFAULT FALSE,
     last_modified TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
@@ -61,9 +61,9 @@ CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long_break');
 
 CREATE TABLE sessions
 (
-    id              SERIAL PRIMARY KEY,
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id         VARCHAR(255) REFERENCES users NOT NULL,
-    task_id         SERIAL REFERENCES tasks       NOT NULL,
+    task_id         UUID REFERENCES tasks       NOT NULL,
     start_timestamp TIMESTAMPTZ                   NOT NULL,
     duration        INTERVAL                      NOT NULL,
     notes           TEXT,
