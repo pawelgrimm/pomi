@@ -3,20 +3,16 @@ import Joi from "joi";
 import { ProjectModel } from "../models";
 
 const projectSchema = Joi.object({
-  id: Joi.number().optional(),
-  user_id: Joi.string().max(255),
+  id: Joi.string().uuid({ version: "uuidv4" }).optional(),
   title: Joi.string().max(255).optional(),
+  isArchived: Joi.boolean().optional(),
 });
 
-export const validateProject = (
-  project: any,
-  options: { isPartial: boolean } = { isPartial: false }
-): ProjectModel => {
+export const validateProject = (project: any): ProjectModel => {
   return Joi.attempt(
     project,
     projectSchema.options({
       stripUnknown: true,
-      presence: options.isPartial ? "optional" : "required",
     })
   ) as ProjectModel;
 };

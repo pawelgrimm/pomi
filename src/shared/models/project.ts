@@ -1,7 +1,7 @@
 interface ProjectModel {
-  id?: number;
-  user_id: string;
+  id?: string;
   title?: string;
+  isArchived?: boolean;
 }
 
 export type { ProjectModel };
