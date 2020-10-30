@@ -2,26 +2,27 @@ import { UserModel } from "../../../shared/models";
 import { PGQuery } from "../index";
 
 const bindUserQueries = (query: PGQuery) => {
+  // @ts-ignore
   return {
-    create: ({ username, email }: UserModel) =>
+    create: ({ display_name, email }: UserModel) =>
       query(
         `
-        INSERT INTO users(username, email) 
+        INSERT INTO users(display_name, email) 
           VALUES ($1, $2)
         RETURNING id;`,
-        [username, email]
+        [display_name, email]
       ).then((res) => res.rows[0]),
 
     selectAll: () =>
       query(
         `
-        SELECT id, username, email FROM users;`
+        SELECT id, display_name, email FROM users;`
       ).then((res) => res.rows),
 
     selectOneById: (id: string) =>
       query(
         `
-        SELECT id, username, email FROM users 
+        SELECT id, display_name, email FROM users 
         WHERE id = $1`,
         [id]
       ).then((res) => res.rows[0]),
