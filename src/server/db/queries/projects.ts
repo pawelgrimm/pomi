@@ -1,37 +1,49 @@
 import { ProjectModel } from "../../../shared/models";
 import { PGQuery } from "../index";
 
-const RETURN_COLS = "id, title";
+const RETURN_COLS = 'id, title, is_archived AS "isArchived"';
 
 const bindProjectQueries = (query: PGQuery) => {
   return {
-    create: (project: ProjectModel) => {
-      const { user_id, title } = project;
-      return query(
+    create: async (
+      userId: string,
+      project: ProjectModel
+    ): Promise<ProjectModel> => {
+      const { title, isArchived } = project;
+      const res = await query(
         `
-        INSERT INTO projects(user_id, title) 
+        INSERT INTO projects(user_id, title, is_archived) 
           VALUES ($1, $2)
-        RETURNING id;`,
-        [user_id, title]
-      ).then((res) => res.rows[0]);
+        RETURNING ${RETURN_COLS};`,
+        [userId, title, isArchived]
+      );
+      return res.rows[0];
     },
-
-    selectAllByUser: (user_id: string) =>
-      query(
+    selectAll: async (
+      userId: string,
+      options?: { sync_token?: string; include_archived?: boolean }
+    ): Promise<ProjectModel[]> => {
+      const res = await query(
         `
-        SELECT id, title FROM projects
+        SELECT ${RETURN_COLS} FROM projects
         WHERE user_id = $1;
         `,
-        [user_id]
-      ).then((res) => res.rows),
-
-    selectOneById: (user_id: string, id: number) =>
-      query(
+        [userId]
+      );
+      return res.rows;
+    },
+    selectOneById: async (
+      userId: string,
+      id: string
+    ): Promise<ProjectModel | undefined> => {
+      const res = await query(
         `
         SELECT ${RETURN_COLS} FROM projects
         WHERE user_id = $1 AND id = $2`,
-        [user_id, id]
-      ).then((res) => res.rows[0]),
+        [userId, id]
+      );
+      return res.rows[0];
+    },
   };
 };
 

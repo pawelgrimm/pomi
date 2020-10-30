@@ -6,20 +6,34 @@ afterAll(() => {
   close().then();
 });
 
-const project = {
-  user_id: "234%^^%ssdfuser",
+const userId = "8e290323-6f92-441a-a946-efff804944cf";
+
+const testProject = {
+  title: "a test project",
 };
 
 describe("Project create tests", () => {
   it("should create a project", async (done) => {
     const { body } = await request(app)
       .post("/api/projects")
-      .send(project)
+      .set("Authorization", `Bearer ${userId}`)
+      .send(testProject)
       .expect(201);
 
-    expect(await Projects.selectAllByUser()).toContainEqual({
-      id: body.id,
-      ...project,
+    expect(body).toContainEqual({
+      project: {
+        id: expect.any(String),
+        isArchived: false,
+        ...testProject,
+      },
+    });
+
+    expect(await Projects.selectAll(userId)).toContainEqual({
+      project: {
+        id: expect.any(String),
+        isArchived: false,
+        ...testProject,
+      },
     });
     done();
   });
