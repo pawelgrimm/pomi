@@ -1,23 +1,16 @@
 # API Spec v1
 
-- [/users](#-users)
-  * [(auth) GET /](#-auth--get--)
-    + [*Response*](#-response-)
-  * [(auth) GET /sync](#-auth--get--sync)
-    + [*Request*](#-request-)
-    + [*Response*](#-response--1)
+<details>
+	<summary>Contents</summary>
+
+- [/users](#users)
+  * [(auth) GET /](#get)
+  * [(auth) GET /sync](#get--sync)
 - [/sessions](#-sessions)
   * [(auth) GET /](#-auth--get---1)
-    + [*Request*](#-request--1)
-    + [*Response*](#-response--2)
   * [(auth) GET /:id](#-auth--get---id)
-    + [*Response*](#-response--3)
   * [(auth) POST /](#-auth--post--)
-    + [*Request*](#-request--2)
-    + [*Response*](#-response--4)
   * [(auth) PATCH /](#-auth--patch--)
-    + [*Request*](#-request--3)
-    + [*Response*](#-response--5)
 - [/projects/](#-projects-)
   * [(auth) GET /](#-auth--get---2)
     + [*Request*](#-request--4)
@@ -36,9 +29,13 @@
   * [(auth) PATCH /:id](#-auth--patch---id-1)
     + [*Request*](#-request--7)
     + [*Response*](#-response--11)
+</details>
+# Spec
+
+All endpoints require user authorization. 
 
 ## /users
-### (auth) GET /
+### GET /
 Gets user info
 
 #### *Response*
@@ -50,7 +47,7 @@ Gets user info
 }
 ```
 
-### (auth) GET /sync 
+### GET /sync 
 Gets all [sessions,] task, and projects for user [that were updated since last sync]
 
 #### *Request*
@@ -89,7 +86,7 @@ Gets all [sessions,] task, and projects for user [that were updated since last s
 ```
 
 ## /sessions
-### (auth) GET / 
+### GET / 
 Gets all sessions for user [that were updated since last sync]
 
 #### *Request*
@@ -117,7 +114,7 @@ Gets all sessions for user [that were updated since last sync]
 }
 ```
 
-### (auth) GET /:id
+### GET /:id
 Gets session with given id.
 
 #### *Response*
@@ -136,7 +133,7 @@ Gets session with given id.
 }
 ```
 
-### (auth) POST /
+### POST /
 Creates a new sessions. Creates a projects and/or task as needed (if title is provided instead of id).
 
 Note: It would be cool if active/incomplete project/task titles were searched first before creating a new record #40 
@@ -184,7 +181,7 @@ Note: It would be cool if active/incomplete project/task titles were searched fi
 		endTimestamp: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
-		edited: false
+		edited: boolean,
 		retroAdded: boolean
 	},
   // Only if new task is created
@@ -203,7 +200,7 @@ Note: It would be cool if active/incomplete project/task titles were searched fi
 }
 ```
 
-### (auth) PATCH /
+### PATCH /
 Used primarily by edit session workflow. Creates a projects and/or task as needed (if title is provided instead of id).
 
 #### *Request*
@@ -251,7 +248,7 @@ Used primarily by edit session workflow. Creates a projects and/or task as neede
 		endTimestamp: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
-		isEdited: true
+		edited: true
 		retroAdded: boolean
 	},
 	// Only if new task is created
@@ -271,7 +268,7 @@ Used primarily by edit session workflow. Creates a projects and/or task as neede
 ```
 
 ## /projects/
-### (auth) GET / 
+### GET / 
 Gets all projects for user [that were updated since last sync]
 
 #### *Request*
@@ -293,7 +290,7 @@ Gets all projects for user [that were updated since last sync]
 }
 ```
 
-### (auth) GET /:id
+### GET /:id
 Gets the project with the provided id
 
 #### *Response*
@@ -308,7 +305,7 @@ Gets the project with the provided id
 }
 ```
 
-### (auth) PATCH /:id 
+### PATCH /:id 
 Update a project
 
 **Sub-routes**
@@ -338,7 +335,7 @@ Update a project
 ```
 
 ## /tasks
-### (auth) GET / 
+### GET / 
 Gets all tasks for user [that were updated since last sync]
 
 #### *Request*
@@ -361,7 +358,7 @@ Gets all tasks for user [that were updated since last sync]
 }
 ```
 
-### (auth) GET /:id
+### GET /:id
 Gets the task with the provided id
 
 #### *Response*
@@ -377,7 +374,7 @@ Gets the task with the provided id
 }
 ```
 
-### (auth) PATCH /:id 
+### PATCH /:id 
 Update a project
 
 **Sub-routes**
