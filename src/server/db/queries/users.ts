@@ -1,31 +1,29 @@
 import { UserModel } from "../../../shared/models";
-import { PGQuery } from "../index";
+import { DatabasePoolType, sql } from "slonik";
 
-const bindUserQueries = (query: PGQuery) => {
+const bindUserQueries = (pool: DatabasePoolType) => {
   // @ts-ignore
   return {
-    create: ({ display_name, email }: UserModel) =>
-      query(
-        `
-        INSERT INTO users(display_name, email) 
-          VALUES ($1, $2)
+    create: ({ id, display_name, email }: UserModel) =>
+      pool.one(
+        sql`
+        INSERT INTO users(id, display_name, email) 
+          VALUES ($1, $2, $3)
         RETURNING id;`,
-        [display_name, email]
-      ).then((res) => res.rows[0]),
+        [id, display_name, email]
+      ),
 
     selectAll: () =>
-      query(
-        `
-        SELECT id, display_name, email FROM users;`
-      ).then((res) => res.rows),
+      pool.any(sql`
+        SELECT id, display_name, email FROM users;`),
 
     selectOneById: (id: string) =>
-      query(
-        `
+      pool.maybeOne(
+        sql`
         SELECT id, display_name, email FROM users 
         WHERE id = $1`,
         [id]
-      ).then((res) => res.rows[0]),
+      ),
   };
 };
 

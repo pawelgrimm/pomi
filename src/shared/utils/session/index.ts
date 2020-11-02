@@ -5,8 +5,8 @@ import { SessionType, SessionTypeString } from "../../models/session";
  * @param duration an interval in milliseconds
  * @returns a string in the format "%d milliseconds", or undefined if duration is falsy (0 or undefined).
  */
-export const getDurationWithUnits = (duration?: number): string | undefined => {
-  return duration ? `${duration} milliseconds` : undefined;
+export const getDurationWithUnits = (duration?: number): string | null => {
+  return duration ? `${duration} milliseconds` : null;
 };
 
 /**

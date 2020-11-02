@@ -1,6 +1,6 @@
 import { DatabaseSessionModel } from "../../../shared/models";
-import { PGQuery } from "../index";
 import { getDurationWithUnits } from "../../../shared/utils";
+import { DatabasePoolType, sql } from "slonik";
 
 const RETURN_COLS = `
   id, 
@@ -8,11 +8,11 @@ const RETURN_COLS = `
   task_id, 
   start_timestamp, 
   extract('epoch' from duration) * 1000.0   duration, 
-  notes, 
+  note, 
   type, 
-  retro_added`;
+  is_retro_added`;
 
-const bindSessionQueries = (query: PGQuery) => {
+const bindSessionQueries = (pool: DatabasePoolType) => {
   return {
     create: (session: DatabaseSessionModel) => {
       const {
@@ -24,57 +24,57 @@ const bindSessionQueries = (query: PGQuery) => {
         type,
         retro_added,
       } = session;
-      return query(
-        `
+      return pool.any(
+        sql`
             INSERT INTO sessions(user_id,
                                  task_id,
                                  start_timestamp,
                                  duration,
                                  notes,
                                  type,
-                                 retro_added)
+                                 is_retro_added)
             VALUES ($1, $2, $3, $4, $5, $6, $7)
             RETURNING id;
             `,
         [
           user_id,
           task_id,
-          start_timestamp,
+          start_timestamp.toISOString(),
           getDurationWithUnits(duration),
-          notes,
+          notes || null,
           type,
-          retro_added,
+          retro_added || null,
         ]
-      ).then((res) => res.rows[0]);
+      );
     },
 
     // TODO: take time zone as a param
     selectAll: () =>
-      query(
-        `
+      pool.any(
+        sql`
             SELECT ${RETURN_COLS}
             FROM sessions;
             `
-      ).then((res) => res.rows),
+      ),
 
     selectAllToday: () =>
-      query(
-        `
+      pool.any(
+        sql`
             SELECT ${RETURN_COLS}
             FROM sessions
             WHERE start_timestamp > current_date;
             `
-      ).then((res) => res.rows),
+      ),
 
     selectOneById: (id: string) =>
-      query(
-        `
+      pool.maybeOne(
+        sql`
             SELECT ${RETURN_COLS}
             FROM sessions
             WHERE id = $1;
             `,
         [id]
-      ).then((res) => res.rows[0]),
+      ),
 
     update: (id: string, session: Partial<DatabaseSessionModel>) => {
       const {
@@ -86,8 +86,9 @@ const bindSessionQueries = (query: PGQuery) => {
         type,
         retro_added,
       } = session;
-      return query(
-        `
+      return pool
+        .query(
+          sql`
             UPDATE sessions
             SET user_id         = coalesce($1, user_id),
                 task_id         = coalesce($2, task_id),
@@ -95,20 +96,21 @@ const bindSessionQueries = (query: PGQuery) => {
                 duration        = coalesce($4, duration),
                 notes           = coalesce($5, notes),
                 type            = coalesce($6, type),
-                retro_added     = coalesce($7, retro_added)
+                is_retro_added     = coalesce($7, is_retro_added)
             WHERE id = $8;
             `,
-        [
-          user_id,
-          task_id,
-          start_timestamp,
-          duration,
-          notes,
-          type,
-          retro_added,
-          id,
-        ]
-      ).then(() => true);
+          [
+            user_id || null,
+            task_id || null,
+            start_timestamp?.toISOString() || null,
+            duration || null,
+            notes || null,
+            type || null,
+            retro_added || null,
+            id,
+          ]
+        )
+        .then(() => true);
     },
   };
 };

@@ -71,7 +71,7 @@ CREATE TABLE sessions
     type            SESSION_TYPE     DEFAULT 'session',
     is_edited       BOOLEAN          DEFAULT FALSE,
     is_retro_added  BOOLEAN          DEFAULT FALSE,
-    last_modified   TIMESTAMPTZ                   NOT NULL
+    last_modified   TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
 );
 
 CREATE TRIGGER update_sessions_last_modified

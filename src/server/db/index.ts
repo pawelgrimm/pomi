@@ -1,5 +1,5 @@
-import { Pool, QueryResult } from "pg";
-import { PG_CONNECTION_STRING } from "../config";
+import { pool, close, DatabasePoolType } from "./slonik";
+//import { PG_CONNECTION_STRING } from "../config";
 import {
   /* PLOP_INJECT_IMPORT */
   bindProjectQueries,
@@ -10,29 +10,18 @@ import {
 /**
  * Set up a client pool connected to the application database
  */
-const pool = new Pool({ connectionString: PG_CONNECTION_STRING });
+// const pool = new Pool({ connectionString: PG_CONNECTION_STRING });
 
 /**
  * End the client pool's connection
  */
-const close = () => pool.end();
-
-export type PGQuery = (
-  queryText: string,
-  values?: any[]
-) => Promise<QueryResult>;
-
-/**
- * Execute a query against the application database
- * @param queryText the query to execute
- * @param values values to substitute into the query
- */
-const query: PGQuery = (queryText, values) => pool.query(queryText, values);
+// const close = () => pool.end();
 
 // Bind object-specific queries to query and expose them as an export
 /* PLOP_INJECT_BIND */
-export const Projects = bindProjectQueries(query);
-export const Sessions = bindSessionQueries(query);
-export const Users = bindUserQueries(query);
+export const Projects = bindProjectQueries(pool);
+export const Sessions = bindSessionQueries(pool);
+export const Users = bindUserQueries(pool);
 
-export { query, close };
+export { pool, close };
+export type { DatabasePoolType };
