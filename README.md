@@ -1,4 +1,4 @@
-<img src="./docs/assets/pomi-icon.png" width="100px"/>
+<img src="./docs/assets/pomi-logo.png" width="450px"/>
 
 # README
 
