@@ -1,22 +1,22 @@
 # API Spec v1
 
 ## Contents
-- [/users](#users)
-  - [GET /](#get-)
-  - [GET /sync](#get-sync)
-- [/sessions](#sessions)
-  - [GET /](#get--1)
-  - [GET /:id](#get-id)
-  - [POST /](#post-)
-  - [PATCH /](#patch-)
-- [/projects](#projects)
-  - [GET /](#get--2)
-  - [GET /:id](#get-id-1)
-  - [PATCH /:id](#patch-id)
-- [/tasks](#tasks)
-  - [GET /](#get--3)
-  - [GET /:id](#get-id-2)
-  - [PATCH /:id](#patch-id-1)
+ - [/users](#users)
+   - [GET /](#get-)
+   - [GET /sync](#get-sync)
+ - [/sessions](#sessions)
+   - [GET /](#get--1)
+   - [GET /:id](#get-id)
+   - [POST /](#post-)
+   - [PATCH /](#patch-)
+ - [/projects](#projects)
+   - [GET /](#get--2)
+   - [GET /:id](#get-id-1)
+   - [PATCH /:id](#patch-id)
+ - [/tasks](#tasks)
+   - [GET /](#get--3)
+   - [GET /:id](#get-id-2)
+   - [PATCH /:id](#patch-id-1)
     
 All endpoints require user authorization. 
 
