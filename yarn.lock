@@ -5208,7 +5208,7 @@ dot-prop@^5.2.0:
   dependencies:
     is-obj "^2.0.0"
 
-dotenv-defaults@^2.0.1:
+dotenv-defaults@2.0.1, dotenv-defaults@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/dotenv-defaults/-/dotenv-defaults-2.0.1.tgz#ea6f9632b3b5cc55e48b736760def5561f1cb7c0"
   integrity sha512-ugFCyBF7ILuwpmznduHPQZBMucHHJ8T4OBManTEVjemxCm2+nqifSuW2lD2SNKdiKSH1E324kZSdJ8M04b4I/A==
@@ -12230,7 +12230,7 @@ ripemd160@^2.0.0, ripemd160@^2.0.1:
     hash-base "^3.0.0"
     inherits "^2.0.1"
 
-roarr@^2.15.4:
+roarr@^2.15.2, roarr@^2.15.4:
   version "2.15.4"
   resolved "https://registry.yarnpkg.com/roarr/-/roarr-2.15.4.tgz#f5fe795b7b838ccfe35dc608e0282b9eba2e7afd"
   integrity sha512-CHhPh+UNHD2GTXNYhPWLnU8ONHdI+5DI+4EYIAOaiD63rHeYlZvyh8P+in5999TTSFgUYuKUAjzRI4mdh/p+2A==
@@ -12502,6 +12502,13 @@ sentence-case@^2.1.0:
     no-case "^2.2.0"
     upper-case-first "^1.1.2"
 
+serialize-error@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-6.0.0.tgz#ccfb887a1dd1c48d6d52d7863b92544331fd752b"
+  integrity sha512-3vmBkMZLQO+BR4RPHcyRGdE09XCF6cvxzk2N2qn8Er3F91cy8Qt7VvEbZBOpaL53qsBbe2cFOefU6tRY6WDelA==
+  dependencies:
+    type-fest "^0.12.0"
+
 serialize-error@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-7.0.1.tgz#f1360b0447f61ffb483ec4157c737fab7d778e18"
@@ -12688,6 +12695,16 @@ slonik-interceptor-field-name-transformation@1.5.3:
     core-js "^3.6.4"
     slonik "^22.4.0"
 
+slonik-sql-tag-raw@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/slonik-sql-tag-raw/-/slonik-sql-tag-raw-1.0.2.tgz#15e3ab1184e96a3f1c16ce38d4acd08f17a3767b"
+  integrity sha512-wjUsnDUtUTYnxBReFVjuy35l4YO4alWJwrAMqQz04UuhPA29cRGR9VojFBLhCPxD9F9/MsjNYVWa3YTFBqhlxA==
+  dependencies:
+    lodash "^4.17.15"
+    roarr "^2.15.2"
+    serialize-error "^6.0.0"
+    slonik "^22.4.4"
+
 slonik@23.0.1:
   version "23.0.1"
   resolved "https://registry.yarnpkg.com/slonik/-/slonik-23.0.1.tgz#0a2ad7b2f39bbee610939209ad971f2328759914"
@@ -12713,7 +12730,7 @@ slonik@23.0.1:
     through2 "^4.0.2"
     ulid "^2.3.0"
 
-slonik@^22.4.0:
+slonik@^22.4.0, slonik@^22.4.4:
   version "22.7.1"
   resolved "https://registry.yarnpkg.com/slonik/-/slonik-22.7.1.tgz#46326b3050f3e466918a7db3eacc62dc40834ea5"
   integrity sha512-88GidNOWv4Bg0CqYLXajqcD0bbLip2soY6B4JzHP7EGDrWUb1WSlu7mIppTJVfcK99mx+jnX3xQq3FJ0DoOXag==
@@ -13767,6 +13784,11 @@ type-fest@^0.11.0:
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.11.0.tgz#97abf0872310fed88a5c466b25681576145e33f1"
   integrity sha512-OdjXJxnCN1AvyLSzeKIgXTXxV+99ZuXl3Hpo9XpJAv9MBcHrrJOQ5kV7ypXOuQie+AmWG25hLbiKdwYTifzcfQ==
+
+type-fest@^0.12.0:
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.12.0.tgz#f57a27ab81c68d136a51fd71467eff94157fa1ee"
+  integrity sha512-53RyidyjvkGpnWPMF9bQgFtWp+Sl8O2Rp13VavmJgfAP9WWG6q6TkrKU8iyJdnwnfgHI6k2hTlgqH4aSdjoTbg==
 
 type-fest@^0.13.1:
   version "0.13.1"

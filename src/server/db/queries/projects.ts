@@ -1,7 +1,8 @@
 import { ProjectModel } from "../../../shared/models";
 import { DatabasePoolType, sql } from "slonik";
+import { raw } from "slonik-sql-tag-raw";
 
-const RETURN_COLS = 'id, title, is_archived AS "isArchived"';
+const RETURN_COLS = raw("id, title, is_archived");
 
 const bindProjectQueries = (pool: DatabasePoolType) => {
   return {

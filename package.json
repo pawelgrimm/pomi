@@ -18,9 +18,9 @@
     "generate": "plop",
     "migrate-db": "sh src/server/db/migrations/migrate.sh",
     "reset-dev-db": "yarn migrate-db dev 1 && yarn migrate-db dev",
+    "reset-test-db": "yarn migrate-db dev 1 && yarn migrate-db dev",
     "test:server": "jest --config src/server/jest.config.js --watch",
     "test:shared": "jest --config src/shared/jest.config.js --watch",
-    "prepare-test-db": "dropdb pomi_test -U pomi --if-exists && createdb -U pomi pomi_test && yarn migrate-db test",
     "killnode": "kill -9 $(lsof -t -i:3001)"
   },
   "dependencies": {
@@ -52,6 +52,7 @@
     "date-fns": "2.16.1",
     "debug": "4.2.0",
     "dotenv": "8.2.0",
+    "dotenv-defaults": "2.0.1",
     "dotenv-webpack": "4.0.0",
     "express": "4.17.1",
     "express-promise-router": "4.0.1",
@@ -80,6 +81,7 @@
     "sass": "1.26.10",
     "slonik": "23.0.1",
     "slonik-interceptor-field-name-transformation": "1.5.3",
+    "slonik-sql-tag-raw": "1.0.2",
     "supertest": "5.0.0",
     "ts-jest": "26.4.2",
     "ts-loader": "8.0.7",
