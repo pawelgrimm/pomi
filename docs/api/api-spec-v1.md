@@ -5,16 +5,16 @@
   - [GET /](#get-)
   - [GET /sync](#get-sync)
 - [/sessions](#sessions)
-  - [GET /](#get-1)
+  - [GET /](#get--1)
   - [GET /:id](#get-id)
   - [POST /](#post-)
   - [PATCH /](#patch-)
-- [/projects/](#projects-)
-  - [GET /](#get-2)
+- [/projects](#projects)
+  - [GET /](#get--2)
   - [GET /:id](#get-id-1)
   - [PATCH /:id](#patch-id)
 - [/tasks](#tasks)
-  - [GET /](#get-3)
+  - [GET /](#get--3)
   - [GET /:id](#get-id-2)
   - [PATCH /:id](#patch-id-1)
     
@@ -253,7 +253,7 @@ Used primarily by edit session workflow. Creates a projects and/or task as neede
 }
 ```
 
-## /projects/
+## /projects
 ### GET / 
 Gets all projects for user [that were updated since last sync]
 
