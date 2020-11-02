@@ -1,37 +1,23 @@
 # API Spec v1
 
-<details>
-	<summary>Contents</summary>
-
+## Contents
 - [/users](#users)
-  * [(auth) GET /](#get)
-  * [(auth) GET /sync](#get--sync)
-- [/sessions](#-sessions)
-  * [(auth) GET /](#-auth--get---1)
-  * [(auth) GET /:id](#-auth--get---id)
-  * [(auth) POST /](#-auth--post--)
-  * [(auth) PATCH /](#-auth--patch--)
-- [/projects/](#-projects-)
-  * [(auth) GET /](#-auth--get---2)
-    + [*Request*](#-request--4)
-    + [*Response*](#-response--6)
-  * [(auth) GET /:id](#-auth--get---id-1)
-    + [*Response*](#-response--7)
-  * [(auth) PATCH /:id](#-auth--patch---id)
-    + [*Request*](#-request--5)
-    + [*Response*](#-response--8)
-- [/tasks](#-tasks)
-  * [(auth) GET /](#-auth--get---3)
-    + [*Request*](#-request--6)
-    + [*Response*](#-response--9)
-  * [(auth) GET /:id](#-auth--get---id-2)
-    + [*Response*](#-response--10)
-  * [(auth) PATCH /:id](#-auth--patch---id-1)
-    + [*Request*](#-request--7)
-    + [*Response*](#-response--11)
-</details>
-# Spec
-
+  - [GET /](#get-)
+  - [GET /sync](#get-sync)
+- [/sessions](#sessions)
+  - [GET /](#get-1)
+  - [GET /:id](#get-id)
+  - [POST /](#post-)
+  - [PATCH /](#patch-)
+- [/projects/](#projects-)
+  - [GET /](#get-2)
+  - [GET /:id](#get-id-1)
+  - [PATCH /:id](#patch-id)
+- [/tasks](#tasks)
+  - [GET /](#get-3)
+  - [GET /:id](#get-id-2)
+  - [PATCH /:id](#patch-id-1)
+    
 All endpoints require user authorization. 
 
 ## /users
