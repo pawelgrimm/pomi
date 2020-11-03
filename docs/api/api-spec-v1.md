@@ -262,7 +262,7 @@ Gets all projects for user [that were updated since last sync]
 *query params*:
 
  - `sync_token=*`: last sync time
- - `include_archived=0`: include archived projects
+ - `include_archived=0`: include archived projects. Note: if a sync_token is provided, archived items are always included.
 
 #### *Response*
 
