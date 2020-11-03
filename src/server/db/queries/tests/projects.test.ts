@@ -6,7 +6,6 @@ import { resetTestDb } from "../../../setupTest";
 import {
   arrayContainingObjectsContaining,
   sleep,
-  wrapObjectContaining,
 } from "../../../../shared/utils";
 
 let user: UserModel;
@@ -130,7 +129,37 @@ describe("Select All Projects", () => {
     done();
   });
 
-  it.todo("Should always return archived projects when using a sync token");
+  it("Should always return archived projects when using a sync token", async (done) => {
+    const testProjects = await insertTestProjects(
+      user.id,
+      [{}, { isArchived: true }, {}],
+      { sleep: 5 }
+    );
+
+    const oldProject = testProjects.shift();
+    const [lastProject] = testProjects;
+
+    if (!oldProject || !lastProject || testProjects.length < 2) {
+      throw new Error("testProjects must start with at least 3 projects");
+    }
+
+    const lastModifiedTime = await pool.oneFirst<number>(sql`
+        SELECT last_modified FROM projects
+        WHERE id = ${lastProject.id}
+    `);
+
+    //TODO: fix the slonic Date parser and remove this workaround
+    const syncToken = new Date(lastModifiedTime).toISOString();
+
+    const projects = await Projects.selectAll(user.id, { syncToken });
+
+    expect(projects).toEqual(arrayContainingObjectsContaining(testProjects));
+    expect(projects).not.toEqual(
+      arrayContainingObjectsContaining([oldProject])
+    );
+
+    done();
+  });
 });
 
 /**
@@ -139,13 +168,18 @@ describe("Select All Projects", () => {
  * @param testProjects an array of projects
  * @param options provide a sleep duration in milliseconds if desired
  */
-const insertTestProjects = (
+const insertTestProjects = async (
   userId: string,
   testProjects: ProjectModel[],
   options?: { sleep?: number }
 ): Promise<Array<ProjectModel & Required<Pick<ProjectModel, "id">>>> => {
   return Promise.all(
     testProjects.map(async (project, index) => {
+      if (options?.sleep) {
+        const sleepDuration = options.sleep * index;
+        await sleep(sleepDuration);
+      }
+
       const { title = `project ${index + 1}`, isArchived = false } = project;
 
       const id = await pool.oneFirst<string>(sql`
@@ -154,9 +188,6 @@ const insertTestProjects = (
         RETURNING id;
       `);
 
-      if (options?.sleep) {
-        await sleep(options.sleep);
-      }
       return { ...project, id };
     })
   );

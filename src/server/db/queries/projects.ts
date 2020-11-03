@@ -1,6 +1,6 @@
 import { isValid, parseISO } from "date-fns";
 import { ProjectModel } from "../../../shared/models";
-import { DatabasePoolType, sql } from "slonik";
+import { DatabasePoolType, InvalidInputError, sql } from "slonik";
 import { raw } from "slonik-sql-tag-raw";
 
 const RETURN_COLS = raw("id, title, is_archived");
@@ -57,6 +57,11 @@ type SelectAllOptions = {
 const parseSelectAllOptions = (
   options?: SelectAllOptions
 ): Required<SelectAllOptions> => {
+  if (options?.syncToken && !isValid(parseISO(options.syncToken))) {
+    throw new InvalidInputError(
+      '"syncToken" was supplied in options, but could not be parsed'
+    );
+  }
   return {
     syncToken: options?.syncToken || "*",
     includeArchived: options?.includeArchived || false,
@@ -66,13 +71,10 @@ const parseSelectAllOptions = (
 const buildAdditionalWhereClauses = (options?: SelectAllOptions) => {
   const { includeArchived, syncToken } = parseSelectAllOptions(options);
   const whereClauses = [];
-
-  if (!includeArchived) {
+  if (syncToken !== "*") {
+    whereClauses.push(sql`last_modified >= ${syncToken}`);
+  } else if (!includeArchived) {
     whereClauses.push(sql`is_archived = FALSE`);
   }
-  if (syncToken !== "*" && isValid(parseISO(syncToken))) {
-    whereClauses.push(sql`last_modified >= ${syncToken}`);
-  }
-
   return whereClauses;
 };
