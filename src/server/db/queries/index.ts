@@ -1,5 +1,5 @@
 /* PLOP_INJECT_IMPORT */
-import { bindProjectQueries } from "./projects";
+import { bindProjectQueries, SelectOptions } from "./projects";
 import { bindSessionQueries } from "./sessions";
 import { bindUserQueries } from "./users";
 
@@ -9,3 +9,5 @@ export {
   bindSessionQueries,
   bindUserQueries,
 };
+
+export type { SelectOptions };

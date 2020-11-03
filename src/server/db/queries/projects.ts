@@ -7,11 +7,16 @@ const RETURN_COLS = raw("id, title, is_archived");
 
 const bindProjectQueries = (pool: DatabasePoolType) => {
   return {
+    /**
+     * Create one project in the projects table
+     * @param userId - id of user assigned to object
+     * @param project - project to insert
+     */
     create: async (
       userId: string,
       project: ProjectModel
     ): Promise<ProjectModel> => {
-      const { title = null, isArchived = null } = project;
+      const { title = "", isArchived = false } = project;
       return pool.one(sql`
         INSERT INTO projects(user_id, title, is_archived)
         VALUES (${userId}, ${title}, ${isArchived})
@@ -19,44 +24,62 @@ const bindProjectQueries = (pool: DatabasePoolType) => {
       `);
     },
 
-    selectAll: async (
+    /**
+     * Get multiple projects for a user
+     * @param userId - id of project-owning user
+     * @param {SelectOptions} options - additional options used to customize query
+     */
+    select: async (
       userId: string,
-      options?: Partial<SelectAllOptions>
+      options?: SelectOptions
     ): Promise<Readonly<ProjectModel[]>> => {
       const whereClauses = [sql`user_id = ${userId}`];
       whereClauses.push(...buildAdditionalWhereClauses(options));
 
-      const query = sql`
+      return pool.any(sql`
         SELECT ${RETURN_COLS} FROM projects
         WHERE ${sql.join(whereClauses, sql` AND `)};
-        `;
-
-      return pool.any(query);
+        `);
     },
-    selectOneById: async (
+
+    /**
+     * Get a project for a user
+     * @param userId - id of project-owning user
+     * @param projectId - id of project to query
+     */
+    selectOne: async (
       userId: string,
-      id: string
+      projectId: string
     ): Promise<ProjectModel | null> => {
-      return pool.maybeOne(
-        sql`
+      return pool.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM projects
-        WHERE user_id = $1 AND id = $2`,
-        [userId, id]
-      );
+        WHERE user_id = ${userId} AND id = ${projectId};
+        `);
     },
   };
 };
 
 export { bindProjectQueries };
 
-type SelectAllOptions = {
+/**
+ * Options provided to select()
+ * @typedef {Object} SelectOptions
+ * @property {string} syncToken - token that indicates last sync time; when provided,
+ *  only projects modified after the last sync are queried
+ * @property {boolean} includeArchived - indicates if archived projects should be queried
+ */
+export type SelectOptions = {
   syncToken?: string;
   includeArchived?: boolean;
 };
 
+/**
+ * Parse a SelectOptions object, validate the options, and set defaults for undefined options.
+ * @param {SelectOptions} options - options provided to select()
+ */
 const parseSelectAllOptions = (
-  options?: SelectAllOptions
-): Required<SelectAllOptions> => {
+  options?: SelectOptions
+): Required<SelectOptions> => {
   if (options?.syncToken && !isValid(parseISO(options.syncToken))) {
     throw new InvalidInputError(
       '"syncToken" was supplied in options, but could not be parsed'
@@ -68,7 +91,11 @@ const parseSelectAllOptions = (
   };
 };
 
-const buildAdditionalWhereClauses = (options?: SelectAllOptions) => {
+/**
+ * Build additional where clauses based on options
+ * @param options {SelectOptions} options - options provided to select()
+ */
+const buildAdditionalWhereClauses = (options?: SelectOptions) => {
   const { includeArchived, syncToken } = parseSelectAllOptions(options);
   const whereClauses = [];
   if (syncToken !== "*") {

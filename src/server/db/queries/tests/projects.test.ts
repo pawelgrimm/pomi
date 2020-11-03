@@ -36,14 +36,28 @@ beforeEach(() => {
 });
 
 describe("Create Project", () => {
-  it("Should create project successfully", async (done) => {
+  it("Should create a project successfully", async () => {
     const newProject = await Projects.create(user.id, validProject);
-    const projects = await pool.any(
+    const projects = pool.any(
       sql`SELECT id, title, is_archived
             FROM projects`
     );
-    expect(projects).toContainEqual({ ...validProject, id: newProject.id });
-    done();
+    return expect(projects).resolves.toContainEqual({
+      ...validProject,
+      id: newProject.id,
+    });
+  });
+  it("Should create a project w/o optional values successfully", async () => {
+    const newProject = await Projects.create(user.id, {});
+    const projects = pool.any(
+      sql`SELECT id, title, is_archived
+            FROM projects`
+    );
+    return expect(projects).resolves.toContainEqual({
+      id: newProject.id,
+      isArchived: false,
+      title: "",
+    });
   });
   it("Should fail gracefully when a non-existent user is provided", () => {
     const newProject = Projects.create(uuid(), validProject);
@@ -57,7 +71,7 @@ describe("Select All Projects", () => {
   it("Should select all projects for a user", async () => {
     const testProjects = await insertTestProjects(user.id, [{}, {}]);
 
-    const projects = Projects.selectAll(user.id);
+    const projects = Projects.select(user.id);
 
     return expect(projects).resolves.toEqual(
       arrayContainingObjectsContaining(testProjects)
@@ -70,7 +84,7 @@ describe("Select All Projects", () => {
       { isArchived: true },
     ]);
 
-    const projects = await Projects.selectAll(user.id);
+    const projects = await Projects.select(user.id);
 
     expect(projects).toEqual(
       arrayContainingObjectsContaining([testProjects[0]])
@@ -87,7 +101,7 @@ describe("Select All Projects", () => {
       { isArchived: true },
     ]);
 
-    const projects = Projects.selectAll(user.id, {
+    const projects = Projects.select(user.id, {
       includeArchived: true,
     });
 
@@ -116,7 +130,7 @@ describe("Select All Projects", () => {
     //TODO: fix the slonic Date parser and remove this workaround
     const syncToken = new Date(lastModifiedTime).toISOString();
 
-    const projects = await Projects.selectAll(user.id, {
+    const projects = await Projects.select(user.id, {
       syncToken,
     });
 
@@ -151,7 +165,7 @@ describe("Select All Projects", () => {
     //TODO: fix the slonic Date parser and remove this workaround
     const syncToken = new Date(lastModifiedTime).toISOString();
 
-    const projects = await Projects.selectAll(user.id, { syncToken });
+    const projects = await Projects.select(user.id, { syncToken });
 
     expect(projects).toEqual(arrayContainingObjectsContaining(testProjects));
     expect(projects).not.toEqual(
@@ -159,6 +173,25 @@ describe("Select All Projects", () => {
     );
 
     done();
+  });
+});
+
+describe("Select One Project", () => {
+  it("Should return one project", async () => {
+    const testProjects = await insertTestProjects(user.id, [{}, {}]);
+    const selectedProject = testProjects.pop();
+
+    if (!selectedProject || testProjects.length === 0) {
+      throw new Error("testProjects should contain at least 2 projects");
+    }
+
+    const project = Projects.selectOne(user.id, selectedProject.id);
+
+    return expect(project).resolves.toMatchObject(selectedProject);
+  });
+  it("Should not throw an error when no project is found", () => {
+    const project = Projects.selectOne(user.id, uuid());
+    return expect(project).resolves.toBeFalsy();
   });
 });
 
