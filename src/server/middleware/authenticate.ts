@@ -19,13 +19,19 @@ admin.initializeApp({
 
 export const authenticate: RequestHandler = async (req, res, next) => {
   const authHeader = req.header("Authorization") as string;
-  const uid = authHeader.slice(7); //TODO: parse Bearer more correctly
   try {
-    //const { uid } = await admin.auth().verifyIdToken(token);
+    // TODO: parse Bearer more elegantly for testing
+    const uid = authHeader.slice(7);
+    if (!uid) {
+      res.status(401);
+      next(new Error("No auth header"));
+    }
     res.locals.userId = uid;
     next();
+    //
+    // const { uid } = await admin.auth().verifyIdToken(token);
   } catch (e) {
-    res.status(401).send();
-    return;
+    res.status(401);
+    next(e);
   }
 };
