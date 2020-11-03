@@ -11,9 +11,12 @@ import {
   getDateFromEpochTime,
 } from "./time/time";
 
+import { sleep } from "./tests";
+
 import { getDurationWithUnits } from "./session";
 
 export {
+  sleep,
   getDurationWithUnits,
   secondsToParts,
   getEpochTime,
