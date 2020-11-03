@@ -1,3 +1,4 @@
+import { isValid, parseISO } from "date-fns";
 import { ProjectModel } from "../../../shared/models";
 import { DatabasePoolType, sql } from "slonik";
 import { raw } from "slonik-sql-tag-raw";
@@ -17,17 +18,20 @@ const bindProjectQueries = (pool: DatabasePoolType) => {
         RETURNING ${RETURN_COLS};
       `);
     },
+
     selectAll: async (
       userId: string,
-      options?: { sync_token?: string; include_archived?: boolean }
+      options?: Partial<SelectAllOptions>
     ): Promise<Readonly<ProjectModel[]>> => {
-      return pool.any(
-        sql`
+      const whereClauses = [sql`user_id = ${userId}`];
+      whereClauses.push(...buildAdditionalWhereClauses(options));
+
+      const query = sql`
         SELECT ${RETURN_COLS} FROM projects
-        WHERE user_id = $1;
-        `,
-        [userId]
-      );
+        WHERE ${sql.join(whereClauses, sql` AND `)};
+        `;
+
+      return pool.any(query);
     },
     selectOneById: async (
       userId: string,
@@ -44,3 +48,31 @@ const bindProjectQueries = (pool: DatabasePoolType) => {
 };
 
 export { bindProjectQueries };
+
+type SelectAllOptions = {
+  syncToken?: string;
+  includeArchived?: boolean;
+};
+
+const parseSelectAllOptions = (
+  options?: SelectAllOptions
+): Required<SelectAllOptions> => {
+  return {
+    syncToken: options?.syncToken || "*",
+    includeArchived: options?.includeArchived || false,
+  };
+};
+
+const buildAdditionalWhereClauses = (options?: SelectAllOptions) => {
+  const { includeArchived, syncToken } = parseSelectAllOptions(options);
+  const whereClauses = [];
+
+  if (!includeArchived) {
+    whereClauses.push(sql`is_archived = FALSE`);
+  }
+  if (syncToken !== "*" && isValid(parseISO(syncToken))) {
+    whereClauses.push(sql`last_modified >= ${syncToken}`);
+  }
+
+  return whereClauses;
+};

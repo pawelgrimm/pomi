@@ -18,7 +18,8 @@
     "generate": "plop",
     "migrate-db": "sh src/server/db/migrations/migrate.sh",
     "reset-dev-db": "yarn migrate-db dev 1 && yarn migrate-db dev",
-    "reset-test-db": "yarn migrate-db dev 1 && yarn migrate-db dev",
+    "reset-test-db": "yarn migrate-db test 1 && yarn migrate-db test",
+
     "test:server": "jest --config src/server/jest.config.js --watch",
     "test:shared": "jest --config src/shared/jest.config.js --watch",
     "killnode": "kill -9 $(lsof -t -i:3001)"
@@ -81,6 +82,7 @@
     "sass": "1.26.10",
     "slonik": "23.0.1",
     "slonik-interceptor-field-name-transformation": "1.5.3",
+    "slonik-interceptor-query-logging": "1.3.8",
     "slonik-sql-tag-raw": "1.0.2",
     "supertest": "5.0.0",
     "ts-jest": "26.4.2",

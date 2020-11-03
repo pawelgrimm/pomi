@@ -4441,6 +4441,11 @@ cosmiconfig@^6.0.0:
     path-type "^4.0.0"
     yaml "^1.7.2"
 
+crack-json@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/crack-json/-/crack-json-1.3.0.tgz#9203e472b7d5dc0a32915b24d7bfb9b8ea996bc0"
+  integrity sha512-JfZ9NPLsU9ejTYgZ7fM+5TIMfTwROTxpi2Twh597GxmiVDwIGZSjaor+zsQBKZ0mmCKOFb9EZZLVeKNf/5UaGg==
+
 create-ecdh@^4.0.0:
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/create-ecdh/-/create-ecdh-4.0.4.tgz#d6e7f4bffa66736085a0762fd3a632684dabcc4e"
@@ -10075,6 +10080,11 @@ parse-json@^5.0.0:
     json-parse-even-better-errors "^2.3.0"
     lines-and-columns "^1.1.6"
 
+parse-ms@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-2.1.0.tgz#348565a753d4391fa524029956b172cb7753097d"
+  integrity sha512-kHt7kzLoS9VBZfUsiKjv43mr91ea+U05EyKkEtqp7vNbHxmaVuEqN7XxeEVnGrMtYOAxGrDElSi96K7EgO1zCA==
+
 parse-passwd@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/parse-passwd/-/parse-passwd-1.0.0.tgz#6d5b934a456993b23d37f40a382d6f1666a8e5c6"
@@ -11271,6 +11281,13 @@ pretty-format@^26.0.0, pretty-format@^26.4.2, pretty-format@^26.6.0, pretty-form
     ansi-regex "^5.0.0"
     ansi-styles "^4.0.0"
     react-is "^17.0.1"
+
+pretty-ms@^6.0.0:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/pretty-ms/-/pretty-ms-6.0.1.tgz#03ec6cfee20329f142645e63efad96bb775d3da4"
+  integrity sha512-ke4njoVmlotekHlHyCZ3wI/c5AMT8peuHs8rKJqekj/oR5G8lND2dVpicFlUz5cbZgE290vvkMuDwfj/OcW1kw==
+  dependencies:
+    parse-ms "^2.1.0"
 
 process-nextick-args@~2.0.0:
   version "2.0.1"
@@ -12502,6 +12519,13 @@ sentence-case@^2.1.0:
     no-case "^2.2.0"
     upper-case-first "^1.1.2"
 
+serialize-error@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-5.0.0.tgz#a7ebbcdb03a5d71a6ed8461ffe0fc1a1afed62ac"
+  integrity sha512-/VtpuyzYf82mHYTtI4QKtwHa79vAdU5OQpNPAmE/0UDdlGT0ZxHwC+J6gXkw29wwoVI8fMPsfcVHOwXtUQYYQA==
+  dependencies:
+    type-fest "^0.8.0"
+
 serialize-error@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/serialize-error/-/serialize-error-6.0.0.tgz#ccfb887a1dd1c48d6d52d7863b92544331fd752b"
@@ -12693,6 +12717,16 @@ slonik-interceptor-field-name-transformation@1.5.3:
   dependencies:
     camelcase "^5.3.1"
     core-js "^3.6.4"
+    slonik "^22.4.0"
+
+slonik-interceptor-query-logging@1.3.8:
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/slonik-interceptor-query-logging/-/slonik-interceptor-query-logging-1.3.8.tgz#ccb6c446b3bcd7be2de57bae0a5b75903a7c8f74"
+  integrity sha512-/qbBUhYBj1IfJhZaWYO9ir8EjXaRdjpv3HSnaOmpvbCuVJgQmaqqgHLtRi4V7kWHoZfDa6C5tmDN2DL4hgOu1Q==
+  dependencies:
+    crack-json "^1.3.0"
+    pretty-ms "^6.0.0"
+    serialize-error "^5.0.0"
     slonik "^22.4.0"
 
 slonik-sql-tag-raw@1.0.2:
@@ -13805,7 +13839,7 @@ type-fest@^0.6.0:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.6.0.tgz#8d2a2370d3df886eb5c90ada1c5bf6188acf838b"
   integrity sha512-q+MB8nYR1KDLrgr4G5yemftpMC7/QLqVndBmEEdqzmNj5dcFOO4Oo8qlwZE3ULT3+Zim1F8Kq4cBnikNhlCMlg==
 
-type-fest@^0.8.1:
+type-fest@^0.8.0, type-fest@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==

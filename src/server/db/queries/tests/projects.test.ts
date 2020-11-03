@@ -31,13 +31,126 @@ beforeEach(() => {
   };
 });
 
-describe("Project Queries", () => {
+describe("Create Project", () => {
   it("Should create project successfully", async (done) => {
     const newProject = await Projects.create(user.id, validProject);
     const projects = await pool.any(
-      sql`SELECT id, title, is_archived FROM projects`
+      sql`SELECT id, title, is_archived
+            FROM projects`
     );
     expect(projects).toContainEqual({ ...validProject, id: newProject.id });
+    done();
+  });
+});
+
+describe("Select All Projects", () => {
+  it("Should select all projects for a user", async (done) => {
+    const testProjects = [
+      { title: "project 1", id: "" },
+      { title: "project 2", id: "" },
+    ];
+    for (const project of testProjects) {
+      project.id = await pool.oneFirst<string>(sql`
+        INSERT INTO projects(user_id, title) 
+        VALUES (${user.id}, ${project.title})
+        RETURNING id;
+      `);
+    }
+
+    const projects = await Projects.selectAll(user.id);
+
+    expect(projects).toEqual(
+      expect.arrayContaining(
+        testProjects.map((p) => expect.objectContaining(p))
+      )
+    );
+
+    done();
+  });
+  it("Should not select archived projects by default", async (done) => {
+    const testProjects = [
+      { title: "project 1", id: "", isArchived: false },
+      { title: "project 2", id: "", isArchived: true },
+    ];
+
+    for (const project of testProjects) {
+      project.id = await pool.oneFirst<string>(sql`
+        INSERT INTO projects(user_id, title, is_archived) 
+        VALUES (${user.id}, ${project.title}, ${project.isArchived})
+        RETURNING id;
+      `);
+    }
+
+    const projects = await Projects.selectAll(user.id);
+
+    expect(projects).toContainEqual(testProjects[0]);
+    expect(projects).not.toContainEqual(testProjects[1]);
+
+    done();
+  });
+  it("Should select archived projects when instructed to", async (done) => {
+    const testProjects = [
+      { title: "project 1", id: "", isArchived: false },
+      { title: "project 2", id: "", isArchived: true },
+    ];
+
+    for (const project of testProjects) {
+      project.id = await pool.oneFirst<string>(sql`
+        INSERT INTO projects(user_id, title, is_archived) 
+        VALUES (${user.id}, ${project.title}, ${project.isArchived})
+        RETURNING id;
+      `);
+    }
+
+    const projects = await Projects.selectAll(user.id, {
+      includeArchived: true,
+    });
+
+    expect(projects).toEqual(
+      expect.arrayContaining(
+        testProjects.map((p) => expect.objectContaining(p))
+      )
+    );
+
+    done();
+  });
+  it("Should select only projects modified after a given time", async (done) => {
+    const testProjects = [
+      { title: "project 1", id: "" },
+      { title: "project 2", id: "" },
+      { title: "project 3", id: "" },
+    ];
+
+    for (const project of testProjects) {
+      project.id = await pool.oneFirst<string>(sql`
+        INSERT INTO projects(user_id, title) 
+        VALUES (${user.id}, ${project.title})
+        RETURNING id;
+      `);
+    }
+
+    const lastModifiedTime = await pool.oneFirst<number>(sql`
+        SELECT last_modified FROM projects
+        WHERE id = ${testProjects[2].id}
+    `);
+
+    //TODO: fix the slonic Date parser and remove this workaround
+    const syncToken = new Date(lastModifiedTime).toISOString();
+
+    const projects = await Projects.selectAll(user.id, {
+      syncToken,
+    });
+
+    expect(projects).toEqual(
+      expect.arrayContaining([expect.objectContaining(testProjects[2])])
+    );
+
+    expect(projects).toEqual(
+      expect.not.arrayContaining([
+        ...testProjects.slice(0, 2).map((p) => expect.objectContaining(p)),
+      ])
+    );
+
     done();
   });
 });
