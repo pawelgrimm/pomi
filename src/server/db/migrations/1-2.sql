@@ -6,7 +6,7 @@ $$
 BEGIN
     -- ASSUMES the table has a column named exactly last_modified
     -- Fetch the timestamp of the start of the transaction
-    NEW.last_modified = current_timestamp;
+    NEW.last_modified = date_trunc('milliseconds', current_timestamp);
     RETURN NEW;
 END;
 $$ language plpgsql;
