@@ -3,7 +3,11 @@ import { v4 as uuid } from "uuid";
 import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
 import { ProjectModel, UserModel } from "../../../../shared/models";
 import { resetTestDb } from "../../../setupTest";
-import { sleep } from "../../../../shared/utils";
+import {
+  arrayContainingObjectsContaining,
+  sleep,
+  wrapObjectContaining,
+} from "../../../../shared/utils";
 
 let user: UserModel;
 
@@ -51,95 +55,63 @@ describe("Create Project", () => {
 });
 
 describe("Select All Projects", () => {
-  it("Should select all projects for a user", async (done) => {
-    const testProjects = [
-      { title: "project 1", id: "" },
-      { title: "project 2", id: "" },
-    ];
-    for (const project of testProjects) {
-      project.id = await pool.oneFirst<string>(sql`
-        INSERT INTO projects(user_id, title) 
-        VALUES (${user.id}, ${project.title})
-        RETURNING id;
-      `);
-    }
+  it("Should select all projects for a user", async () => {
+    const testProjects = await insertTestProjects(user.id, [{}, {}]);
+
+    const projects = Projects.selectAll(user.id);
+
+    return expect(projects).resolves.toEqual(
+      arrayContainingObjectsContaining(testProjects)
+    );
+  });
+
+  it("Should not select archived projects by default", async (done) => {
+    const testProjects = await insertTestProjects(user.id, [
+      {},
+      { isArchived: true },
+    ]);
 
     const projects = await Projects.selectAll(user.id);
 
     expect(projects).toEqual(
-      expect.arrayContaining(
-        testProjects.map((p) => expect.objectContaining(p))
-      )
+      arrayContainingObjectsContaining([testProjects[0]])
+    );
+    expect(projects).not.toEqual(
+      arrayContainingObjectsContaining([testProjects[1]])
     );
 
     done();
   });
-  it("Should not select archived projects by default", async (done) => {
-    const testProjects = [
-      { title: "project 1", id: "", isArchived: false },
-      { title: "project 2", id: "", isArchived: true },
-    ];
+  it("Should select archived projects when instructed to", async () => {
+    const testProjects = await insertTestProjects(user.id, [
+      {},
+      { isArchived: true },
+    ]);
 
-    for (const project of testProjects) {
-      project.id = await pool.oneFirst<string>(sql`
-        INSERT INTO projects(user_id, title, is_archived) 
-        VALUES (${user.id}, ${project.title}, ${project.isArchived})
-        RETURNING id;
-      `);
-    }
-
-    const projects = await Projects.selectAll(user.id);
-
-    expect(projects).toContainEqual(testProjects[0]);
-    expect(projects).not.toContainEqual(testProjects[1]);
-
-    done();
-  });
-  it("Should select archived projects when instructed to", async (done) => {
-    const testProjects = [
-      { title: "project 1", id: "", isArchived: false },
-      { title: "project 2", id: "", isArchived: true },
-    ];
-
-    for (const project of testProjects) {
-      project.id = await pool.oneFirst<string>(sql`
-        INSERT INTO projects(user_id, title, is_archived) 
-        VALUES (${user.id}, ${project.title}, ${project.isArchived})
-        RETURNING id;
-      `);
-    }
-
-    const projects = await Projects.selectAll(user.id, {
+    const projects = Projects.selectAll(user.id, {
       includeArchived: true,
     });
 
-    expect(projects).toEqual(
-      expect.arrayContaining(
-        testProjects.map((p) => expect.objectContaining(p))
-      )
+    return expect(projects).resolves.toEqual(
+      arrayContainingObjectsContaining(testProjects)
     );
-
-    done();
   });
   it("Should select only projects modified after a given time", async (done) => {
-    const testProjects = [
-      { title: "project 1", id: "" },
-      { title: "project 2", id: "" },
-      { title: "project 3", id: "" },
-    ];
+    const testProjects = await insertTestProjects(user.id, [{}, {}, {}], {
+      sleep: 5,
+    });
 
-    for (const project of testProjects) {
-      project.id = await pool.oneFirst<string>(sql`
-        INSERT INTO projects(user_id, title) 
-        VALUES (${user.id}, ${project.title})
-        RETURNING id;
-      `);
-      await sleep(5);
+    const lastProject = testProjects.pop();
+
+    if (!lastProject) {
+      throw new Error(
+        "Make sure there are at least 2 test projects to work with"
+      );
     }
 
     const lastModifiedTime = await pool.oneFirst<number>(sql`
         SELECT last_modified FROM projects
-        WHERE id = ${testProjects[2].id}
+        WHERE id = ${lastProject.id}
     `);
 
     //TODO: fix the slonic Date parser and remove this workaround
@@ -149,14 +121,10 @@ describe("Select All Projects", () => {
       syncToken,
     });
 
-    expect(projects).toEqual(
-      expect.arrayContaining([expect.objectContaining(testProjects[2])])
-    );
+    expect(projects).toEqual(arrayContainingObjectsContaining([lastProject]));
 
-    expect(projects).toEqual(
-      expect.not.arrayContaining([
-        ...testProjects.slice(0, 2).map((p) => expect.objectContaining(p)),
-      ])
+    expect(projects).not.toEqual(
+      arrayContainingObjectsContaining(testProjects)
     );
 
     done();
@@ -164,3 +132,32 @@ describe("Select All Projects", () => {
 
   it.todo("Should always return archived projects when using a sync token");
 });
+
+/**
+ * Insert an array of projects into the test database and add newly generated id to the project
+ * @param userId id of user to which these projects belong
+ * @param testProjects an array of projects
+ * @param options provide a sleep duration in milliseconds if desired
+ */
+const insertTestProjects = (
+  userId: string,
+  testProjects: ProjectModel[],
+  options?: { sleep?: number }
+): Promise<Array<ProjectModel & Required<Pick<ProjectModel, "id">>>> => {
+  return Promise.all(
+    testProjects.map(async (project, index) => {
+      const { title = `project ${index + 1}`, isArchived = false } = project;
+
+      const id = await pool.oneFirst<string>(sql`
+        INSERT INTO projects(user_id, title, is_archived) 
+        VALUES (${userId}, ${title}, ${isArchived})
+        RETURNING id;
+      `);
+
+      if (options?.sleep) {
+        await sleep(options.sleep);
+      }
+      return { ...project, id };
+    })
+  );
+};

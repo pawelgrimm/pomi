@@ -11,12 +11,18 @@ import {
   getDateFromEpochTime,
 } from "./time/time";
 
-import { sleep } from "./tests";
+import {
+  sleep,
+  wrapObjectContaining,
+  arrayContainingObjectsContaining,
+} from "./testing-helpers";
 
 import { getDurationWithUnits } from "./session";
 
 export {
   sleep,
+  wrapObjectContaining,
+  arrayContainingObjectsContaining,
   getDurationWithUnits,
   secondsToParts,
   getEpochTime,

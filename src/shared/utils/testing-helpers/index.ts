@@ -5,3 +5,9 @@
 export const sleep = (duration: number) => {
   return new Promise((resolve) => setTimeout(resolve, duration));
 };
+
+export const wrapObjectContaining = (objects: {}[]) =>
+  objects.map((object) => expect.objectContaining(object));
+
+export const arrayContainingObjectsContaining = (objects: {}[]) =>
+  expect.arrayContaining(wrapObjectContaining(objects));
