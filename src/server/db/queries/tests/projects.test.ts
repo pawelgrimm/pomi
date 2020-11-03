@@ -1,8 +1,9 @@
 import { Projects, pool } from "../../index";
 import { v4 as uuid } from "uuid";
-import { sql } from "slonik";
+import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
 import { ProjectModel, UserModel } from "../../../../shared/models";
 import { resetTestDb } from "../../../setupTest";
+import { sleep } from "../../../../shared/utils";
 
 let user: UserModel;
 
@@ -40,6 +41,12 @@ describe("Create Project", () => {
     );
     expect(projects).toContainEqual({ ...validProject, id: newProject.id });
     done();
+  });
+  it("Should fail gracefully when a non-existent user is provided", () => {
+    const newProject = Projects.create(uuid(), validProject);
+    return expect(newProject).rejects.toThrow(
+      ForeignKeyIntegrityConstraintViolationError
+    );
   });
 });
 
@@ -127,6 +134,7 @@ describe("Select All Projects", () => {
         VALUES (${user.id}, ${project.title})
         RETURNING id;
       `);
+      await sleep(5);
     }
 
     const lastModifiedTime = await pool.oneFirst<number>(sql`
@@ -153,4 +161,6 @@ describe("Select All Projects", () => {
 
     done();
   });
+
+  it.todo("Should always return archived projects when using a sync token");
 });
