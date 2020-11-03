@@ -23,7 +23,7 @@ CREATE TABLE projects
 (
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id       VARCHAR(255) REFERENCES users              NOT NULL,
-    title         VARCHAR(255),
+    title         VARCHAR(255)     DEFAULT ''                NOT NULL,
     is_archived   BOOLEAN          DEFAULT FALSE             NOT NULL,
     last_modified TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
@@ -43,8 +43,8 @@ CREATE TABLE tasks
     id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id       VARCHAR(255) REFERENCES users              NOT NULL,
     project_id    UUID REFERENCES projects                   NOT NULL,
-    title         VARCHAR(255),
-    is_completed  BOOLEAN          DEFAULT FALSE,
+    title         VARCHAR(255)     DEFAULT ''                NOT NULL,
+    is_completed  BOOLEAN          DEFAULT FALSE             NOT NULL,
     last_modified TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
 
@@ -63,15 +63,15 @@ CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long_break');
 CREATE TABLE sessions
 (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         VARCHAR(255) REFERENCES users NOT NULL,
-    task_id         UUID REFERENCES tasks         NOT NULL,
-    start_timestamp TIMESTAMPTZ                   NOT NULL,
-    duration        INTERVAL                      NOT NULL,
-    notes           TEXT,
-    type            SESSION_TYPE     DEFAULT 'session',
-    is_edited       BOOLEAN          DEFAULT FALSE,
-    is_retro_added  BOOLEAN          DEFAULT FALSE,
-    last_modified   TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
+    user_id         VARCHAR(255) REFERENCES users              NOT NULL,
+    task_id         UUID REFERENCES tasks                      NOT NULL,
+    start_timestamp TIMESTAMPTZ                                NOT NULL,
+    duration        INTERVAL                                   NOT NULL,
+    notes           TEXT             DEFAULT ''                NOT NULL,
+    type            SESSION_TYPE     DEFAULT 'session'         NOT NULL,
+    is_edited       BOOLEAN          DEFAULT FALSE             NOT NULL,
+    is_retro_added  BOOLEAN          DEFAULT FALSE             NOT NULL,
+    last_modified   TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
 
 CREATE TRIGGER update_sessions_last_modified
