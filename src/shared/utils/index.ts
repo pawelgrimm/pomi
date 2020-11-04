@@ -15,6 +15,7 @@ import {
   sleep,
   wrapObjectContaining,
   arrayContainingObjectsContaining,
+  insertTestProjects,
 } from "./testing-helpers";
 
 import { getDurationWithUnits } from "./session";
@@ -23,6 +24,7 @@ export {
   sleep,
   wrapObjectContaining,
   arrayContainingObjectsContaining,
+  insertTestProjects,
   getDurationWithUnits,
   secondsToParts,
   getEpochTime,
