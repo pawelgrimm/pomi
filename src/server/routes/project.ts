@@ -1,21 +1,13 @@
 import Router from "express-promise-router";
-import QueryString from "qs";
-import { authenticate, validationErrorHandler } from "../middleware";
+import {
+  authenticate,
+  parseSelectAllOptions,
+  validationErrorHandler,
+} from "../middleware";
 import { Projects } from "../db";
-import { SelectOptions } from "../db/queries";
 import { validateProject } from "../../shared/validators";
 
 const router = Router();
-
-const parseSelectAllOptions = (
-  options: QueryString.ParsedQs
-): SelectOptions => {
-  const { sync_token, include_archived } = options;
-  return {
-    syncToken: (sync_token && sync_token.toString()) || "*",
-    includeArchived: !!include_archived,
-  };
-};
 
 router.use(authenticate);
 
@@ -27,9 +19,8 @@ router.post("/", async (req, res) => {
 });
 
 /*      GET ALL PROJECTS FOR USER     */
-router.get("/", async (req, res) => {
-  const { userId } = res.locals;
-  const options = parseSelectAllOptions(req.query);
+router.get("/", parseSelectAllOptions, async (req, res) => {
+  const { userId, options } = res.locals;
   try {
     const projects = await Projects.select(userId, options);
     res.status(200).send({ projects });
