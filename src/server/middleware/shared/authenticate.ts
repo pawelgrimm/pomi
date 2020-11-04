@@ -3,7 +3,7 @@ import {
   project_id,
   client_email,
   private_key,
-} from "../config/firebaseServiceAccountKey.json";
+} from "../../config/firebaseServiceAccountKey.json";
 import { RequestHandler } from "express";
 
 const serviceAccount = {
