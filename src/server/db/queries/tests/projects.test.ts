@@ -1,10 +1,6 @@
-import { Projects, createPool } from "../../index";
+import { Projects, pool } from "../../index";
 import { v4 as uuid } from "uuid";
-import {
-  DatabasePoolType,
-  ForeignKeyIntegrityConstraintViolationError,
-  sql,
-} from "slonik";
+import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
 import { ProjectModel, UserModel } from "../../../../shared/models";
 import { resetTestDb } from "../../../setupTest";
 import {
@@ -14,10 +10,8 @@ import {
 } from "../../../../shared/utils";
 
 let user: UserModel;
-let pool: DatabasePoolType;
 
 beforeAll(() => {
-  pool = createPool();
   user = {
     id: uuid(),
     display_name: "projectsTestUser",
@@ -33,6 +27,10 @@ beforeAll(() => {
   });
 });
 
+afterAll(() => {
+  return pool.end();
+});
+
 let validProject: ProjectModel;
 
 beforeEach(() => {
@@ -40,10 +38,6 @@ beforeEach(() => {
     title: "some title",
     isArchived: true,
   };
-});
-
-afterAll(() => {
-  return pool.end();
 });
 
 describe("Create Project", () => {
