@@ -1,9 +1,9 @@
 import request from "supertest";
 import app from "../../server";
-import { createPool } from "../../db";
+import { pool } from "../../db";
 import { v4 as uuid } from "uuid";
 import { resetTestDb } from "../../setupTest";
-import { DatabasePoolType, sql } from "slonik";
+import { sql } from "slonik";
 import { UserModel } from "../../../shared/models";
 import {
   arrayContainingObjectsContaining,
@@ -12,10 +12,8 @@ import {
 } from "../../../shared/utils";
 
 let user: UserModel;
-let pool: DatabasePoolType;
 
 beforeAll(() => {
-  pool = createPool();
   user = {
     id: uuid(),
     display_name: "projectsTestUser",
@@ -95,8 +93,11 @@ describe("POST project/", () => {
 });
 
 describe("GET projects/", () => {
-  it("Should get all projects", async (done) => {
+  it("Should get all (unarchived) projects", async (done) => {
     const testProjects = await insertTestProjects(user.id, [{}, {}, {}]);
+    const archivedProject = await insertTestProjects(user.id, [
+      { isArchived: true },
+    ]);
 
     const { body } = await request(app)
       .get("/api/projects")
@@ -105,6 +106,9 @@ describe("GET projects/", () => {
 
     expect(body).toEqual({
       projects: arrayContainingObjectsContaining(testProjects),
+    });
+    expect(body).not.toEqual({
+      projects: arrayContainingObjectsContaining(archivedProject),
     });
     done();
   });
@@ -134,8 +138,62 @@ describe("GET projects/", () => {
     );
     done();
   });
-  it.todo("A bad sync token should return a 422 error");
-  it.todo("Should get projects including archived projects");
+  it("A bad sync token should return a 422 error", async (done) => {
+    const syncToken = "this-is-not-an-iso-8601-date";
+
+    const { body } = await request(app)
+      .get(`/api/projects?sync_token=${syncToken}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .set("X-Test-Suppress-Error-Logging", "true")
+      .expect(422);
+    expect(body).toEqual({
+      errors: {
+        paths: arrayContainingObjectsContaining([
+          {
+            name: "syncToken",
+            message: /could not be parsed/,
+          },
+        ]),
+      },
+    });
+    done();
+  });
+  it("A bad value for includeArchived should return a 422 error", async (done) => {
+    const { body } = await request(app)
+      .get(`/api/projects?include_archived=tamales`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .set("X-Test-Suppress-Error-Logging", "true")
+      .expect(422);
+
+    expect(body).toEqual({
+      errors: {
+        paths: arrayContainingObjectsContaining([
+          {
+            name: "includeArchived",
+            message: /could not be parsed/,
+          },
+        ]),
+      },
+    });
+    done();
+  });
+  it("Should get projects including archived projects", async (done) => {
+    const testProjects = await insertTestProjects(user.id, [
+      {},
+      { isArchived: true },
+      {},
+    ]);
+
+    const { body } = await request(app)
+      .get("/api/projects?include_archived=1")
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200);
+
+    expect(body).toEqual({
+      projects: arrayContainingObjectsContaining(testProjects),
+    });
+    done();
+  });
   it.todo("Should return correctly when user has no projects");
 });
 
