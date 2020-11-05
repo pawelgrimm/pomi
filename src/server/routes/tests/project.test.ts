@@ -9,6 +9,7 @@ import {
   arrayContainingObjectsContaining,
   getSyncTokenForProject,
   insertTestProjects,
+  wrapObjectContaining,
 } from "../../../shared/utils";
 
 let user: UserModel;
@@ -194,10 +195,50 @@ describe("GET projects/", () => {
     });
     done();
   });
-  it.todo("Should return correctly when user has no projects");
+  it("Should return correctly when user has no projects", async (done) => {
+    const userId = await pool.query(sql`INSERT INTO users(id, display_name, email) 
+       VALUES (${uuid()}, 'new_user', 'anotheremailtest@example.com')`);
+
+    const { body } = await request(app)
+      .get("/api/projects")
+      .set("Authorization", `Bearer ${userId}`)
+      .expect(404);
+
+    expect(body).toEqual({
+      projects: [],
+    });
+    done();
+  });
 });
 
 describe("GET projects/:id", () => {
-  it.todo("Should get specific projects");
-  it.todo("Should return correctly when project is not found");
+  it("Should get specific projects", async () => {
+    await insertTestProjects(user.id, [{}, {}, {}]);
+    const specificProject = await insertTestProjects(user.id, [
+      { isArchived: true },
+    ]);
+
+    const body = request(app)
+      .get(`/api/projects/${specificProject[0].id}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200)
+      .then((res) => res.body);
+
+    return expect(body).resolves.toEqual({
+      project: expect.objectContaining(specificProject[0]),
+    });
+  });
+  it("Should return correctly when project is not found", async () => {
+    await insertTestProjects(user.id, [{}, {}, {}]);
+
+    const body = request(app)
+      .get(`/api/projects/${uuid()}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(404)
+      .then((res) => res.body);
+
+    return expect(body).resolves.toEqual({
+      project: null,
+    });
+  });
 });

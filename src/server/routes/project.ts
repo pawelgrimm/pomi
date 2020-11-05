@@ -21,25 +21,18 @@ router.post("/", async (req, res) => {
 /*      GET ALL PROJECTS FOR USER     */
 router.get("/", parseOptions, async (req, res) => {
   const { userId, options } = res.locals;
-  try {
-    const projects = await Projects.select(userId, options);
-    res.status(200).send({ projects });
-  } catch (e) {
-    console.error(e);
-    res.status(500).send();
-  }
+  const projects = await Projects.select(userId, options);
+
+  res.status(projects.length > 0 ? 200 : 404).send({ projects });
 });
 
 /*      GET PROJECT BY ID    */
 router.get("/:id", async (req, res) => {
   const { userId } = res.locals;
   const id = req.params.id;
-  try {
-    const project = await Projects.selectOne(userId, id);
-    res.status(200).send({ project });
-  } catch {
-    res.status(500).send();
-  }
+  const project = await Projects.selectOne(userId, id);
+
+  res.status(project ? 200 : 404).send({ project });
 });
 
 router.use(validationErrorHandler);
