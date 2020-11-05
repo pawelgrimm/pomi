@@ -44,15 +44,15 @@ describe("Authorization", () => {
   it("should require authorization on all paths", async (done) => {
     await request(app)
       .post("/api/projects")
-      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .set("X-Test-Suppress-Error-Logging", "true")
       .expect(401);
     await request(app)
       .get("/api/projects")
-      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .set("X-Test-Suppress-Error-Logging", "true")
       .expect(401);
     await request(app)
       .get("/api/projects/123")
-      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .set("X-Test-Suppress-Error-Logging", "true")
       .expect(401);
     done();
   });
@@ -81,7 +81,7 @@ describe("POST project/", () => {
     const { body } = await request(app)
       .post("/api/projects")
       .set("Authorization", `Bearer ${user.id}`)
-      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .set("X-Test-Suppress-Error-Logging", "true")
       .send({ isArchived: "black beans" })
       .expect(422);
 
