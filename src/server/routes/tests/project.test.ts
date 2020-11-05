@@ -1,18 +1,21 @@
 import request from "supertest";
 import app from "../../server";
-import { close, pool } from "../../db";
+import { createPool } from "../../db";
 import { v4 as uuid } from "uuid";
 import { resetTestDb } from "../../setupTest";
-import { sql } from "slonik";
+import { DatabasePoolType, sql } from "slonik";
 import { UserModel } from "../../../shared/models";
 import {
   arrayContainingObjectsContaining,
+  getSyncTokenForProject,
   insertTestProjects,
 } from "../../../shared/utils";
 
 let user: UserModel;
+let pool: DatabasePoolType;
 
 beforeAll(() => {
+  pool = createPool();
   user = {
     id: uuid(),
     display_name: "projectsTestUser",
@@ -29,7 +32,7 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  close().then();
+  return pool.end();
 });
 
 const validProject = {
@@ -39,9 +42,18 @@ const validProject = {
 
 describe("Authorization", () => {
   it("should require authorization on all paths", async (done) => {
-    await request(app).post("/api/projects").expect(401);
-    await request(app).get("/api/projects").expect(401);
-    await request(app).get("/api/projects/123").expect(401);
+    await request(app)
+      .post("/api/projects")
+      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .expect(401);
+    await request(app)
+      .get("/api/projects")
+      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .expect(401);
+    await request(app)
+      .get("/api/projects/123")
+      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
+      .expect(401);
     done();
   });
 });
@@ -96,7 +108,33 @@ describe("GET projects/", () => {
     });
     done();
   });
-  it.todo("Should get new projects");
+  it("Should get only new projects", async (done) => {
+    const testProjects = await insertTestProjects(user.id, [{}, {}, {}], {
+      sleep: 5,
+    });
+
+    const lastProject = testProjects.pop();
+
+    if (!lastProject) {
+      throw new Error("testProjects must have at least 2 projects");
+    }
+
+    const syncToken = await getSyncTokenForProject(lastProject.id);
+
+    const { body } = await request(app)
+      .get(`/api/projects?sync_token=${syncToken}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200);
+
+    expect(body).toEqual({
+      projects: arrayContainingObjectsContaining([lastProject]),
+    });
+    expect(body?.projects).not.toEqual(
+      arrayContainingObjectsContaining(testProjects)
+    );
+    done();
+  });
+  it.todo("A bad sync token should return a 422 error");
   it.todo("Should get projects including archived projects");
   it.todo("Should return correctly when user has no projects");
 });
