@@ -19,7 +19,6 @@
     "migrate-db": "sh src/server/db/migrations/migrate.sh",
     "reset-dev-db": "yarn migrate-db dev 1 && yarn migrate-db dev",
     "reset-test-db": "yarn migrate-db test 1 && yarn migrate-db test",
-
     "test:server": "jest --config src/server/jest.config.js --watch",
     "test:shared": "jest --config src/shared/jest.config.js --watch",
     "killnode": "kill -9 $(lsof -t -i:3001)"
@@ -47,6 +46,7 @@
     "@types/supertest": "2.0.10",
     "@types/uuid": "8.3.0",
     "axios": "0.20.0",
+    "camelcase-keys": "6.2.2",
     "classnames": "2.2.6",
     "comlink": "4.3.0",
     "concurrently": "5.3.0",
