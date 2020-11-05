@@ -1,7 +1,8 @@
 import { isValid, parseISO } from "date-fns";
 import { ProjectModel } from "../../../shared/models";
-import { DatabasePoolType, InvalidInputError, sql } from "slonik";
+import { DatabasePoolType, sql } from "slonik";
 import { raw } from "slonik-sql-tag-raw";
+import { ParseOptionsError } from "../../errors";
 
 const RETURN_COLS = raw("id, title, is_archived");
 
@@ -34,7 +35,10 @@ const bindProjectQueries = (pool: DatabasePoolType) => {
       options?: SelectOptions
     ): Promise<Readonly<ProjectModel[]>> => {
       const whereClauses = [sql`user_id = ${userId}`];
-      whereClauses.push(...buildAdditionalWhereClauses(options));
+
+      whereClauses.push(
+        ...buildAdditionalWhereClauses(parseSelectAllOptions(options))
+      );
 
       return pool.any(sql`
         SELECT ${RETURN_COLS} FROM projects
@@ -77,17 +81,22 @@ export type SelectOptions = {
  * Parse a SelectOptions object, validate the options, and set defaults for undefined options.
  * @param {SelectOptions} options - options provided to select()
  */
-const parseSelectAllOptions = (
-  options?: SelectOptions
+export const parseSelectAllOptions = (
+  options: SelectOptions = {}
 ): Required<SelectOptions> => {
-  if (options?.syncToken && !isValid(parseISO(options.syncToken))) {
-    throw new InvalidInputError(
-      '"syncToken" was supplied in options, but could not be parsed'
-    );
+  const { syncToken = "*", includeArchived = false } = options;
+  if (syncToken !== "*" && !isValid(parseISO(syncToken))) {
+    throw new ParseOptionsError([
+      {
+        name: syncToken,
+        message: `"${syncToken}" could not be parsed as an ISO 8601 date string.`,
+      },
+    ]);
   }
+
   return {
-    syncToken: options?.syncToken || "*",
-    includeArchived: options?.includeArchived || false,
+    syncToken,
+    includeArchived,
   };
 };
 
@@ -95,8 +104,8 @@ const parseSelectAllOptions = (
  * Build additional where clauses based on options
  * @param options {SelectOptions} options - options provided to select()
  */
-const buildAdditionalWhereClauses = (options?: SelectOptions) => {
-  const { includeArchived, syncToken } = parseSelectAllOptions(options);
+const buildAdditionalWhereClauses = (options: Required<SelectOptions>) => {
+  const { includeArchived, syncToken } = options;
   const whereClauses = [];
   if (syncToken !== "*") {
     whereClauses.push(sql`last_modified >= ${syncToken}`);
