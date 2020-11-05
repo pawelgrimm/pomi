@@ -18,10 +18,10 @@ admin.initializeApp({
 });
 
 export const authenticate: RequestHandler = async (req, res, next) => {
-  const authHeader = req.header("Authorization") as string;
+  const authHeader = req.header("Authorization");
   try {
     // TODO: parse Bearer more elegantly for testing
-    const uid = authHeader.slice(7);
+    const uid = authHeader?.slice(7);
     if (!uid) {
       res.status(401);
       next(new Error("No auth header"));
