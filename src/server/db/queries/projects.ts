@@ -70,25 +70,30 @@ export { bindProjectQueries };
  * @typedef {Object} SelectOptions
  * @property {string} syncToken - token that indicates last sync time; when provided,
  *  only projects modified after the last sync are queried
- * @property {boolean} includeArchived - indicates if archived projects should be queried
+ * @property {T extends string | boolean = boolean} includeArchived - indicates if archived projects should be queried
  */
-export type SelectOptions = {
+export type SelectOptions<T extends string | boolean = boolean> = {
   syncToken?: string;
-  includeArchived?: boolean;
+  includeArchived?: T;
 };
 
 /**
  * Parse a SelectOptions object, validate the options, and set defaults for undefined options.
  * @param {SelectOptions} options - options provided to select()
  */
-export const parseSelectAllOptions = (
-  options: SelectOptions = {}
+export const parseSelectAllOptions = <T extends string | boolean = boolean>(
+  options: SelectOptions<T> = {}
 ): Required<SelectOptions> => {
-  const { syncToken = "*", includeArchived = false } = options;
+  const { syncToken = "*" } = options;
+  let includeArchived = parseStringToBoolean(
+    "includeArchived",
+    options.includeArchived
+  );
+
   if (syncToken !== "*" && !isValid(parseISO(syncToken))) {
     throw new ParseOptionsError([
       {
-        name: syncToken,
+        name: "syncToken",
         message: `"${syncToken}" could not be parsed as an ISO 8601 date string.`,
       },
     ]);
@@ -98,6 +103,39 @@ export const parseSelectAllOptions = (
     syncToken,
     includeArchived,
   };
+};
+
+/**
+ * Convert a string value to a boolean
+ * @param pathName - name of path being tested, passed to error if thrown
+ * @param value a string value representing a boolean
+ */
+const parseStringToBoolean = (
+  pathName: string,
+  value?: string | boolean
+): boolean => {
+  // undefined, null, false
+  if (!value) {
+    return false;
+  }
+  // true
+  if (typeof value === "boolean") {
+    return value;
+  }
+  // strings
+  value = value.toLowerCase();
+  if (value === "0" || value === "false") {
+    return false;
+  } else if (value === "1" || value === "true") {
+    return true;
+  }
+
+  throw new ParseOptionsError([
+    {
+      name: pathName,
+      message: `"${value}" could not be parsed to a boolean value`,
+    },
+  ]);
 };
 
 /**
