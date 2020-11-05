@@ -1,5 +1,6 @@
 import express from "express";
 import { mountRoutes } from "./routes";
+import { logError } from "./middleware";
 
 const app = express();
 app.use(express.json());
@@ -9,5 +10,7 @@ mountRoutes(app);
 app.get("/*", function (req, res) {
   res.sendFile("index.html");
 });
+
+app.use(logError);
 
 export default app;
