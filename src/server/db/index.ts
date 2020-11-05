@@ -1,4 +1,4 @@
-import { pool, createPool, DatabasePoolType } from "./slonik";
+import { pool, closePool, DatabasePoolType } from "./slonik";
 import {
   /* PLOP_INJECT_IMPORT */
   bindProjectQueries,
@@ -22,5 +22,5 @@ export const Projects = bindProjectQueries(pool);
 export const Sessions = bindSessionQueries(pool);
 export const Users = bindUserQueries(pool);
 
-export { pool, createPool };
+export { pool, closePool };
 export type { DatabasePoolType };
