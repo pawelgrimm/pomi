@@ -1,5 +1,4 @@
-import { pool, close, DatabasePoolType } from "./slonik";
-//import { PG_CONNECTION_STRING } from "../config";
+import { pool, createPool, DatabasePoolType } from "./slonik";
 import {
   /* PLOP_INJECT_IMPORT */
   bindProjectQueries,
@@ -23,5 +22,5 @@ export const Projects = bindProjectQueries(pool);
 export const Sessions = bindSessionQueries(pool);
 export const Users = bindUserQueries(pool);
 
-export { pool, close };
+export { pool, createPool };
 export type { DatabasePoolType };

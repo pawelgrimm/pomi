@@ -54,3 +54,17 @@ export const insertTestProjects = async (
     })
   );
 };
+
+/**
+ * Get the sync token corresponding to a project
+ * @param projectId a project id
+ */
+export const getSyncTokenForProject = async (projectId: string) => {
+  const lastModifiedTime = await pool.oneFirst<number>(sql`
+        SELECT last_modified FROM projects
+        WHERE id = ${projectId}
+    `);
+
+  //TODO: fix the slonic Date parser and remove this workaround
+  return new Date(lastModifiedTime).toISOString();
+};

@@ -16,11 +16,13 @@ import {
   wrapObjectContaining,
   arrayContainingObjectsContaining,
   insertTestProjects,
+  getSyncTokenForProject,
 } from "./testing-helpers";
 
 import { getDurationWithUnits } from "./session";
 
 export {
+  getSyncTokenForProject,
   sleep,
   wrapObjectContaining,
   arrayContainingObjectsContaining,

@@ -1,4 +1,4 @@
-import { createPool, DatabasePoolType } from "slonik";
+import { createPool as createPoolSlonik, DatabasePoolType } from "slonik";
 import { createFieldNameTransformationInterceptor } from "slonik-interceptor-field-name-transformation";
 import { createQueryLoggingInterceptor } from "slonik-interceptor-query-logging";
 import { PG_CONNECTION_STRING } from "../config";
@@ -12,14 +12,16 @@ const interceptors = [
 ];
 
 /**
- * Set up a client pool connected to the application database
+ * Create a pool, for tests
  */
-const pool = createPool(PG_CONNECTION_STRING, { interceptors });
+const createPool = () => {
+  return createPoolSlonik(PG_CONNECTION_STRING, { interceptors });
+};
 
 /**
- * End the client pool's connection
+ * Set up a client pool connected to the application database
  */
-const close = () => pool.end();
+const pool = createPool();
 
-export { pool, close };
+export { pool, createPool };
 export type { DatabasePoolType };

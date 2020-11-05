@@ -1,16 +1,23 @@
-import { Projects, pool } from "../../index";
+import { Projects, createPool } from "../../index";
 import { v4 as uuid } from "uuid";
-import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
+import {
+  DatabasePoolType,
+  ForeignKeyIntegrityConstraintViolationError,
+  sql,
+} from "slonik";
 import { ProjectModel, UserModel } from "../../../../shared/models";
 import { resetTestDb } from "../../../setupTest";
 import {
   arrayContainingObjectsContaining,
+  getSyncTokenForProject,
   insertTestProjects,
 } from "../../../../shared/utils";
 
 let user: UserModel;
+let pool: DatabasePoolType;
 
 beforeAll(() => {
+  pool = createPool();
   user = {
     id: uuid(),
     display_name: "projectsTestUser",
@@ -33,6 +40,10 @@ beforeEach(() => {
     title: "some title",
     isArchived: true,
   };
+});
+
+afterAll(() => {
+  return pool.end();
 });
 
 describe("Create Project", () => {
@@ -122,13 +133,7 @@ describe("Select All Projects", () => {
       );
     }
 
-    const lastModifiedTime = await pool.oneFirst<number>(sql`
-        SELECT last_modified FROM projects
-        WHERE id = ${lastProject.id}
-    `);
-
-    //TODO: fix the slonic Date parser and remove this workaround
-    const syncToken = new Date(lastModifiedTime).toISOString();
+    const syncToken = await getSyncTokenForProject(lastProject.id);
 
     const projects = await Projects.select(user.id, {
       syncToken,
@@ -157,13 +162,7 @@ describe("Select All Projects", () => {
       throw new Error("testProjects must start with at least 3 projects");
     }
 
-    const lastModifiedTime = await pool.oneFirst<number>(sql`
-        SELECT last_modified FROM projects
-        WHERE id = ${lastProject.id}
-    `);
-
-    //TODO: fix the slonic Date parser and remove this workaround
-    const syncToken = new Date(lastModifiedTime).toISOString();
+    const syncToken = await getSyncTokenForProject(lastProject.id);
 
     const projects = await Projects.select(user.id, { syncToken });
 
