@@ -1,5 +1,4 @@
-import { authenticate } from "./shared/authenticate";
-import { validationErrorHandler } from "./shared/validationErrorHandler";
-import { parseSelectAllOptions } from "./project";
+import { authenticate, validationErrorHandler, logError } from "./shared";
+import { parseOptions } from "./project";
 
-export { authenticate, validationErrorHandler, parseSelectAllOptions };
+export { authenticate, validationErrorHandler, logError, parseOptions };
