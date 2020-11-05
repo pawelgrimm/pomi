@@ -4,7 +4,7 @@ type Path = {
 };
 
 export class ParseOptionsError extends Error {
-  private paths: Path[];
+  paths: Path[];
 
   constructor(paths: Path[]) {
     super();
