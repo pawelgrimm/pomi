@@ -1,10 +1,14 @@
 import request from "supertest";
 import app from "../../server";
-import { Projects, close, pool } from "../../db";
+import { close, pool } from "../../db";
 import { v4 as uuid } from "uuid";
 import { resetTestDb } from "../../setupTest";
 import { sql } from "slonik";
 import { UserModel } from "../../../shared/models";
+import {
+  arrayContainingObjectsContaining,
+  insertTestProjects,
+} from "../../../shared/utils";
 
 let user: UserModel;
 
@@ -65,6 +69,7 @@ describe("POST project/", () => {
     const { body } = await request(app)
       .post("/api/projects")
       .set("Authorization", `Bearer ${user.id}`)
+      .set("X-Test-Options", JSON.stringify({ suppressErrorLogging: true }))
       .send({ isArchived: "black beans" })
       .expect(422);
 
@@ -78,7 +83,19 @@ describe("POST project/", () => {
 });
 
 describe("GET projects/", () => {
-  it.todo("Should get all projects");
+  it("Should get all projects", async (done) => {
+    const testProjects = await insertTestProjects(user.id, [{}, {}, {}]);
+
+    const { body } = await request(app)
+      .get("/api/projects")
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200);
+
+    expect(body).toEqual({
+      projects: arrayContainingObjectsContaining(testProjects),
+    });
+    done();
+  });
   it.todo("Should get new projects");
   it.todo("Should get projects including archived projects");
   it.todo("Should return correctly when user has no projects");
