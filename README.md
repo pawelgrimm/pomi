@@ -115,7 +115,7 @@ It's **not recommended** since the app is not yet released, but if you'd like to
      PORT=3001
      ```
      
-5. Provision a new [Firebase Authentication application](https://firebase.google.com/docs/auth/), download the service account key, name it `firebaseServiceAccountKey.json`, and place it in `src/server/config/`
+5. Provision a new [Firebase Authentication application](https://firebase.google.com/docs/auth/web/custom-auth#before-you-begin), download the service account key, name them `firebaseServiceAccountKey.json`, and move to `src/server/config/`
 
 6. Install dependencies: 
 
