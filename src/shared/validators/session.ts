@@ -28,9 +28,9 @@ const calculateDuration = (parent: any): number | undefined => {
  * Schema used to convert client sessions into database sessions
  */
 const databaseSessionSchema = Joi.object({
-  id: Joi.number().optional(),
+  id: Joi.string().uuid({ version: "uuidv4" }).optional(),
   user_id: Joi.string().max(255).label("userId"),
-  task_id: Joi.number().label("taskId"),
+  task_id: Joi.string().uuid({ version: "uuidv4" }).optional().label("taskId"),
   start_timestamp: Joi.date().iso().label("startTimestamp"),
   duration: Joi.number().optional().default(calculateDuration),
   // end_timestamp must be after duration so that the calculation
@@ -38,13 +38,13 @@ const databaseSessionSchema = Joi.object({
   end_timestamp: Joi.date().iso().strip().label("endTimestamp"),
   notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
   type: Joi.string().allow("session", "break", "long-break"),
-  retro_added: Joi.boolean().optional().default(false).label("retroAdded"),
+  is_retro_added: Joi.boolean().optional().default(false).label("isRetroAdded"),
 })
   .rename("userId", "user_id")
   .rename("taskId", "task_id")
   .rename("startTimestamp", "start_timestamp")
   .rename("endTimestamp", "end_timestamp")
-  .rename("retroAdded", "retro_added");
+  .rename("isRetroAdded", "is_retro_added");
 
 /**
  * Validate and convert a ClientSessionModel-like object into a DatabaseSessionModel
@@ -84,9 +84,9 @@ const calculateEndTimestamp = (parent: any): Date | undefined => {
  * Schema used to convert and hydrate database sessions into client sessions
  */
 const clientSessionSchema = Joi.object({
-  id: Joi.number().optional(),
+  id: Joi.string().uuid({ version: "uuidv4" }).optional(),
   userId: Joi.string().label("user_id"),
-  taskId: Joi.number().label("task_id"),
+  taskId: Joi.string().uuid({ version: "uuidv4" }).label("task_id"),
   startTimestamp: Joi.date().label("start_timestamp"),
   endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
   // duration must be after end_timestamp so that the calculation
@@ -94,12 +94,12 @@ const clientSessionSchema = Joi.object({
   duration: Joi.number().strip(),
   notes: Joi.string().trim().optional(),
   type: Joi.string().allow("session", "break", "long-break"),
-  retroAdded: Joi.boolean().optional().label("retro_added"),
+  isRetroAdded: Joi.boolean().optional().label("retro_added"),
 })
   .rename("user_id", "userId")
   .rename("task_id", "taskId")
   .rename("start_timestamp", "startTimestamp")
-  .rename("retro_added", "retroAdded");
+  .rename("is_retro_added", "isRetroAdded");
 
 /**
  * Validate and convert a DatabaseSessionModel object into a ClientSessionModel object

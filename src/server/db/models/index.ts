@@ -4,5 +4,8 @@ import { ProjectSelectOptions } from "../../../shared/types";
 import { Task } from "./task";
 import { TaskSelectOptions } from "../../../shared/types";
 
-export { Project, Task };
-export type { ProjectSelectOptions, TaskSelectOptions };
+import { Session } from "./session";
+import { SessionSelectOptions } from "../../../shared/types";
+
+export { Project, Task, Session };
+export type { ProjectSelectOptions, TaskSelectOptions, SessionSelectOptions };

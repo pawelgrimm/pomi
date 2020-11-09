@@ -21,7 +21,7 @@ import {
   insertTestTasks,
 } from "./testing-helpers";
 
-import { getDurationWithUnits } from "./session";
+import { getDurationWithUnits } from "./sessions";
 
 import { parseStringToBoolean, validateSyncToken } from "./models";
 

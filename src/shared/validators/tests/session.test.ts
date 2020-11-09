@@ -1,27 +1,29 @@
 import { differenceInMilliseconds } from "date-fns";
 import { validateClientSession, hydrateDatabaseSession } from "../session";
 import { ClientSessionModel, DatabaseSessionModel } from "../../types";
-
+import { v4 as uuid } from "uuid";
 let validClientSession: ClientSessionModel;
 let validDatabaseSession: Omit<DatabaseSessionModel, "start_timestamp"> & {
   start_timestamp: string;
 };
 beforeEach(() => {
+  const taskId = uuid();
+  const id = uuid();
   validClientSession = {
     userId: "sodf5%$32random",
-    taskId: 456,
+    taskId,
     startTimestamp: new Date("2020-10-23T15:00:00.000Z"),
     endTimestamp: new Date("2020-10-23T16:00:00.000Z"),
     type: "break",
   };
   validDatabaseSession = {
-    id: 123,
+    id,
     user_id: "sodf5%$32random",
-    task_id: 457,
+    task_id: taskId,
     start_timestamp: "2020-10-23T15:00:00.000Z",
     duration: 3600000,
     type: "break",
-    retro_added: false,
+    is_retro_added: false,
   };
 });
 
@@ -41,7 +43,7 @@ describe("Session Validator (client to database)", () => {
       user_id: userId,
       task_id: taskId,
       start_timestamp: startTimestamp,
-      retro_added: false,
+      is_retro_added: false,
       duration: expect.any(Number),
     });
   });
@@ -69,9 +71,9 @@ describe("Session Validator (client to database)", () => {
     const renamedSession = validateClientSession(validClientSession);
     expect(renamedSession).toMatchObject({
       user_id: expect.any(String),
-      task_id: expect.any(Number),
+      task_id: expect.any(String),
       start_timestamp: expect.any(Date),
-      retro_added: expect.any(Boolean),
+      is_retro_added: expect.any(Boolean),
     });
   });
   it("Should calculate duration correctly", () => {
@@ -116,7 +118,7 @@ describe("Session Validator (database to client)", () => {
       task_id,
       start_timestamp,
       duration,
-      retro_added,
+      is_retro_added,
       ...rest
     } = validDatabaseSession;
     const validatedSession = hydrateDatabaseSession(validDatabaseSession);
@@ -126,7 +128,7 @@ describe("Session Validator (database to client)", () => {
       userId: user_id,
       taskId: task_id,
       startTimestamp: new Date(start_timestamp),
-      retroAdded: retro_added,
+      isRetroAdded: is_retro_added,
       endTimestamp: expect.any(Date),
     });
   });
