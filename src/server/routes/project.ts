@@ -1,9 +1,6 @@
 import Router from "express-promise-router";
-import {
-  authenticate,
-  parseOptions,
-  validationErrorHandler,
-} from "../middleware";
+import { authenticate, validationErrorHandler } from "../middleware";
+import { parseOptions } from "../middleware/project";
 import { Projects } from "../db";
 import { validateProject } from "../../shared/validators";
 
