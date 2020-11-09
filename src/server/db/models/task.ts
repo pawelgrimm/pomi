@@ -15,10 +15,10 @@ export class Task implements Model {
   /**
    * Create one task in the tasks table
    * @param userId - id of user assigned to object
-   * @param project - project to insert
+   * @param task - task to insert
    */
-  async create(userId: string, project: TaskModel): Promise<TaskModel> {
-    const { title = "", projectId = null, isCompleted = false } = project;
+  async create(userId: string, task: TaskModel): Promise<TaskModel> {
+    const { title = "", projectId = null, isCompleted = false } = task;
     return this.pool.one(sql`
         INSERT INTO tasks(user_id, project_id, title, is_completed)
         VALUES (${userId}, 

@@ -1,4 +1,4 @@
-import { ProjectModel } from "../../types";
+import { ProjectModel, TaskModel } from "../../types";
 import { pool } from "../../../server/db";
 import { sql } from "slonik";
 
@@ -67,4 +67,61 @@ export const getSyncTokenForProject = async (projectId: string) => {
 
   //TODO: fix the slonic Date parser and remove this workaround
   return new Date(lastModifiedTime).toISOString();
+};
+
+/**
+ * Get the sync token corresponding to an object
+ * @param model name of the table the object is stored in
+ * @param id the object's id
+ */
+export const getSyncTokenForObject = async (model: string, id: string) => {
+  const table = sql.identifier([model]);
+  const lastModifiedTime = await pool.oneFirst<number>(sql`
+        SELECT last_modified FROM ${table}
+        WHERE id = ${id}
+    `);
+
+  //TODO: fix the slonic Date parser and remove this workaround
+  return new Date(lastModifiedTime).toISOString();
+};
+
+/**
+ * Insert an array of tasks into the test database and add newly generated id to the task
+ * @param userId id of user to which these tasks belong
+ * @param testTasks an array of tasks
+ * @param options provide a sleep duration in milliseconds if desired
+ */
+export const insertTestTasks = async (
+  userId: string,
+  testTasks: TaskModel[],
+  options?: { sleep?: number }
+): Promise<Array<TaskModel & Required<Pick<TaskModel, "id">>>> => {
+  return Promise.all(
+    testTasks.map(async (task, index) => {
+      if (options?.sleep) {
+        const sleepDuration = options.sleep * index;
+        await sleep(sleepDuration);
+      }
+
+      const {
+        title = `task ${index + 1}`,
+        isCompleted = false,
+        projectId = null,
+      } = task;
+
+      const id = await pool.oneFirst<string>(sql`
+        INSERT INTO tasks(user_id, 
+                          title, 
+                          project_id, 
+                          is_completed) 
+        VALUES (${userId}, 
+                ${title}, 
+                COALESCE(${projectId}, (SELECT default_project FROM users WHERE id = ${userId})), 
+                ${isCompleted})
+        RETURNING id;
+      `);
+
+      return { ...task, id };
+    })
+  );
 };

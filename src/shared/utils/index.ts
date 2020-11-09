@@ -17,6 +17,8 @@ import {
   arrayContainingObjectsContaining,
   insertTestProjects,
   getSyncTokenForProject,
+  getSyncTokenForObject,
+  insertTestTasks,
 } from "./testing-helpers";
 
 import { getDurationWithUnits } from "./session";
@@ -24,6 +26,8 @@ import { getDurationWithUnits } from "./session";
 import { parseStringToBoolean, validateSyncToken } from "./models";
 
 export {
+  insertTestTasks,
+  getSyncTokenForObject,
   validateSyncToken,
   parseStringToBoolean,
   getSyncTokenForProject,
