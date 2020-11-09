@@ -1,19 +1,23 @@
 import Joi from "joi";
 import { TaskModel } from "../types";
 
+/**
+ * A Joi schema representing a TaskModel
+ */
 const taskSchema = Joi.object({
-  id: Joi.number().optional(),
+  id: Joi.string().uuid({ version: "uuidv4" }).optional(),
+  projectId: Joi.string().uuid({ version: "uuidv4" }).optional(),
+  title: Joi.string().max(255).optional(),
+  isCompleted: Joi.boolean().optional(),
 });
 
-export const validateTask = (
-  task: any,
-  options: { isPartial: boolean } = { isPartial: false }
-): TaskModel => {
+/**
+ * Validate and parse an object into as a Talk
+ * @param task an object representing a task
+ */
+export const validateTask = (task: any): TaskModel => {
   return Joi.attempt(
     task,
-    taskSchema.options({
-      stripUnknown: true,
-      presence: options.isPartial ? "optional" : "required",
-    })
+    taskSchema.options({ stripUnknown: true })
   ) as TaskModel;
 };
