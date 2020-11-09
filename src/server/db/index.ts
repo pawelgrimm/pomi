@@ -1,10 +1,10 @@
 import { pool, closePool, DatabasePoolType } from "./slonik";
 import {
   /* PLOP_INJECT_IMPORT */
-  bindProjectQueries,
   bindSessionQueries,
   bindUserQueries,
 } from "./queries";
+import { Project } from "./models";
 
 /**
  * Set up a client pool connected to the application database
@@ -18,7 +18,7 @@ import {
 
 // Bind object-specific queries to query and expose them as an export
 /* PLOP_INJECT_BIND */
-export const Projects = bindProjectQueries(pool);
+export const Projects = new Project(pool);
 export const Sessions = bindSessionQueries(pool);
 export const Users = bindUserQueries(pool);
 
