@@ -1,7 +1,7 @@
 import { Projects, pool } from "../../index";
 import { v4 as uuid } from "uuid";
 import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
-import { ProjectModel, UserModel } from "../../../../shared/models";
+import { ProjectModel, UserModel } from "../../../../shared/types";
 import { resetTestDb } from "../../../setupTest";
 import {
   arrayContainingObjectsContaining,

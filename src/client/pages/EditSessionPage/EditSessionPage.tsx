@@ -17,7 +17,7 @@ import {
 } from "../../../shared/utils";
 import { Formik, Form, Field } from "formik";
 import { editButton } from "../../hooks/useAddSession/useAddSession";
-import { ClientSessionModel } from "../../../shared/models";
+import { ClientSessionModel } from "../../../shared/types";
 
 interface Props {
   children?: React.ReactNode;

@@ -1,5 +1,5 @@
 import { validateUser } from "../user";
-import { UserModel } from "../../models";
+import { UserModel } from "../../types";
 
 let validUser: UserModel;
 

@@ -1,4 +1,4 @@
-import { ProjectModel } from "../../models";
+import { ProjectModel } from "../../types";
 import { pool } from "../../../server/db";
 import { sql } from "slonik";
 

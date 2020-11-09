@@ -1,4 +1,4 @@
-import { DatabaseSessionModel } from "../../../shared/models";
+import { DatabaseSessionModel } from "../../../shared/types";
 import { getDurationWithUnits } from "../../../shared/utils";
 import { DatabasePoolType, sql } from "slonik";
 

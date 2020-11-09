@@ -1,4 +1,4 @@
-import { UserModel } from "../../../shared/models";
+import { UserModel } from "../../../shared/types";
 import { DatabasePoolType, sql } from "slonik";
 
 const bindUserQueries = (pool: DatabasePoolType) => {

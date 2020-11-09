@@ -1,4 +1,4 @@
-import { SessionType, SessionTypeString } from "../../models/session";
+import { SessionType, SessionTypeString } from "../../types/session";
 
 /**
  * Append "milliseconds" to a numeric value

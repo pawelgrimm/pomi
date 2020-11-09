@@ -1,5 +1,5 @@
 import { parseStringToBoolean, validateSyncToken } from "../models";
-import { ProjectSelectOptions } from "../../models";
+import { ProjectSelectOptions } from "../../types";
 
 /**
  * Parse a ProjectSelectOptions object, validate the options, and set defaults for undefined options.

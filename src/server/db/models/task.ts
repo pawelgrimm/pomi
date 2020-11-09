@@ -1,7 +1,7 @@
 import { DatabasePoolType, sql } from "slonik";
 import { raw } from "slonik-sql-tag-raw";
 import { Model } from "./model";
-import { TaskModel, TaskSelectOptions } from "../../../shared/models";
+import { TaskModel, TaskSelectOptions } from "../../../shared/types";
 import { parseSelectAllOptions } from "../../../shared/utils/tasks";
 
 const RETURN_COLS = raw("id, title, project_id, is_completed");

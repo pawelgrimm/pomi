@@ -4,8 +4,8 @@ import { ActionButton, TimerDisplay, TextField } from "../../components";
 import { ButtonGroup, Tab, Tabs } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useAddSession } from "../../hooks";
-import { ClientSessionModel } from "../../../shared/models";
-import { getSessionType } from "../../../shared/models/session";
+import { ClientSessionModel } from "../../../shared/types";
+import { getSessionType } from "../../../shared/types/session";
 
 const timerStartValues = [60 * 25, 60 * 5, 60 * 15];
 

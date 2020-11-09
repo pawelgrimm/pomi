@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { UserModel } from "../models";
+import { UserModel } from "../types";
 
 const userSchema = Joi.object({
   id: Joi.string().required().max(255),

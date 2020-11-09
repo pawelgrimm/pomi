@@ -1,6 +1,6 @@
 import { Model } from "./model";
 import { DatabasePoolType, sql } from "slonik";
-import { ProjectModel, ProjectSelectOptions } from "../../../shared/models";
+import { ProjectModel, ProjectSelectOptions } from "../../../shared/types";
 import { raw } from "slonik-sql-tag-raw";
 import { parseSelectAllOptions } from "../../../shared/utils/projects";
 

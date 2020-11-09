@@ -1,5 +1,5 @@
 import { parseStringToBoolean, validateSyncToken } from "../models";
-import { TaskSelectOptions } from "../../models";
+import { TaskSelectOptions } from "../../types";
 
 /**
  * Parse a TaskSelectOptions object, validate the options, and set defaults for undefined options.

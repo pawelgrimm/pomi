@@ -1,7 +1,7 @@
 import request from "supertest";
 import app from "../../server";
 import { Sessions } from "../../db";
-import { ClientSessionModel } from "../../../shared/models";
+import { ClientSessionModel } from "../../../shared/types";
 
 const session: ClientSessionModel = {
   taskId: 0,

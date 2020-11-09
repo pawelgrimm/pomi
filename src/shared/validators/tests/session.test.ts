@@ -1,6 +1,6 @@
 import { differenceInMilliseconds } from "date-fns";
 import { validateClientSession, hydrateDatabaseSession } from "../session";
-import { ClientSessionModel, DatabaseSessionModel } from "../../models";
+import { ClientSessionModel, DatabaseSessionModel } from "../../types";
 
 let validClientSession: ClientSessionModel;
 let validDatabaseSession: Omit<DatabaseSessionModel, "start_timestamp"> & {

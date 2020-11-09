@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ClientSessionModel } from "../../../shared/models";
+import { ClientSessionModel } from "../../../shared/types";
 import {
   validateClientSession,
   hydrateDatabaseSession,

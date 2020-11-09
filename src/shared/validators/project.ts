@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-import { ProjectModel } from "../models";
+import { ProjectModel } from "../types";
 
 const projectSchema = Joi.object({
   id: Joi.string().uuid({ version: "uuidv4" }).optional(),

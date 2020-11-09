@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { TaskModel } from "../models";
+import { TaskModel } from "../types";
 
 const taskSchema = Joi.object({
   id: Joi.number().optional(),

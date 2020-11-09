@@ -1,5 +1,5 @@
 import { validateProject } from "../project";
-import { ProjectModel } from "../../models";
+import { ProjectModel } from "../../types";
 
 let validProject: ProjectModel;
 

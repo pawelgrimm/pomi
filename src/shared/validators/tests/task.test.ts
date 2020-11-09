@@ -1,5 +1,5 @@
 import { validateTask } from "../task";
-import { TaskModel } from "../../models";
+import { TaskModel } from "../../types";
 
 let validTask: TaskModel;
 

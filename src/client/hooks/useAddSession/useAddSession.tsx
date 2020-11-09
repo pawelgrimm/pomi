@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import { postSession } from "../../services/session/session";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useHistory } from "react-router-dom";
-import { ClientSessionModel } from "../../../shared/models";
+import { ClientSessionModel } from "../../../shared/types";
 import { validateClientSession } from "../../../shared/validators";
 import { History } from "history";
 import { Button } from "@material-ui/core";

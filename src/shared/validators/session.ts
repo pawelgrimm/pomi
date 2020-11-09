@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { ClientSessionModel, DatabaseSessionModel } from "../models";
+import { ClientSessionModel, DatabaseSessionModel } from "../types";
 import { addMilliseconds, differenceInMilliseconds } from "date-fns";
 
 const NOTES_LENGTH_LIMIT = 1000;
