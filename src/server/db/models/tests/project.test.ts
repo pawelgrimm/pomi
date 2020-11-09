@@ -41,7 +41,7 @@ beforeEach(() => {
 });
 
 describe("Create Project", () => {
-  it("Should create a project successfully", async () => {
+  it("Should call the create function correctly", async () => {
     const newProject = await Projects.create(user.id, validProject);
     const projects = pool.any(
       sql`SELECT id, title, is_archived

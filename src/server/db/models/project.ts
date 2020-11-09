@@ -1,10 +1,8 @@
 import { Model } from "./model";
 import { DatabasePoolType, sql } from "slonik";
-import { isValid, parseISO } from "date-fns";
-import { ParseOptionsError } from "../../errors";
-import { parseStringToBoolean } from "../../../shared/utils/models";
-import { ProjectModel } from "../../../shared/models";
+import { ProjectModel, ProjectSelectOptions } from "../../../shared/models";
 import { raw } from "slonik-sql-tag-raw";
+import { parseSelectAllOptions } from "../../../shared/utils/projects";
 
 const RETURN_COLS = raw("id, title, is_archived");
 
@@ -31,15 +29,15 @@ export class Project implements Model {
   /**
    * Get multiple projects for a user
    * @param userId - id of project-owning user
-   * @param {SelectOptions} options - additional options used to customize query
+   * @param {ProjectSelectOptions} options - additional options used to customize query
    */
   async select(
     userId: string,
-    options?: SelectOptions
+    options?: ProjectSelectOptions
   ): Promise<Readonly<ProjectModel[]>> {
     const whereClauses = [sql`user_id = ${userId}`];
 
-    const parsedOptions = Project.parseSelectAllOptions(options);
+    const parsedOptions = parseSelectAllOptions(options);
 
     whereClauses.push(...Project.buildAdditionalWhereClauses(parsedOptions));
 
@@ -65,38 +63,12 @@ export class Project implements Model {
   }
 
   /**
-   * Parse a SelectOptions object, validate the options, and set defaults for undefined options.
-   * @param {SelectOptions} options - options provided to select()
-   */
-  static parseSelectAllOptions<T extends string | boolean = boolean>(
-    options: SelectOptions<T> = {}
-  ): Required<SelectOptions> {
-    const { syncToken = "*" } = options;
-    let includeArchived = parseStringToBoolean(
-      "includeArchived",
-      options.includeArchived
-    );
-
-    if (syncToken !== "*" && !isValid(parseISO(syncToken))) {
-      throw new ParseOptionsError([
-        {
-          name: "syncToken",
-          message: `"${syncToken}" could not be parsed as an ISO 8601 date string.`,
-        },
-      ]);
-    }
-
-    return {
-      syncToken,
-      includeArchived,
-    };
-  }
-
-  /**
    * Build additional where clauses based on options
-   * @param options {SelectOptions} options - options provided to select()
+   * @param options {ProjectSelectOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(options: Required<SelectOptions>) {
+  private static buildAdditionalWhereClauses(
+    options: Required<ProjectSelectOptions>
+  ) {
     const { includeArchived, syncToken } = options;
     const whereClauses = [];
     if (syncToken !== "*") {
@@ -107,15 +79,3 @@ export class Project implements Model {
     return whereClauses;
   }
 }
-
-/**
- * Options provided to Project's select() function
- * @typedef {Object} SelectOptions
- * @property {string} syncToken - token that indicates last sync time; when provided,
- *  only projects modified after the last sync are queried
- * @property {T extends string | boolean = boolean} includeArchived - indicates if archived projects should be queried
- */
-export type SelectOptions<T extends string | boolean = boolean> = {
-  syncToken?: string;
-  includeArchived?: T;
-};
