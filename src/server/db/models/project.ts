@@ -7,7 +7,7 @@ import { parseSelectAllOptions } from "../../../shared/utils/projects";
 const RETURN_COLS = raw("id, title, is_archived");
 
 /**
- * Class representing projects table.
+ * Class representing the projects table.
  */
 export class Project implements Model {
   constructor(private pool: DatabasePoolType) {}

@@ -21,9 +21,10 @@ import {
 
 import { getDurationWithUnits } from "./session";
 
-import { parseStringToBoolean } from "./models";
+import { parseStringToBoolean, validateSyncToken } from "./models";
 
 export {
+  validateSyncToken,
   parseStringToBoolean,
   getSyncTokenForProject,
   sleep,

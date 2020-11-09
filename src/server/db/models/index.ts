@@ -1,4 +1,8 @@
-import { Project, SelectOptions } from "./project";
+import { Project } from "./project";
+import { ProjectSelectOptions } from "../../../shared/models";
 
-export { Project };
-export type { SelectOptions };
+import { Task } from "./task";
+import { TaskSelectOptions } from "../../../shared/models";
+
+export { Project, Task };
+export type { ProjectSelectOptions, TaskSelectOptions };
