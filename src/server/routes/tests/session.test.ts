@@ -1,16 +1,14 @@
 import request from "supertest";
 import app from "../../server";
-import { Sessions, close } from "../../db";
+import { Sessions } from "../../db";
 import { ClientSessionModel } from "../../../shared/models";
 
-afterAll(() => {
-  close().then();
-});
-
 const session: ClientSessionModel = {
+  taskId: 0,
+  userId: "",
   startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
   endTimestamp: new Date("2020-10-24T23:46:09.853Z"),
-  task: "Test session",
+  notes: "Test session",
   type: "session",
 };
 
@@ -24,7 +22,7 @@ describe("Session create tests", () => {
     expect(await Sessions.selectAll()).toContainEqual({
       id: body.id,
       start_timestamp: new Date(session.startTimestamp),
-      task: session.task,
+      notes: session.notes,
       duration:
         new Date(session.endTimestamp).valueOf() -
         new Date(session.startTimestamp).valueOf(),

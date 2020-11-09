@@ -1,10 +1,6 @@
 import request from "supertest";
 import app from "../../server";
-import { Users, close } from "../../db";
-
-afterAll(() => {
-  close().then();
-});
+import { Users } from "../../db";
 
 const user = {
   username: "Test User",
