@@ -1,0 +1,2 @@
+ALTER TABLE users DROP COLUMN IF EXISTS default_project;
+ALTER TABLE users DROP COLUMN IF EXISTS default_task;
