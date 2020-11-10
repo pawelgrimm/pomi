@@ -1,37 +1,35 @@
-export type {
-  ClientSessionModel,
-  DatabaseSessionModel,
-  SessionTypeString,
-  SessionSelectOptions,
-};
+export type { DatabaseSessionModel };
 
-export { SessionType, getSessionTypeString };
+/**
+ * Model representing a row in the sessions table
+ */
+export interface SessionModel {
+  id?: string;
+  userId: string;
+  taskId: string;
+  startTimestamp: Date;
+  endTimestamp?: Date;
+  duration?: number;
+  notes?: string;
+  type: SessionTypeString;
+  isRetroAdded?: boolean;
+}
 
-enum SessionType {
+export interface DbReadySessionModel extends SessionModel {
+  duration: number;
+}
+
+export enum SessionType {
   session,
   break,
   long_break,
 }
 
-type SessionTypeString = keyof typeof SessionType;
+export type SessionTypeString = keyof typeof SessionType;
 
-const getSessionTypeString = (value: SessionType): SessionTypeString => {
+export const getSessionTypeString = (value: SessionType): SessionTypeString => {
   return SessionType[value] as SessionTypeString;
 };
-
-/**
- * Client representation of session model
- */
-interface ClientSessionModel {
-  id?: string;
-  userId: string;
-  taskId: string;
-  startTimestamp: Date;
-  endTimestamp: Date;
-  notes?: string;
-  type: SessionTypeString;
-  isRetroAdded?: boolean;
-}
 
 /**
  * Options provided to Task's select() function
@@ -40,7 +38,7 @@ interface ClientSessionModel {
  *  only projects modified after the last sync are queried
  * @property {T extends string | boolean = boolean} includeArchived - indicates if completed tasks should be queried
  */
-type SessionSelectOptions<T extends string | Date = Date> = {
+export type SessionSelectOptions<T extends string | Date = Date> = {
   syncToken?: string;
   // start?: T;
   // end?: T;
