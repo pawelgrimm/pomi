@@ -17,7 +17,10 @@ export class Project implements Model {
    * @param userId - id of user assigned to object
    * @param project - project to insert
    */
-  async create(userId: string, project: ProjectModel): Promise<ProjectModel> {
+  async create(
+    userId: string,
+    project: ProjectModel
+  ): Promise<Required<ProjectModel>> {
     const { title = "", isArchived = false } = project;
     return this.pool.one(sql`
         INSERT INTO projects(user_id, title, is_archived)
@@ -34,7 +37,7 @@ export class Project implements Model {
   async select(
     userId: string,
     options?: ProjectSelectOptions
-  ): Promise<Readonly<ProjectModel[]>> {
+  ): Promise<Readonly<Required<ProjectModel>[]>> {
     const whereClauses = [sql`user_id = ${userId}`];
 
     const parsedOptions = parseSelectAllOptions(options);
@@ -55,7 +58,7 @@ export class Project implements Model {
   async selectOne(
     userId: string,
     projectId: string
-  ): Promise<ProjectModel | null> {
+  ): Promise<Required<ProjectModel> | null> {
     return this.pool.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM projects
         WHERE user_id = ${userId} AND id = ${projectId};

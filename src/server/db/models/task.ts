@@ -17,7 +17,7 @@ export class Task implements Model {
    * @param userId - id of user assigned to object
    * @param task - task to insert
    */
-  async create(userId: string, task: TaskModel): Promise<TaskModel> {
+  async create(userId: string, task: TaskModel): Promise<Required<TaskModel>> {
     const { title = "", projectId = null, isCompleted = false } = task;
     return this.pool.one(sql`
         INSERT INTO tasks(user_id, project_id, title, is_completed)
@@ -37,7 +37,7 @@ export class Task implements Model {
   async select(
     userId: string,
     options?: TaskSelectOptions
-  ): Promise<Readonly<TaskModel[]>> {
+  ): Promise<Readonly<Required<TaskModel>[]>> {
     const whereClauses = [sql`user_id = ${userId}`];
 
     const parsedOptions = parseSelectAllOptions(options);
@@ -55,11 +55,23 @@ export class Task implements Model {
    * @param userId - id of task-owning user
    * @param taskId - id of task to query
    */
-  async selectOne(userId: string, taskId: string): Promise<TaskModel | null> {
+  async selectOne(
+    userId: string,
+    taskId: string
+  ): Promise<Required<TaskModel> | null> {
     return this.pool.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM tasks
         WHERE user_id = ${userId} AND id = ${taskId};
         `);
+  }
+
+  /**
+   * Set a task's completed flag
+   * @param userId - id of task-owning user
+   * @param taskId - id of task to update
+   */
+  async complete(userId: string, taskId: string): Promise<boolean> {
+    throw new Error("Not yet implemented");
   }
 
   /**
