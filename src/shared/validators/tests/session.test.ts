@@ -1,8 +1,8 @@
 import { differenceInMilliseconds } from "date-fns";
-import { validateClientSession, hydrateDatabaseSession } from "../session";
-import { ClientSessionModel, DatabaseSessionModel } from "../../types";
+import { validateSession, hydrateDatabaseSession } from "../session";
+import { SessionModel, DatabaseSessionModel } from "../../types";
 import { v4 as uuid } from "uuid";
-let validClientSession: ClientSessionModel;
+let validClientSession: SessionModel;
 let validDatabaseSession: Omit<DatabaseSessionModel, "start_timestamp"> & {
   start_timestamp: string;
 };
@@ -37,7 +37,7 @@ describe("Session Validator (client to database)", () => {
       ...rest
     } = validClientSession;
 
-    const validatedSession = validateClientSession(validClientSession);
+    const validatedSession = validateSession(validClientSession);
     expect(validatedSession).toEqual({
       ...rest,
       user_id: userId,
@@ -49,26 +49,24 @@ describe("Session Validator (client to database)", () => {
   });
   it("should not pass validation when a required field is missing", () => {
     const { userId, ...rest } = validClientSession;
-    expect(() => validateClientSession({ ...rest })).toThrow(
-      /"userId" is required/
-    );
+    expect(() => validateSession({ ...rest })).toThrow(/"userId" is required/);
   });
   it("Should not strip optional fields", () => {
     const notes = "these are my notes and they are important";
     const validSessionWithNotes = { notes, ...validClientSession };
-    const strippedSession = validateClientSession(validSessionWithNotes);
+    const strippedSession = validateSession(validSessionWithNotes);
     expect(strippedSession).toMatchObject({ notes });
   });
 
   it("Should strip unknown fields", () => {
-    const strippedSession = validateClientSession({
+    const strippedSession = validateSession({
       extra: "junk",
       ...validClientSession,
     });
     expect(strippedSession).not.toMatchObject({ extra: "junk" });
   });
   it("Should rename fields", () => {
-    const renamedSession = validateClientSession(validClientSession);
+    const renamedSession = validateSession(validClientSession);
     expect(renamedSession).toMatchObject({
       user_id: expect.any(String),
       task_id: expect.any(String),
@@ -78,7 +76,7 @@ describe("Session Validator (client to database)", () => {
   });
   it("Should calculate duration correctly", () => {
     const { startTimestamp, endTimestamp } = validClientSession;
-    const calculatedSession = validateClientSession(validClientSession);
+    const calculatedSession = validateSession(validClientSession);
     expect(calculatedSession).toMatchObject({
       duration: differenceInMilliseconds(endTimestamp, startTimestamp),
     });
@@ -92,7 +90,7 @@ describe("Session Validator (client to database)", () => {
   it("Shouldn't return a duration when start/end timestamp is missing", () => {
     const { startTimestamp, endTimestamp, ...rest } = validClientSession;
     const noTimeSession = { ...rest };
-    const noDurationSession = validateClientSession(noTimeSession, {
+    const noDurationSession = validateSession(noTimeSession, {
       isPartial: true,
     });
     expect(noDurationSession).not.toMatchObject({
@@ -102,9 +100,7 @@ describe("Session Validator (client to database)", () => {
   it("Shouldn't allow really long notes", () => {
     const longNote = "".padEnd(100000, "_");
     expect(() =>
-      console.log(
-        validateClientSession({ ...validClientSession, notes: longNote })
-      )
+      console.log(validateSession({ ...validClientSession, notes: longNote }))
     ).toThrow(
       /"notes" length must be less than or equal to \d+ characters long/
     );

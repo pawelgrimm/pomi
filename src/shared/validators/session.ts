@@ -1,6 +1,6 @@
 import Joi from "joi";
-import { ClientSessionModel, DatabaseSessionModel } from "../types";
-import { addMilliseconds, differenceInMilliseconds } from "date-fns";
+import { DbReadySessionModel, SessionModel } from "../types";
+import { calculateDuration, calculateEndTimestamp } from "../utils";
 
 const NOTES_LENGTH_LIMIT = 1000;
 
@@ -11,99 +11,43 @@ const NOTES_LENGTH_LIMIT = 1000;
  */
 
 /**
- * Calculate the duration (in milliseconds) of a session
- * @param parent a clone of the object being validated
- * @returns the duration in the format "n milliseconds", or undefined if
- *  parent does not contain a start and end timestamp
+ * Schema used to convert and hydrate database sessions into client sessions
  */
-const calculateDuration = (parent: any): number | undefined => {
-  const { start_timestamp, end_timestamp } = parent;
-  if (start_timestamp && end_timestamp) {
-    return differenceInMilliseconds(end_timestamp, start_timestamp);
-  }
-  return undefined;
-};
-
-/**
- * Schema used to convert client sessions into database sessions
- */
-const databaseSessionSchema = Joi.object({
+const sessionSchema = Joi.object({
   id: Joi.string().uuid({ version: "uuidv4" }).optional(),
-  user_id: Joi.string().max(255).label("userId"),
-  task_id: Joi.string().uuid({ version: "uuidv4" }).optional().label("taskId"),
-  start_timestamp: Joi.date().iso().label("startTimestamp"),
+  userId: Joi.string().max(255),
+  taskId: Joi.string().uuid({ version: "uuidv4" }),
+  startTimestamp: Joi.date().iso(),
+  endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
   duration: Joi.number().optional().default(calculateDuration),
-  // end_timestamp must be after duration so that the calculation
-  // occurs before end_timestamp is stripped
-  end_timestamp: Joi.date().iso().strip().label("endTimestamp"),
-  notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
+  notes: Joi.string().trim().optional().max(NOTES_LENGTH_LIMIT),
   type: Joi.string().allow("session", "break", "long-break"),
-  is_retro_added: Joi.boolean().optional().default(false).label("isRetroAdded"),
-})
-  .rename("userId", "user_id")
-  .rename("taskId", "task_id")
-  .rename("startTimestamp", "start_timestamp")
-  .rename("endTimestamp", "end_timestamp")
-  .rename("isRetroAdded", "is_retro_added");
+  isRetroAdded: Joi.boolean().optional(),
+}).xor("endTimestamp", "duration");
 
 /**
- * Validate and convert a ClientSessionModel-like object into a DatabaseSessionModel
- * @param session a ClientSessionModel-like object
+ * Validate a Session
+ * @param session a SessionModel-like object
  * @param options an object containing an optional isPartial key (to validate provided
- *  keys, not presence of all required keys)
- * @returns the object converted to a DatabaseSessionModel
+ *  keys and not require presence of all required keys)
+ * @returns the object as a SessionModel
  */
-export const validateClientSession = (
+export const validateSession = (
   session: any,
   options: { isPartial?: boolean } = {}
-): DatabaseSessionModel => {
+): DbReadySessionModel => {
   return Joi.attempt(
     session,
-    databaseSessionSchema.options({
+    sessionSchema.options({
       stripUnknown: true,
       presence: options.isPartial ? "optional" : "required",
     })
-  ) as DatabaseSessionModel;
+  ) as DbReadySessionModel;
 };
 
 /**
- * Calculate the end timestamp of a session
- * @param parent a clone of the object being validated
- * @returns the end timestamp as a Date object, or undefined if
- *  parent does not contain a start timestamp and duration
- */
-const calculateEndTimestamp = (parent: any): Date | undefined => {
-  const { startTimestamp, duration } = parent;
-  if (startTimestamp && duration) {
-    return addMilliseconds(startTimestamp, Number(duration));
-  }
-  return undefined;
-};
-
-/**
- * Schema used to convert and hydrate database sessions into client sessions
- */
-const clientSessionSchema = Joi.object({
-  id: Joi.string().uuid({ version: "uuidv4" }).optional(),
-  userId: Joi.string().label("user_id"),
-  taskId: Joi.string().uuid({ version: "uuidv4" }).label("task_id"),
-  startTimestamp: Joi.date().label("start_timestamp"),
-  endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
-  // duration must be after end_timestamp so that the calculation
-  // occurs before duration is stripped
-  duration: Joi.number().strip(),
-  notes: Joi.string().trim().optional(),
-  type: Joi.string().allow("session", "break", "long-break"),
-  isRetroAdded: Joi.boolean().optional().label("retro_added"),
-})
-  .rename("user_id", "userId")
-  .rename("task_id", "taskId")
-  .rename("start_timestamp", "startTimestamp")
-  .rename("is_retro_added", "isRetroAdded");
-
-/**
- * Validate and convert a DatabaseSessionModel object into a ClientSessionModel object
- * @param session a ClientSessionModel-like object
+ * Validate and convert a DatabaseSessionModel object into a SessionModel object
+ * @param session a SessionModel-like object
  * @param options an object containing an optional isPartial key (to validate provided
  *  keys, not presence of all required keys)
  * @returns the object converted to a DatabaseSessionModel
@@ -111,12 +55,6 @@ const clientSessionSchema = Joi.object({
 export const hydrateDatabaseSession = (
   session: any,
   options: { isPartial?: boolean } = {}
-): ClientSessionModel => {
-  return Joi.attempt(
-    session,
-    clientSessionSchema.options({
-      stripUnknown: true,
-      presence: options.isPartial ? "optional" : "required",
-    })
-  ) as ClientSessionModel;
+): SessionModel => {
+  return validateSession(session, options);
 };
