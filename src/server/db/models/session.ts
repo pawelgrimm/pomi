@@ -3,15 +3,16 @@ import { SqlTokenType } from "slonik/dist/types";
 import { raw } from "slonik-sql-tag-raw";
 import { Model } from "./model";
 import {
-  ClientSessionModel as SessionModel,
+  SessionModel,
   DatabaseSessionModel,
   SessionSelectOptions,
 } from "../../../shared/types";
-import { validateClientSession } from "../../../shared/validators";
+import { validateSession } from "../../../shared/validators";
 import {
-  getDurationWithUnits,
+  sqlDate,
+  sqlDuration,
   parseSelectAllOptions,
-} from "../../../shared/utils/sessions";
+} from "../../../shared/utils";
 
 const RETURN_COLS = raw(`
   id, 
@@ -23,13 +24,13 @@ const RETURN_COLS = raw(`
   is_retro_added`);
 
 type Boolified<T> = { [P in keyof T | string]: boolean };
-const UPDATEABLE_COLUMNS: Boolified<Partial<DatabaseSessionModel>> = {
-  task_id: true,
-  start_timestamp: true,
+const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
+  taskId: true,
+  startTimestamp: true,
   duration: true,
   notes: true,
   type: true,
-  is_retro_added: true,
+  isRetroAdded: true,
 };
 
 /**
@@ -45,23 +46,22 @@ export class Session implements Model {
    */
   async create(userId: string, session: SessionModel): Promise<SessionModel> {
     const {
-      user_id,
-      task_id = null,
-      start_timestamp,
+      taskId = null,
+      startTimestamp,
       duration,
       notes = "",
       type,
-      is_retro_added = false,
-    } = validateClientSession(session);
+      isRetroAdded = false,
+    } = validateSession(session);
     return this.pool.one(sql`
         INSERT INTO sessions(user_id, task_id, start_timestamp, duration, notes, type, is_retro_added)
-        VALUES (${user_id}, 
-                COALESCE(${task_id}, (SELECT default_task FROM users WHERE id = ${userId})), 
-                ${start_timestamp.toISOString()}, 
-                ${getDurationWithUnits(duration)},
+        VALUES (${userId}, 
+                COALESCE(${taskId}, (SELECT default_task FROM users WHERE id = ${userId})), 
+                ${sqlDate(startTimestamp)}, 
+                ${sqlDuration(duration)},
                 ${notes},
                 ${type},
-                ${is_retro_added})
+                ${isRetroAdded})
         RETURNING ${RETURN_COLS};
    `);
   }
@@ -153,11 +153,11 @@ export class Session implements Model {
     return whereClauses;
   }
 
-  private static buildUpdateSets(session: Partial<DatabaseSessionModel>) {
+  private static buildUpdateSets(session: Partial<SessionModel>) {
     const setClauses: SqlTokenType[] = [];
     Object.entries(session).forEach(([key, value]) => {
       if (UPDATEABLE_COLUMNS[key] && value != null) {
-        const newValue = value instanceof Date ? value.toISOString() : value;
+        const newValue = value instanceof Date ? sqlDate(value) : value;
         setClauses.push(sql`${sql.identifier([key])} = ${newValue}}`);
       }
     });
