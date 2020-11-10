@@ -1,55 +1,69 @@
 import Router from "express-promise-router";
-import { Sessions } from "../db";
-import {
-  hydrateDatabaseSession,
-  validateSession,
-} from "../../shared/validators";
+import { Projects, Sessions, Tasks } from "../db";
+import { validateSession } from "../../shared/validators";
+import { authenticate } from "../middleware";
 
 const router = Router();
 
+router.use(authenticate);
+
 /*      NEW SESSION      */
-router.post("/", async (req, res) => {
-  try {
-    const session = validateSession(req.body);
-    const row = await Sessions.create(session);
-    res.status(201).send(row);
-  } catch (e) {
-    console.log(e);
-    res.status(500).send();
+router.post("/", async ({ body }, res) => {
+  const { userId } = res.locals;
+  // Determine if a task was provided
+  const { task, ...sessionRaw } = body.task;
+
+  validateSession(sessionRaw); // validate the session before trying to create tasks or projects
+  let taskId: string = task?.id;
+  let newTask;
+  let newProject;
+  if (!taskId && task?.title) {
+    //We will need to create a task
+    const project = task?.project;
+    let projectId: string = project?.id;
+    if (!projectId && project?.title) {
+      //Create a project
+      newProject = await Projects.create(userId, { ...project });
+      projectId = newProject.id;
+      res.locals.project = newProject;
+    }
+    newTask = await Tasks.create(userId, { ...task, projectId });
+    taskId = newTask.id;
+    res.locals.task = newTask;
   }
+
+  const session = await Sessions.create(userId, { ...sessionRaw, taskId });
+  res.status(201).send({ session, task: newTask, project: newProject });
 });
 
 /*      GET ALL SESSIONS     */
 router.get("/", async (req, res) => {
-  const rows = await Sessions.selectAll();
-  const sessions = rows.map((session) => hydrateDatabaseSession(session));
-  res.status(200).send(sessions);
+  const { userId } = res.locals;
+  const sessions = await Sessions.select(userId);
+  res.status(sessions.length > 0 ? 200 : 404).send({ sessions });
 });
 
 /*      GET ALL OF TODAY'S SESSIONS     */
 router.get("/today", async (req, res) => {
-  const rows = await Sessions.selectAllToday();
-  const sessions = rows.map((session) => hydrateDatabaseSession(session));
-  res.status(200).send(sessions);
+  const { userId } = res.locals;
+  const sessions = await Sessions.selectAllToday(userId);
+  res.status(sessions.length > 0 ? 200 : 404).send({ sessions });
 });
 
 /*      GET SESSION BY ID    */
 router.get("/:id", async (req, res) => {
-  const id = req.params.id;
-  const row = await Sessions.selectOneById(id);
-  const session = hydrateDatabaseSession(row);
-  res.status(200).send(session);
+  const { userId } = res.locals;
+  const sessionId = req.params.id;
+  const session = await Sessions.selectOne(userId, sessionId);
+  res.status(!!session ? 200 : 404).send({ session });
 });
 
 router.patch("/:id", async (req, res) => {
-  const id = req.params.id;
-  const session = validateSession(req.body, { isPartial: true });
-  try {
-    const success = await Sessions.update(id, session);
-    res.status(200).send(success);
-  } catch (e) {
-    res.status(500).send(e);
-  }
+  const { userId } = res.locals;
+  const sessionId = req.params.id;
+  const session = req.body;
+  const success = await Sessions.update(userId, sessionId, session);
+  res.status(success ? 200 : 422).send();
 });
 
 export default router;

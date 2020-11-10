@@ -44,7 +44,10 @@ export class Session implements Model {
    * @param userId - id of user assigned to object
    * @param session - session to insert
    */
-  async create(userId: string, session: SessionModel): Promise<SessionModel> {
+  async create(
+    userId: string,
+    session: SessionModel
+  ): Promise<Required<SessionModel>> {
     const {
       taskId = null,
       startTimestamp,
@@ -74,7 +77,7 @@ export class Session implements Model {
   async select(
     userId: string,
     options?: SessionSelectOptions
-  ): Promise<Readonly<SessionModel[]>> {
+  ): Promise<Readonly<Required<SessionModel>[]>> {
     const whereClauses: SqlTokenType[] = [sql`user_id = ${userId}`];
 
     const parsedOptions = parseSelectAllOptions(options);
@@ -92,7 +95,9 @@ export class Session implements Model {
    * @param userId - id of session-owning user
    * TODO: Accommodate timezone
    */
-  async selectAllToday(userId: string) {
+  async selectAllToday(
+    userId: string
+  ): Promise<Readonly<Required<SessionModel>[]>> {
     return this.pool.any(sql`
         SELECT ${RETURN_COLS} FROM sessions
         WHERE user_id = ${userId} AND start_timestamp > current_date;`);
@@ -106,7 +111,7 @@ export class Session implements Model {
   async selectOne(
     userId: string,
     sessionId: string
-  ): Promise<SessionModel | null> {
+  ): Promise<Required<SessionModel> | null> {
     return this.pool.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM sessions
         WHERE user_id = ${userId} AND id = ${sessionId};

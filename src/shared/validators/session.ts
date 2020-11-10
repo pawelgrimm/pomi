@@ -16,7 +16,7 @@ const NOTES_LENGTH_LIMIT = 1000;
 const sessionSchema = Joi.object({
   id: Joi.string().uuid({ version: "uuidv4" }).optional(),
   userId: Joi.string().max(255),
-  taskId: Joi.string().uuid({ version: "uuidv4" }),
+  taskId: Joi.string().uuid({ version: "uuidv4" }).optional(),
   startTimestamp: Joi.date().iso(),
   endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
   duration: Joi.number().optional().default(calculateDuration),
