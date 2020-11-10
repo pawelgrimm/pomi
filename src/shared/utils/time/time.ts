@@ -20,6 +20,11 @@ const secondsToParts = (seconds: number): { sign: string; parts: number[] } => {
   return { sign: signPart, parts: [hoursPart, minutesPart, secondsPart] };
 };
 
+/**
+ * Convert seconds to time formatted as HH:MM:SS
+ * @param seconds time in seconds
+ * @param options object containing trimmed: true to remove 0 padding
+ */
 const secondsToFormattedTime = (
   seconds: number,
   options: { trimmed: boolean } = { trimmed: false }
@@ -36,6 +41,11 @@ const secondsToFormattedTime = (
   );
 };
 
+/**
+ * Convert a time in the format HH:MM:SS to seconds
+ * @param formattedTime time in the format HH:MM:SS
+ * @returns time in seconds
+ */
 const formattedTimeToSeconds = (formattedTime: string) => {
   const tokens = formattedTime
     .split(":")
@@ -118,6 +128,21 @@ const getDateFromEpochTime = (time: number): Date => {
   return new Date(time * 1000);
 };
 
+/**
+ * Convert the date to a string format for use in SQL queries
+ * @param date the date object to convert
+ */
+const sqlDate = (date: Date) => date.toISOString();
+
+/**
+ * Append "milliseconds" to a numeric value for use in SQL queries
+ * @param duration an interval in milliseconds
+ * @returns a string in the format "%d milliseconds", or undefined if duration is falsy (0 or undefined).
+ */
+const sqlDuration = (duration?: number): string | null => {
+  return duration ? `${duration} milliseconds` : null;
+};
+
 export {
   secondsToParts,
   getEpochTime,
@@ -129,4 +154,6 @@ export {
   getDateStringFromEpochTime,
   getDateStringFromDate,
   getDateFromEpochTime,
+  sqlDate,
+  sqlDuration,
 };
