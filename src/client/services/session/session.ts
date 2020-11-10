@@ -1,18 +1,18 @@
 import axios from "axios";
-import { ClientSessionModel } from "../../../shared/types";
+import { SessionModel } from "../../../shared/types";
 import {
-  validateClientSession,
+  validateSession,
   hydrateDatabaseSession,
 } from "../../../shared/validators";
 
-const postSession = (session: ClientSessionModel): Promise<number> => {
-  const validatedSession = validateClientSession(session);
+const postSession = (session: SessionModel): Promise<number> => {
+  const validatedSession = validateSession(session);
   return axios
     .post("/api/sessions", validatedSession)
     .then((res) => res?.data?.id);
 };
 
-const getSession = (id: number): Promise<ClientSessionModel> => {
+const getSession = (id: number): Promise<SessionModel> => {
   return axios
     .get(`/api/sessions/${id}`)
     .then((res) => res?.data)
@@ -28,9 +28,9 @@ const patchSession = ({
   session,
 }: {
   id: number;
-  session: Partial<ClientSessionModel>;
+  session: Partial<SessionModel>;
 }): Promise<boolean> => {
-  const validatedSession = validateClientSession(session, { isPartial: true });
+  const validatedSession = validateSession(session, { isPartial: true });
   return axios.patch(`/api/sessions/${id}`, validatedSession).then(
     () => true,
     () => false

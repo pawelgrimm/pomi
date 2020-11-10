@@ -2,7 +2,7 @@ import Router from "express-promise-router";
 import { Sessions } from "../db";
 import {
   hydrateDatabaseSession,
-  validateClientSession,
+  validateSession,
 } from "../../shared/validators";
 
 const router = Router();
@@ -10,7 +10,7 @@ const router = Router();
 /*      NEW SESSION      */
 router.post("/", async (req, res) => {
   try {
-    const session = validateClientSession(req.body);
+    const session = validateSession(req.body);
     const row = await Sessions.create(session);
     res.status(201).send(row);
   } catch (e) {
@@ -43,7 +43,7 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const id = req.params.id;
-  const session = validateClientSession(req.body, { isPartial: true });
+  const session = validateSession(req.body, { isPartial: true });
   try {
     const success = await Sessions.update(id, session);
     res.status(200).send(success);

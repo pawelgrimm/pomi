@@ -17,7 +17,7 @@ import {
 } from "../../../shared/utils";
 import { Formik, Form, Field } from "formik";
 import { editButton } from "../../hooks/useAddSession/useAddSession";
-import { ClientSessionModel } from "../../../shared/types";
+import { SessionModel } from "../../../shared/types";
 
 interface Props {
   children?: React.ReactNode;
@@ -41,7 +41,7 @@ const initialState: SessionState = {
   notes: "",
 };
 
-const sessionToSessionState = (session: ClientSessionModel): SessionState => {
+const sessionToSessionState = (session: SessionModel): SessionState => {
   const {
     startTimestamp,
     endTimestamp,
@@ -68,7 +68,7 @@ const EditSessionPage: React.FC<Props> = () => {
   const history = useHistory();
   const { id } = useParams();
 
-  const { isLoading, isError, data, error } = useQuery<ClientSessionModel>(
+  const { isLoading, isError, data, error } = useQuery<SessionModel>(
     ["todo", { id }],
     fetchSession
   );
@@ -96,7 +96,7 @@ const EditSessionPage: React.FC<Props> = () => {
       initialValues={session}
       onSubmit={(values, { setSubmitting }) => {
         const { date, startTime, endTime, ...rest } = values;
-        let sessionUpdates: Partial<ClientSessionModel> = {
+        let sessionUpdates: Partial<SessionModel> = {
           startTimestamp: getDate(
             values.date,
             Number.parseInt(values.startTime)

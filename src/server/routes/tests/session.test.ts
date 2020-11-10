@@ -1,9 +1,9 @@
 import request from "supertest";
 import app from "../../server";
 import { Sessions } from "../../db";
-import { ClientSessionModel } from "../../../shared/types";
+import { SessionModel } from "../../../shared/types";
 
-const session: ClientSessionModel = {
+const session: SessionModel = {
   taskId: 0,
   userId: "",
   startTimestamp: new Date("2020-10-23T19:59:29.853Z"),

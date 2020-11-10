@@ -4,7 +4,7 @@ import { ActionButton, TimerDisplay, TextField } from "../../components";
 import { ButtonGroup, Tab, Tabs } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useAddSession } from "../../hooks";
-import { ClientSessionModel } from "../../../shared/types";
+import { SessionModel } from "../../../shared/types";
 import { getSessionType } from "../../../shared/types/session";
 
 const timerStartValues = [60 * 25, 60 * 5, 60 * 15];
@@ -60,7 +60,7 @@ const TimerPage = () => {
             console.log("timer started");
             formikHelpers.setFieldValue("startTimestamp", new Date());
           } else {
-            const session: ClientSessionModel = {
+            const session: SessionModel = {
               ...values,
               endTimestamp: new Date(),
               type: getSessionType(type),
