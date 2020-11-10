@@ -13,17 +13,18 @@ const NOTES_LENGTH_LIMIT = 1000;
 /**
  * Schema used to convert and hydrate database sessions into client sessions
  */
-const sessionSchema = Joi.object({
+const sessionSchemaSoft = Joi.object({
   id: Joi.string().uuid({ version: "uuidv4" }).optional(),
-  userId: Joi.string().max(255),
   taskId: Joi.string().uuid({ version: "uuidv4" }).optional(),
   startTimestamp: Joi.date().iso(),
   endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
   duration: Joi.number().optional().default(calculateDuration),
   notes: Joi.string().trim().optional().max(NOTES_LENGTH_LIMIT),
   type: Joi.string().allow("session", "break", "long-break"),
-  isRetroAdded: Joi.boolean().optional(),
-}).xor("endTimestamp", "duration");
+  isRetroAdded: Joi.boolean().optional().default(false),
+});
+
+const sessionSchemaHard = sessionSchemaSoft.or("endTimestamp", "duration");
 
 /**
  * Validate a Session
@@ -38,7 +39,7 @@ export const validateSession = (
 ): DbReadySessionModel => {
   return Joi.attempt(
     session,
-    sessionSchema.options({
+    (options.isPartial ? sessionSchemaSoft : sessionSchemaHard).options({
       stripUnknown: true,
       presence: options.isPartial ? "optional" : "required",
     })

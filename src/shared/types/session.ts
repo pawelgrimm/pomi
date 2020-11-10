@@ -5,8 +5,7 @@ export type { DatabaseSessionModel };
  */
 export interface SessionModel {
   id?: string;
-  userId: string;
-  taskId: string;
+  taskId?: string;
   startTimestamp: Date;
   endTimestamp?: Date;
   duration?: number;
