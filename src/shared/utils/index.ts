@@ -9,6 +9,8 @@ import {
   getDateStringFromEpochTime,
   getDateStringFromDate,
   getDateFromEpochTime,
+  sqlDate,
+  sqlDuration,
 } from "./time/time";
 
 import {
@@ -21,11 +23,21 @@ import {
   insertTestTasks,
 } from "./testing-helpers";
 
-import { getDurationWithUnits } from "./sessions";
+import {
+  getDurationWithUnits,
+  parseSelectAllOptions,
+  calculateDuration,
+  calculateEndTimestamp,
+  getSessionTypeAsString,
+} from "./sessions";
 
 import { parseStringToBoolean, validateSyncToken } from "./models";
 
 export {
+  parseSelectAllOptions,
+  calculateDuration,
+  calculateEndTimestamp,
+  getSessionTypeAsString,
   insertTestTasks,
   getSyncTokenForObject,
   validateSyncToken,
@@ -46,4 +58,6 @@ export {
   getDateStringFromEpochTime,
   getDateStringFromDate,
   getDateFromEpochTime,
+  sqlDate,
+  sqlDuration,
 };

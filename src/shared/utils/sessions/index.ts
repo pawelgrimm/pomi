@@ -1,10 +1,12 @@
 import {
+  SessionModel,
   SessionSelectOptions,
   SessionType,
   SessionTypeString,
 } from "../../types/session";
-import { parseStringToBoolean, validateSyncToken } from "../models";
-import { TaskSelectOptions } from "../../types";
+import { validateSyncToken } from "../models";
+import { addMilliseconds, differenceInMilliseconds } from "date-fns";
+import { sqlDuration } from "..";
 
 /**
  * Append "milliseconds" to a numeric value
@@ -12,7 +14,7 @@ import { TaskSelectOptions } from "../../types";
  * @returns a string in the format "%d milliseconds", or undefined if duration is falsy (0 or undefined).
  */
 export const getDurationWithUnits = (duration?: number): string | null => {
-  return duration ? `${duration} milliseconds` : null;
+  return sqlDuration(duration);
 };
 
 /**
@@ -40,4 +42,36 @@ export const parseSelectAllOptions = <T extends string | Date = Date>(
   return {
     syncToken,
   };
+};
+
+/**
+ * Calculate the end timestamp of a session
+ * @param session: an object containing a startTimestamp and a duration (in ms)
+ * @returns the end timestamp as a Date object, or undefined if
+ *  parent does not contain a start timestamp and duration
+ */
+export const calculateEndTimestamp = (
+  session: Pick<SessionModel, "startTimestamp" | "duration">
+): Date | undefined => {
+  const { startTimestamp, duration } = session;
+  if (startTimestamp && duration) {
+    return addMilliseconds(startTimestamp, Number(duration));
+  }
+  return undefined;
+};
+
+/**
+ * Calculate the duration (in milliseconds) of a session
+ * @param session: an object containing a startTimestamp and a duration
+ * @returns the duration in the format "n milliseconds", or undefined if
+ *  parent does not contain a start and end timestamp
+ */
+export const calculateDuration = (
+  session: Pick<SessionModel, "startTimestamp" | "endTimestamp">
+): number | undefined => {
+  const { startTimestamp, endTimestamp } = session;
+  if (startTimestamp && endTimestamp) {
+    return differenceInMilliseconds(endTimestamp, startTimestamp);
+  }
+  return undefined;
 };
