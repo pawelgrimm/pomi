@@ -1,10 +1,6 @@
 import { Tasks, pool } from "../../index";
 import { v4 as uuid } from "uuid";
-import {
-  ForeignKeyIntegrityConstraintViolationError,
-  NotNullIntegrityConstraintViolationError,
-  sql,
-} from "slonik";
+import { NotNullIntegrityConstraintViolationError, sql } from "slonik";
 import { ProjectModel, TaskModel, UserModel } from "../../../../shared/types";
 import { resetTestDb } from "../../../setupTest";
 import {
@@ -12,6 +8,9 @@ import {
   getSyncTokenForObject,
   insertTestTasks,
 } from "../../../../shared/utils";
+
+import * as validators from "../../../../shared/validators";
+const mockValidator = jest.spyOn(validators, "validateTask");
 
 const getSyncTokenForTask = (taskId: string) => {
   return getSyncTokenForObject("tasks", taskId);
@@ -83,6 +82,7 @@ beforeEach(() => {
     title: "some title",
     isCompleted: true,
   };
+  mockValidator.mockClear();
 });
 
 describe("Create Task", () => {
@@ -91,6 +91,7 @@ describe("Create Task", () => {
     const tasks = pool.any(sql`
         SELECT id, title, is_completed, project_id
         FROM tasks`);
+    expect(mockValidator).toHaveBeenCalledWith(validTask);
     return expect(tasks).resolves.toContainEqual({
       ...validTask,
       projectId: defaultProject.id,

@@ -1,6 +1,5 @@
 import Router from "express-promise-router";
-import { Projects, Sessions, Tasks } from "../db";
-import { validateSession } from "../../shared/validators";
+import { Projects, Sessions, Tasks, pool } from "../db";
 import { authenticate } from "../middleware";
 
 const router = Router();
@@ -10,30 +9,43 @@ router.use(authenticate);
 /*      NEW SESSION      */
 router.post("/", async ({ body }, res) => {
   const { userId } = res.locals;
-  // Determine if a task was provided
-  const { task, ...sessionRaw } = body.task;
+  const { task, ...session } = body;
 
-  validateSession(sessionRaw); // validate the session before trying to create tasks or projects
-  let taskId: string = task?.id;
+  // Determine if a task was provided
   let newTask;
   let newProject;
-  if (!taskId && task?.title) {
-    //We will need to create a task
-    const project = task?.project;
-    let projectId: string = project?.id;
-    if (!projectId && project?.title) {
-      //Create a project
-      newProject = await Projects.create(userId, { ...project });
-      projectId = newProject.id;
-      res.locals.project = newProject;
-    }
-    newTask = await Tasks.create(userId, { ...task, projectId });
-    taskId = newTask.id;
-    res.locals.task = newTask;
-  }
+  let newSession;
+  await pool.connect(async (connection) => {
+    await connection.transaction(async (transaction) => {
+      let taskId: string = task?.id;
+      if (!taskId && task?.title) {
+        //We will need to create a task
+        const project = task?.project;
+        let projectId: string = project?.id;
+        if (!projectId && project?.title) {
+          //Create a project
+          newProject = await Projects.connect(transaction).create(
+            userId,
+            project
+          );
+          projectId = newProject.id;
+        }
+        newTask = await Tasks.connect(transaction).create(userId, {
+          ...task,
+          projectId,
+        });
+        taskId = newTask.id;
+      }
+      newSession = await Sessions.connect(transaction).create(userId, {
+        ...session,
+        taskId,
+      });
+    });
+  });
 
-  const session = await Sessions.create(userId, { ...sessionRaw, taskId });
-  res.status(201).send({ session, task: newTask, project: newProject });
+  res
+    .status(201)
+    .send({ session: newSession, task: newTask, project: newProject });
 });
 
 /*      GET ALL SESSIONS     */

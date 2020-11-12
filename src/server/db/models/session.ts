@@ -54,7 +54,7 @@ export class Session extends Model {
       type,
       isRetroAdded = false,
     } = validateSession(session);
-    return this.pool.one(sql`
+    return this.connection.one(sql`
         INSERT INTO sessions(user_id, task_id, start_timestamp, duration, notes, type, is_retro_added)
         VALUES (${userId}, 
                 COALESCE(${taskId}, (SELECT default_task FROM users WHERE id = ${userId})), 
@@ -82,7 +82,7 @@ export class Session extends Model {
 
     whereClauses.push(...Session.buildAdditionalWhereClauses(parsedOptions));
 
-    return this.pool.any(sql`
+    return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM sessions
         WHERE ${sql.join(whereClauses, sql` AND `)};
         `);
@@ -96,7 +96,7 @@ export class Session extends Model {
   async selectAllToday(
     userId: string
   ): Promise<Readonly<Required<SessionModel>[]>> {
-    return this.pool.any(sql`
+    return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM sessions
         WHERE user_id = ${userId} AND start_timestamp > current_date;`);
   }
@@ -110,7 +110,7 @@ export class Session extends Model {
     userId: string,
     sessionId: string
   ): Promise<Required<SessionModel> | null> {
-    return this.pool.maybeOne(sql`
+    return this.connection.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM sessions
         WHERE user_id = ${userId} AND id = ${sessionId};
         `);
@@ -131,7 +131,7 @@ export class Session extends Model {
     if (updateSets.length < 1) {
       return false;
     }
-    return this.pool
+    return this.connection
       .query(
         sql`
       UPDATE sessions

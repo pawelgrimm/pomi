@@ -1,8 +1,9 @@
-import { DatabasePoolConnectionType, DatabasePoolType, sql } from "slonik";
+import { sql } from "slonik";
 import { raw } from "slonik-sql-tag-raw";
 import { Model } from "./model";
 import { TaskModel, TaskSelectOptions } from "../../../shared/types";
 import { parseSelectAllOptions } from "../../../shared/utils/tasks";
+import { validateTask } from "../../../shared/validators";
 
 const RETURN_COLS = raw("id, title, project_id, is_completed");
 
@@ -16,8 +17,10 @@ export class Task extends Model {
    * @param task - task to insert
    */
   async create(userId: string, task: TaskModel): Promise<Required<TaskModel>> {
-    const { title = "", projectId = null, isCompleted = false } = task;
-    return this.pool.one(sql`
+    const { title = "", projectId = null, isCompleted = false } = validateTask(
+      task
+    );
+    return this.connection.one(sql`
         INSERT INTO tasks(user_id, project_id, title, is_completed)
         VALUES (${userId}, 
                 COALESCE(${projectId}, (SELECT default_project FROM users WHERE id = ${userId})), 
@@ -42,7 +45,7 @@ export class Task extends Model {
 
     whereClauses.push(...Task.buildAdditionalWhereClauses(parsedOptions));
 
-    return this.pool.any(sql`
+    return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM tasks
         WHERE ${sql.join(whereClauses, sql` AND `)};
         `);
@@ -57,7 +60,7 @@ export class Task extends Model {
     userId: string,
     taskId: string
   ): Promise<Required<TaskModel> | null> {
-    return this.pool.maybeOne(sql`
+    return this.connection.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM tasks
         WHERE user_id = ${userId} AND id = ${taskId};
         `);

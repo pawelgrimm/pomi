@@ -3,6 +3,7 @@ import { sql } from "slonik";
 import { ProjectModel, ProjectSelectOptions } from "../../../shared/types";
 import { raw } from "slonik-sql-tag-raw";
 import { parseSelectAllOptions } from "../../../shared/utils/projects";
+import { validateProject } from "../../../shared/validators";
 
 const RETURN_COLS = raw("id, title, is_archived");
 
@@ -19,8 +20,8 @@ export class Project extends Model {
     userId: string,
     project: ProjectModel
   ): Promise<Required<ProjectModel>> {
-    const { title = "", isArchived = false } = project;
-    return this.pool.one(sql`
+    const { title = "", isArchived = false } = validateProject(project);
+    return this.connection.one(sql`
         INSERT INTO projects(user_id, title, is_archived)
         VALUES (${userId}, ${title}, ${isArchived})
         RETURNING ${RETURN_COLS};
@@ -42,7 +43,7 @@ export class Project extends Model {
 
     whereClauses.push(...Project.buildAdditionalWhereClauses(parsedOptions));
 
-    return this.pool.any(sql`
+    return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM projects
         WHERE ${sql.join(whereClauses, sql` AND `)};
         `);
@@ -57,7 +58,7 @@ export class Project extends Model {
     userId: string,
     projectId: string
   ): Promise<Required<ProjectModel> | null> {
-    return this.pool.maybeOne(sql`
+    return this.connection.maybeOne(sql`
         SELECT ${RETURN_COLS} FROM projects
         WHERE user_id = ${userId} AND id = ${projectId};
         `);

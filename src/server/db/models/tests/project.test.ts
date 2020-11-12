@@ -9,6 +9,9 @@ import {
   insertTestProjects,
 } from "../../../../shared/utils";
 
+import * as validators from "../../../../shared/validators";
+const mockValidator = jest.spyOn(validators, "validateProject");
+
 let user: UserModel;
 
 beforeAll(() => {
@@ -38,6 +41,7 @@ beforeEach(() => {
     title: "some title",
     isArchived: true,
   };
+  mockValidator.mockClear();
 });
 
 describe("Create Project", () => {
@@ -47,6 +51,7 @@ describe("Create Project", () => {
       sql`SELECT id, title, is_archived
             FROM projects`
     );
+    expect(mockValidator).toHaveBeenCalledWith(validProject);
     return expect(projects).resolves.toContainEqual({
       ...validProject,
       id: newProject.id,
