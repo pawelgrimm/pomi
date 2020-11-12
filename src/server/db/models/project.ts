@@ -1,5 +1,5 @@
 import { Model } from "./model";
-import { DatabasePoolType, sql } from "slonik";
+import { sql } from "slonik";
 import { ProjectModel, ProjectSelectOptions } from "../../../shared/types";
 import { raw } from "slonik-sql-tag-raw";
 import { parseSelectAllOptions } from "../../../shared/utils/projects";
@@ -9,9 +9,7 @@ const RETURN_COLS = raw("id, title, is_archived");
 /**
  * Class representing the projects table.
  */
-export class Project implements Model {
-  constructor(private pool: DatabasePoolType) {}
-
+export class Project extends Model {
   /**
    * Create one project in the projects table
    * @param userId - id of user assigned to object

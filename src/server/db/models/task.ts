@@ -1,4 +1,4 @@
-import { DatabasePoolType, sql } from "slonik";
+import { DatabasePoolConnectionType, DatabasePoolType, sql } from "slonik";
 import { raw } from "slonik-sql-tag-raw";
 import { Model } from "./model";
 import { TaskModel, TaskSelectOptions } from "../../../shared/types";
@@ -9,9 +9,7 @@ const RETURN_COLS = raw("id, title, project_id, is_completed");
 /**
  * Class representing data access layer for the tasks table
  */
-export class Task implements Model {
-  constructor(private pool: DatabasePoolType) {}
-
+export class Task extends Model {
   /**
    * Create one task in the tasks table
    * @param userId - id of user assigned to object

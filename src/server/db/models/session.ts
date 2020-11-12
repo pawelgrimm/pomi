@@ -1,4 +1,4 @@
-import { DatabasePoolType, sql } from "slonik";
+import { sql } from "slonik";
 import { SqlTokenType } from "slonik/dist/types";
 import { raw } from "slonik-sql-tag-raw";
 import { Model } from "./model";
@@ -36,9 +36,7 @@ const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
 /**
  * Class representing data access layer for the sessions table
  */
-export class Session implements Model {
-  constructor(private pool: DatabasePoolType) {}
-
+export class Session extends Model {
   /**
    * Create one session in the sessions table
    * @param userId - id of user assigned to object

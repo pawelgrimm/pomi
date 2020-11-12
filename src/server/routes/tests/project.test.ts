@@ -7,17 +7,20 @@ import { arrayContainingObjectsContaining } from "../../../shared/utils";
 // Set up mock
 jest.mock("../../db/models");
 const mockProjects = Project as jest.MockedClass<typeof Project>;
+
 const {
   create: mockCreate,
   select: mockSelect,
   selectOne: mockSelectOne,
 } = mockProjects.prototype;
 
+const createMockProject = () => ({ id: uuid(), title: "", isArchived: false });
+
 mockSelect.mockImplementation(
-  () => new Promise((resolve) => resolve([{ id: uuid() }]))
+  () => new Promise((resolve) => resolve([createMockProject()]))
 );
 mockSelectOne.mockImplementation(
-  () => new Promise((resolve) => resolve({ id: uuid() }))
+  () => new Promise((resolve) => resolve(createMockProject()))
 );
 
 let user = { id: uuid() };
