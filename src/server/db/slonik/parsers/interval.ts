@@ -6,7 +6,6 @@ import parsePgInterval from "postgres-interval";
  * @param value
  */
 const intervalParser = (value: string | null) => {
-  console.log("interval parser", value);
   return value === null
     ? value
     : toSeconds(parseISO(parsePgInterval(value).toISOString())) * 1000;
