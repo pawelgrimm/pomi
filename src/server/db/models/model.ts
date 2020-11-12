@@ -1,13 +1,4 @@
-import {
-  DatabasePoolConnectionType,
-  DatabasePoolType,
-  DatabaseTransactionConnectionType,
-} from "slonik";
-
-export type DatabaseConnection =
-  | DatabasePoolType
-  | DatabasePoolConnectionType
-  | DatabaseTransactionConnectionType;
+import { DatabaseConnection, DatabasePoolType } from "../slonik";
 
 type ConstructableThis<T> = { new (...args: any[]): T };
 

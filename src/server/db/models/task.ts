@@ -1,9 +1,8 @@
-import { sql } from "slonik";
-import { raw } from "slonik-sql-tag-raw";
+import { sql, raw } from "../slonik";
 import { Model } from "./model";
+import { validateTask } from "../../../shared/validators";
 import { TaskModel, TaskSelectOptions } from "../../../shared/types";
 import { parseSelectAllOptions } from "../../../shared/utils/tasks";
-import { validateTask } from "../../../shared/validators";
 
 const RETURN_COLS = raw("id, title, project_id, is_completed");
 

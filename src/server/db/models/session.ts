@@ -1,13 +1,13 @@
-import { sql } from "slonik";
-import { SqlTokenType } from "slonik/dist/types";
-import { raw } from "slonik-sql-tag-raw";
+import { sql, raw, SqlTokenType } from "../slonik";
 import { Model } from "./model";
+import { validateSession } from "../../../shared/validators";
 import {
   SessionModel,
   DatabaseSessionModel,
   SessionSelectOptions,
+  TaskModel,
 } from "../../../shared/types";
-import { validateSession } from "../../../shared/validators";
+
 import {
   sqlDate,
   sqlDuration,
@@ -42,12 +42,12 @@ export class Session extends Model {
    * @param userId - id of user assigned to object
    * @param session - session to insert
    */
-  async create(
+  create(
     userId: string,
     session: SessionModel
   ): Promise<Required<SessionModel>> {
     const {
-      taskId = null,
+      taskId,
       startTimestamp,
       duration,
       notes = "",

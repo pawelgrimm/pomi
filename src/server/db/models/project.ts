@@ -1,7 +1,6 @@
+import { sql, raw } from "../slonik";
 import { Model } from "./model";
-import { sql } from "slonik";
 import { ProjectModel, ProjectSelectOptions } from "../../../shared/types";
-import { raw } from "slonik-sql-tag-raw";
 import { parseSelectAllOptions } from "../../../shared/utils/projects";
 import { validateProject } from "../../../shared/validators";
 
