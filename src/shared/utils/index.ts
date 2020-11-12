@@ -21,6 +21,7 @@ import {
   getSyncTokenForProject,
   getSyncTokenForObject,
   insertTestTasks,
+  insertTestSessions,
 } from "./testing-helpers";
 
 import {
@@ -34,6 +35,7 @@ import {
 import { parseStringToBoolean, validateSyncToken } from "./models";
 
 export {
+  insertTestSessions,
   parseSelectAllOptions,
   calculateDuration,
   calculateEndTimestamp,

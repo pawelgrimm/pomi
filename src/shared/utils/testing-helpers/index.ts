@@ -1,6 +1,7 @@
-import { ProjectModel, TaskModel } from "../../types";
-import { pool } from "../../../server/db";
+import { ProjectModel, SessionModel, TaskModel } from "../../types";
+import { pool, Sessions } from "../../../server/db";
 import { sql } from "slonik";
+import { v4 as uuid } from "uuid";
 
 /**
  * Pause execution for the specified duration. Don't forget to add await, as this returns a Promise.
@@ -33,7 +34,7 @@ export const arrayContainingObjectsContaining = (objects: {}[]) =>
 export const insertTestProjects = async (
   userId: string,
   testProjects: ProjectModel[],
-  options?: { sleep?: number }
+  options?: { sleep?: number; defaults: {} }
 ): Promise<Array<ProjectModel & Required<Pick<ProjectModel, "id">>>> => {
   return Promise.all(
     testProjects.map(async (project, index) => {
@@ -51,6 +52,41 @@ export const insertTestProjects = async (
       `);
 
       return { ...project, id };
+    })
+  );
+};
+
+/**
+ * Insert an array of sessions into the test database and add newly generated id to the session
+ * @param userId id of user to which these sessions belong
+ * @param testSessions an array of sessions
+ * @param options provide a sleep duration in milliseconds if desired
+ */
+export const insertTestSessions = async (
+  userId: string,
+  testSessions: Partial<SessionModel>[],
+  options: {
+    sleep?: number;
+    defaults: Partial<SessionModel> & Required<Pick<SessionModel, "taskId">>;
+  }
+): Promise<Array<SessionModel & Required<Pick<SessionModel, "id">>>> => {
+  const fallbacks: SessionModel = {
+    startTimestamp: new Date(),
+    duration: 454000,
+    type: "session",
+    ...options.defaults,
+  };
+  return Promise.all(
+    testSessions.map(async (session, index) => {
+      if (options?.sleep) {
+        const sleepDuration = options.sleep * index;
+        await sleep(sleepDuration);
+      }
+
+      return await Sessions.create(userId, {
+        ...fallbacks,
+        ...session,
+      });
     })
   );
 };
