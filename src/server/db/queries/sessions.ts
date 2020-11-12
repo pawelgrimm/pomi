@@ -12,7 +12,7 @@
 //   type,
 //   is_retro_added`;
 //
-// const bindSessionQueries = (pool: DatabasePoolType) => {
+// const bindSessionQueries = (connection: DatabasePoolType) => {
 //   return {
 //     create: (session: DatabaseSessionModel) => {
 //       const {
@@ -24,7 +24,7 @@
 //         type,
 //         retro_added,
 //       } = session;
-//       return pool.any(
+//       return connection.any(
 //         sql`
 //             INSERT INTO sessions(user_id,
 //                                  task_id,
@@ -50,7 +50,7 @@
 //
 //     // TODO: take time zone as a param
 //     selectAll: () =>
-//       pool.any(
+//       connection.any(
 //         sql`
 //             SELECT ${RETURN_COLS}
 //             FROM sessions;
@@ -58,7 +58,7 @@
 //       ),
 //
 //     selectAllToday: () =>
-//       pool.any(
+//       connection.any(
 //         sql`
 //             SELECT ${RETURN_COLS}
 //             FROM sessions
@@ -67,7 +67,7 @@
 //       ),
 //
 //     selectOneById: (id: string) =>
-//       pool.maybeOne(
+//       connection.maybeOne(
 //         sql`
 //             SELECT ${RETURN_COLS}
 //             FROM sessions
@@ -86,7 +86,7 @@
 //         type,
 //         retro_added,
 //       } = session;
-//       return pool
+//       return connection
 //         .query(
 //           sql`
 //             UPDATE sessions

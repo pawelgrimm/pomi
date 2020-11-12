@@ -15,7 +15,7 @@ const NOTES_LENGTH_LIMIT = 1000;
  */
 const sessionSchemaSoft = Joi.object({
   id: Joi.string().uuid({ version: "uuidv4" }).optional(),
-  taskId: Joi.string().uuid({ version: "uuidv4" }).optional(),
+  taskId: Joi.string().uuid({ version: "uuidv4" }),
   startTimestamp: Joi.date().iso(),
   endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
   duration: Joi.number().optional().default(calculateDuration),
