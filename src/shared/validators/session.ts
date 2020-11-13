@@ -1,61 +1,80 @@
 import Joi from "joi";
-import { DbReadySessionModel, SessionModel } from "../types";
-import { calculateDuration, calculateEndTimestamp } from "../utils";
+import { Schema } from "@hapi/joi";
+import { SessionModel } from "../types";
+import { InvalidMethodError } from "./errors";
+import { Method, standardFieldAlter } from "./shared";
 
 const NOTES_LENGTH_LIMIT = 1000;
 
-/*
- * Note: Schemas listed as optional are always optional.
- * Schemas without a presence requirement are required unless presence is set to
- * "required", which is accomplished using the isPartial flag
+/**
+ * List of methods allowed when validating a session
  */
+type SessionMethods = Method.CREATE | Method.UPDATE | Method.PARTIAL;
 
 /**
- * Schema used to convert and hydrate database sessions into client sessions
+ * Schema used to validate sessions before inserting them into the database
  */
-const sessionSchemaSoft = Joi.object({
-  id: Joi.string().uuid({ version: "uuidv4" }).optional(),
-  taskId: Joi.string().uuid({ version: "uuidv4" }),
-  startTimestamp: Joi.date().iso(),
-  endTimestamp: Joi.date().optional().default(calculateEndTimestamp),
-  duration: Joi.number().optional().default(calculateDuration),
-  notes: Joi.string().trim().optional().max(NOTES_LENGTH_LIMIT),
-  type: Joi.string().allow("session", "break", "long-break"),
-  isRetroAdded: Joi.boolean().optional().default(false),
+const sessionSchema = Joi.object({
+  id: Joi.string()
+    .trim()
+    .uuid({ version: "uuidv4" })
+    .alter({
+      [Method.CREATE]: (schema) => schema.forbidden(),
+      [Method.UPDATE]: (schema) => schema.required(),
+      [Method.PARTIAL]: (schema) => schema.required(),
+    }),
+  taskId: Joi.string()
+    .trim()
+    .uuid({ version: "uuidv4" })
+    .alter(standardFieldAlter),
+  startTimestamp: Joi.date().iso().alter(standardFieldAlter),
+  duration: Joi.number().alter({
+    [Method.CREATE]: (schema) => schema.required(),
+    [Method.UPDATE]: (schema) => schema.required(),
+    [Method.PARTIAL]: (schema) =>
+      schema.when("startTimestamp", {
+        is: Joi.exist(),
+        then: Joi.required(),
+        otherwise: Joi.optional(),
+      }),
+  }),
+  type: Joi.string()
+    .trim()
+    .allow("session", "break", "long-break")
+    .alter(standardFieldAlter),
+  notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
+  isRetroAdded: Joi.boolean().default(false).optional(),
 });
 
-const sessionSchemaHard = sessionSchemaSoft.or("endTimestamp", "duration");
+/**
+ * A map of schemas by method type
+ */
+const sessionSchemas = new Map<SessionMethods, Schema>([
+  [
+    Method.CREATE,
+    sessionSchema
+      .options({
+        stripUnknown: true,
+      })
+      .tailor(Method.CREATE),
+  ],
+  [Method.UPDATE, sessionSchema.unknown(false).tailor(Method.UPDATE)],
+  [Method.PARTIAL, sessionSchema.unknown(false).tailor(Method.PARTIAL)],
+]);
 
 /**
  * Validate a Session
- * @param session a SessionModel-like object
- * @param options an object containing an optional isPartial key (to validate provided
- *  keys and not require presence of all required keys)
+ * @param session - a SessionModel-like object
+ * @param method - a string representing the validation type to use, like "CREATE" or "PATCH"
  * @returns the object as a SessionModel
  */
 export const validateSession = (
   session: any,
-  options: { isPartial?: boolean } = {}
-): DbReadySessionModel => {
-  return Joi.attempt(
-    session,
-    (options.isPartial ? sessionSchemaSoft : sessionSchemaHard).options({
-      stripUnknown: true,
-      presence: options.isPartial ? "optional" : "required",
-    })
-  ) as DbReadySessionModel;
-};
-
-/**
- * Validate and convert a DatabaseSessionModel object into a SessionModel object
- * @param session a SessionModel-like object
- * @param options an object containing an optional isPartial key (to validate provided
- *  keys, not presence of all required keys)
- * @returns the object converted to a DatabaseSessionModel
- */
-export const hydrateDatabaseSession = (
-  session: any,
-  options: { isPartial?: boolean } = {}
+  method: SessionMethods = Method.CREATE
 ): SessionModel => {
-  return validateSession(session, options);
+  const schema = sessionSchemas.get(method);
+
+  if (!schema) throw new InvalidMethodError(method);
+
+  return Joi.attempt(session, schema) as SessionModel;
 };

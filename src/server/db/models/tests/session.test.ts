@@ -192,3 +192,10 @@ describe("Select One Session", () => {
     return expect(session).resolves.toBeFalsy();
   });
 });
+
+describe("Update Session", () => {
+  it.todo("Should update allowed fields successfully");
+  it.todo("Should call validateSession");
+  it.todo("Should not set disallowed fields and throw error");
+  it.todo("Should not allow userId and taskId->task->userId mismatch");
+});

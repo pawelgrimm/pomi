@@ -5,7 +5,6 @@ import {
   SessionModel,
   DatabaseSessionModel,
   SessionSelectOptions,
-  TaskModel,
 } from "../../../shared/types";
 
 import {
@@ -88,18 +87,19 @@ export class Session extends Model {
         `);
   }
 
-  /**
-   * Get today's sessions for a user
-   * @param userId - id of session-owning user
-   * TODO: Accommodate timezone
-   */
-  async selectAllToday(
-    userId: string
-  ): Promise<Readonly<Required<SessionModel>[]>> {
-    return this.connection.any(sql`
-        SELECT ${RETURN_COLS} FROM sessions
-        WHERE user_id = ${userId} AND start_timestamp > current_date;`);
-  }
+  // /**
+  //  * TODO: Write tests
+  //  * Get today's sessions for a user
+  //  * @param userId - id of session-owning user
+  //  * TODO: Accommodate timezone
+  //  */
+  // async selectAllToday(
+  //   userId: string
+  // ): Promise<Readonly<Required<SessionModel>[]>> {
+  //   return this.connection.any(sql`
+  //       SELECT ${RETURN_COLS} FROM sessions
+  //       WHERE user_id = ${userId} AND start_timestamp > current_date;`);
+  // }
 
   /**
    * Get a session for a user
@@ -127,7 +127,9 @@ export class Session extends Model {
     sessionId: string,
     session: Partial<DatabaseSessionModel>
   ): Promise<boolean> {
-    const updateSets = Session.buildUpdateSets(session);
+    const updateSets = Session.buildUpdateSets(
+      validateSession(session, { isPartial: true })
+    );
     if (updateSets.length < 1) {
       return false;
     }

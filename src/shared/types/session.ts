@@ -7,15 +7,10 @@ export interface SessionModel {
   id?: string;
   taskId: string;
   startTimestamp: Date;
-  endTimestamp?: Date;
-  duration?: number;
-  notes?: string;
-  type: SessionTypeString;
-  isRetroAdded?: boolean;
-}
-
-export interface DbReadySessionModel extends SessionModel {
   duration: number;
+  type: SessionTypeString;
+  notes?: string;
+  isRetroAdded?: boolean;
 }
 
 export enum SessionType {
