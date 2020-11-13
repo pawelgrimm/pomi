@@ -91,19 +91,25 @@ const sessionSelectOptionsSchema = Joi.object({
     .default("*")
     .custom(validateSyncToken),
   start: Joi.date().iso().optional(),
-  end: Joi.date().iso().optional(),
+  end: Joi.date()
+    .iso()
+    .optional()
+    .when("start", {
+      is: Joi.exist(),
+      then: Joi.date().greater(Joi.ref("start")),
+    }),
 });
 
 /**
  * Validate session select options and set defaults
- * @param options - a SessionSelectOptions-like object
+ * @param sessionSelectOptions - a SessionSelectOptions-like object
  */
 export const validateSessionSelectOptions = (
-  options: {} = {}
+  sessionSelectOptions: {} = {}
 ): SessionSelectOptions => {
-  options = camelcaseKeys(options);
+  sessionSelectOptions = camelcaseKeys(sessionSelectOptions);
   return Joi.attempt(
-    options,
+    sessionSelectOptions,
     sessionSelectOptionsSchema
   ) as SessionSelectOptions;
 };
