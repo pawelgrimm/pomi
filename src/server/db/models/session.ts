@@ -1,17 +1,13 @@
-import { sql, raw, SqlTokenType } from "../slonik";
+import { raw, sql, SqlTokenType } from "../slonik";
 import { Model } from "./model";
-import { validateSession } from "../../../shared/validators";
 import {
-  SessionModel,
-  DatabaseSessionModel,
-  SessionSelectOptions,
-} from "../../../shared/types";
+  validateSession,
+  validateSessionSelectOptions,
+} from "../../../shared/validators";
+import { SessionModel, SessionSelectOptions } from "../../../shared/types";
 
-import {
-  sqlDate,
-  sqlDuration,
-  parseSelectAllOptions,
-} from "../../../shared/utils";
+import { sqlDate, sqlDuration } from "../../../shared/utils";
+import { Method } from "../../../shared/validators/shared";
 
 const RETURN_COLS = raw(`
   id, 
@@ -77,7 +73,7 @@ export class Session extends Model {
   ): Promise<Readonly<Required<SessionModel>[]>> {
     const whereClauses: SqlTokenType[] = [sql`user_id = ${userId}`];
 
-    const parsedOptions = parseSelectAllOptions(options);
+    const parsedOptions = validateSessionSelectOptions(options);
 
     whereClauses.push(...Session.buildAdditionalWhereClauses(parsedOptions));
 
@@ -125,10 +121,10 @@ export class Session extends Model {
   async update(
     userId: string,
     sessionId: string,
-    session: Partial<DatabaseSessionModel>
+    session: Partial<SessionModel>
   ): Promise<boolean> {
     const updateSets = Session.buildUpdateSets(
-      validateSession(session, { isPartial: true })
+      validateSession(session, Method.UPDATE)
     );
     if (updateSets.length < 1) {
       return false;
@@ -147,14 +143,13 @@ export class Session extends Model {
    * Build additional where clauses based on options
    * @param options {SessionSelectOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(
-    options: Required<SessionSelectOptions>
-  ) {
-    const { syncToken } = options;
+  private static buildAdditionalWhereClauses(options: SessionSelectOptions) {
+    const { syncToken, start, end } = options;
     const whereClauses: SqlTokenType[] = [];
-    if (syncToken !== "*") {
+    if (syncToken !== "*")
       whereClauses.push(sql`last_modified >= ${syncToken}`);
-    }
+    if (start) whereClauses.push(sql`start_timestamp >= ${sqlDate(start)}`);
+    if (end) whereClauses.push(sql`start_timestamp < ${sqlDate(end)}`);
     return whereClauses;
   }
 

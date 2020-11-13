@@ -34,7 +34,7 @@ export const arrayContainingObjectsContaining = (objects: {}[]) =>
 export const insertTestProjects = async (
   userId: string,
   testProjects: ProjectModel[],
-  options?: { sleep?: number; defaults: {} }
+  options?: { sleep?: number; defaults?: {} }
 ): Promise<Array<ProjectModel & Required<Pick<ProjectModel, "id">>>> => {
   return Promise.all(
     testProjects.map(async (project, index) => {

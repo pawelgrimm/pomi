@@ -24,22 +24,13 @@ import {
   insertTestSessions,
 } from "./testing-helpers";
 
-import {
-  getDurationWithUnits,
-  parseSelectAllOptions,
-  calculateDuration,
-  calculateEndTimestamp,
-  getSessionTypeAsString,
-} from "./sessions";
+import { getDurationWithUnits, calculateEndTimestamp } from "./sessions";
 
 import { parseStringToBoolean, validateSyncToken } from "./models";
 
 export {
   insertTestSessions,
-  parseSelectAllOptions,
-  calculateDuration,
   calculateEndTimestamp,
-  getSessionTypeAsString,
   insertTestTasks,
   getSyncTokenForObject,
   validateSyncToken,

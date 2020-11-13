@@ -55,11 +55,13 @@ router.get("/", async (req, res) => {
   res.status(sessions.length > 0 ? 200 : 404).send({ sessions });
 });
 
+// TODO: implement
 /*      GET ALL OF TODAY'S SESSIONS     */
 router.get("/today", async (req, res) => {
-  const { userId } = res.locals;
-  const sessions = await Sessions.selectAllToday(userId);
-  res.status(sessions.length > 0 ? 200 : 404).send({ sessions });
+  res.status(501).send();
+  // const { userId } = res.locals;
+  // const sessions = await Sessions.selectAllToday(userId);
+  // res.status(sessions.length > 0 ? 200 : 404).send({ sessions });
 });
 
 /*      GET SESSION BY ID    */

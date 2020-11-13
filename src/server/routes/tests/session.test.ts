@@ -16,7 +16,6 @@ const createMockSession = (): Required<SessionModel> => ({
   id: uuid(),
   taskId: uuid(),
   startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
-  endTimestamp: new Date("2020-10-23T20:07:49.853Z"),
   duration: 500000,
   notes: "",
   type: "session",
@@ -49,9 +48,7 @@ describe("Session create tests", () => {
       id: body.id,
       start_timestamp: new Date(validSession.startTimestamp),
       notes: validSession.notes,
-      duration:
-        validSession.endTimestamp.valueOf() -
-        validSession.startTimestamp.valueOf(),
+      duration: validSession.duration,
     });
     done();
   });

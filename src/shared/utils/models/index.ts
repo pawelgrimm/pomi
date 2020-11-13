@@ -47,4 +47,5 @@ export const validateSyncToken = (syncToken: string) => {
       },
     ]);
   }
+  return syncToken;
 };

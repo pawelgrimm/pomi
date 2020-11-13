@@ -1,8 +1,10 @@
 import Joi from "joi";
 import { Schema } from "@hapi/joi";
-import { SessionModel } from "../types";
+import { SessionModel, SessionSelectOptions } from "../types";
 import { InvalidMethodError } from "./errors";
 import { Method, standardFieldAlter } from "./shared";
+import camelcaseKeys from "camelcase-keys";
+import { validateSyncToken } from "../utils";
 
 const NOTES_LENGTH_LIMIT = 1000;
 
@@ -77,4 +79,31 @@ export const validateSession = (
   if (!schema) throw new InvalidMethodError(method);
 
   return Joi.attempt(session, schema) as SessionModel;
+};
+
+/**
+ * Schema representing valid options for GET sessions options
+ */
+const sessionSelectOptionsSchema = Joi.object({
+  syncToken: Joi.string()
+    .trim()
+    .optional()
+    .default("*")
+    .custom(validateSyncToken),
+  start: Joi.date().iso().optional(),
+  end: Joi.date().iso().optional(),
+});
+
+/**
+ * Validate session select options and set defaults
+ * @param options - a SessionSelectOptions-like object
+ */
+export const validateSessionSelectOptions = (
+  options: {} = {}
+): SessionSelectOptions => {
+  options = camelcaseKeys(options);
+  return Joi.attempt(
+    options,
+    sessionSelectOptionsSchema
+  ) as SessionSelectOptions;
 };
