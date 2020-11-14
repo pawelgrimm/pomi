@@ -1,5 +1,5 @@
-import { ProjectModel, SessionModel, TaskModel } from "../../types";
-import { pool, Sessions } from "../../../server/db";
+import { ProjectModel, SessionModel, TaskModel, UserModel } from "../../types";
+import { pool, Projects, Sessions } from "../../../server/db";
 import { sql } from "slonik";
 import { v4 as uuid } from "uuid";
 
@@ -145,7 +145,8 @@ export const insertTestTasks = async (
         projectId = null,
       } = task;
 
-      const id = await pool.oneFirst<string>(sql`
+      const mark = Date.now();
+      const { id, lastModified } = await pool.one(sql`
         INSERT INTO tasks(user_id, 
                           title, 
                           project_id, 
@@ -154,10 +155,45 @@ export const insertTestTasks = async (
                 ${title}, 
                 COALESCE(${projectId}, (SELECT default_project FROM users WHERE id = ${userId})), 
                 ${isCompleted})
-        RETURNING id;
+        RETURNING id, last_modified;
       `);
-
+      if (title === "debug") {
+        console.log({
+          index,
+          mark,
+          lastModified: lastModified.valueOf(),
+          difference: lastModified.valueOf() - mark,
+        });
+      }
       return { ...task, id };
     })
   );
+};
+
+/**
+ * Insert a random user into the database
+ */
+export const insertRandomTestUser = async () => {
+  const randomId = uuid();
+
+  const user = {
+    id: randomId,
+    display_name: `user-${randomId}`,
+    email: `${randomId}@example.com`,
+  };
+
+  await pool.one(sql`
+        INSERT INTO users(id, display_name, email) 
+        VALUES (${user.id}, ${user.display_name}, ${user.email})
+        RETURNING id, display_name, email;`);
+
+  const defaultProject = await Projects.create(user.id, {
+    title: "default project",
+  });
+
+  return pool.one<Required<UserModel>>(sql`
+        UPDATE users 
+        SET default_project = ${defaultProject.id}
+        WHERE id = ${user.id}
+        RETURNING id, display_name, email, default_project;`);
 };

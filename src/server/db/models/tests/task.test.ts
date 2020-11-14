@@ -2,7 +2,6 @@ import { Tasks, pool } from "../../index";
 import { v4 as uuid } from "uuid";
 import { NotNullIntegrityConstraintViolationError, sql } from "slonik";
 import { ProjectModel, TaskModel, UserModel } from "../../../../shared/types";
-import { resetTestDb } from "../../../setupTest";
 import {
   arrayContainingObjectsContaining,
   getSyncTokenForObject,
@@ -35,8 +34,6 @@ beforeAll(() => {
   };
 
   return new Promise(async (resolve) => {
-    await resetTestDb();
-
     // create user
     await pool.query(sql`
         INSERT INTO users(id, display_name, email) 
@@ -175,7 +172,7 @@ describe("Select All Tasks", () => {
 
   it("Should select only tasks modified after a given time", async (done) => {
     const testTasks = await insertTestTasks(user.id, [{}, {}, {}], {
-      sleep: 5,
+      sleep: 100,
     });
 
     const lastTask = testTasks.pop();
@@ -201,7 +198,7 @@ describe("Select All Tasks", () => {
     const testTasks = await insertTestTasks(
       user.id,
       [{}, { isCompleted: true }, {}],
-      { sleep: 5 }
+      { sleep: 100 }
     );
 
     const oldTask = testTasks.shift();

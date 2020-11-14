@@ -6,4 +6,7 @@ module.exports = {
       tsconfig: "src/server/tsconfig.json",
     },
   },
+  collectCoverageFrom: ["**/*.ts"],
+  coverageReporters: ["text"],
+  globalSetup: "./globalSetup.js",
 };

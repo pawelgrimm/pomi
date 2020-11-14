@@ -1,5 +1,6 @@
-import { Sessions, pool, Projects, Tasks } from "../../index";
+import { Sessions, pool, Projects, Tasks, Users } from "../../index";
 import { v4 as uuid } from "uuid";
+import { add, sub } from "date-fns";
 import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
 import {
   ProjectModel,
@@ -7,14 +8,16 @@ import {
   TaskModel,
   UserModel,
 } from "../../../../shared/types";
-import { resetTestDb } from "../../../setupTest";
 import {
   arrayContainingObjectsContaining,
   getSyncTokenForObject,
   insertTestSessions,
+  wrapObjectContaining,
 } from "../../../../shared/utils";
 
 import * as validators from "../../../../shared/validators";
+import { insertRandomTestUser } from "../../../../shared/utils/testing-helpers";
+import { Method } from "../../../../shared/validators/shared";
 const mockValidator = jest.spyOn(validators, "validateSession");
 
 const getSyncTokenForSession = (sessionId: string) => {
@@ -22,35 +25,15 @@ const getSyncTokenForSession = (sessionId: string) => {
 };
 
 let user: Readonly<UserModel>;
-let defaultProject: Readonly<Required<ProjectModel>>;
-let project: typeof defaultProject;
+let otherUser: typeof user;
+let project: Readonly<Required<ProjectModel>>;
 let task: Readonly<Required<TaskModel>>;
+let otherUserTask: typeof task;
 
 beforeAll(() => {
-  user = {
-    id: uuid(),
-    display_name: "sessionsTestUser",
-    email: "sessions@example.com",
-  };
-
   return new Promise(async (resolve) => {
-    await resetTestDb();
-
-    // create user
-    await pool.query(sql`
-        INSERT INTO users(id, display_name, email) 
-        VALUES (${user.id}, ${user.display_name}, ${user.email});`);
-
-    defaultProject = await Projects.create(user.id, {
-      title: "default project",
-    });
-
-    // link default project
-    await pool.query(sql`
-        UPDATE users 
-        SET default_project = ${defaultProject.id}
-        WHERE id = ${user.id}
-        RETURNING *;`);
+    user = await insertRandomTestUser();
+    otherUser = await insertRandomTestUser();
 
     project = await Projects.create(user.id, {
       title: "test project",
@@ -59,6 +42,10 @@ beforeAll(() => {
     task = await Tasks.create(user.id, {
       title: "test project",
       projectId: project.id,
+    });
+
+    otherUserTask = await Tasks.create(otherUser.id, {
+      title: "test project",
     });
 
     resolve();
@@ -71,15 +58,50 @@ afterAll(() => {
 
 let validSession: SessionModel;
 
+const createValidSession = (): SessionModel => ({
+  taskId: task.id,
+  startTimestamp: new Date("2020-11-12T21:27:10.359Z"),
+  duration: 1234888,
+  type: "session",
+});
+
 beforeEach(() => {
   mockValidator.mockClear();
-  validSession = {
-    taskId: task.id,
-    startTimestamp: new Date("2020-11-12T21:27:10.359Z"),
-    duration: 1234888,
-    type: "session",
-  };
+  validSession = createValidSession();
 });
+
+const setupTimedSessions = async (referenceTimestamp: string) => {
+  const reference = new Date(referenceTimestamp);
+  const before = sub(reference, { hours: 1 });
+  const beforeBefore = sub(reference, { hours: 2 });
+  const after = add(reference, { hours: 1 });
+  const afterAfter = add(reference, { hours: 2 });
+
+  const testSessions = await insertTestSessions(
+    user.id,
+    [
+      { startTimestamp: beforeBefore },
+      { startTimestamp: before },
+      { startTimestamp: reference },
+      { startTimestamp: after },
+      { startTimestamp: afterAfter },
+    ],
+    { defaults: { taskId: task.id } }
+  );
+
+  const timedSessions = new Map<
+    Date,
+    SessionModel & Required<Pick<SessionModel, "id">>
+  >();
+
+  testSessions.forEach((session) =>
+    timedSessions.set(session.startTimestamp, session)
+  );
+
+  const sortedKeys = Array.from(timedSessions.keys()).sort();
+
+  return { timedSessions, sortedKeys };
+};
 
 describe("Create Session", () => {
   it("Should create a session", async () => {
@@ -112,6 +134,15 @@ describe("Create Session", () => {
       ForeignKeyIntegrityConstraintViolationError
     );
   });
+
+  it("Should not allow userId and taskId->task->userId mismatch", async () => {
+    return expect(() =>
+      Sessions.create(user.id, {
+        ...validSession,
+        taskId: otherUserTask.id,
+      })
+    ).rejects.toThrow(ForeignKeyIntegrityConstraintViolationError);
+  });
 });
 
 describe("Select All Sessions", () => {
@@ -131,6 +162,16 @@ describe("Select All Sessions", () => {
     );
   });
 
+  it("Should not return sessions from another user", async () => {
+    const otherSessions = await insertTestSessions(otherUser.id, [{}, {}, {}], {
+      defaults: { taskId: otherUserTask.id },
+    });
+
+    return expect(Sessions.select(user.id)).resolves.not.toEqual(
+      arrayContainingObjectsContaining(otherSessions)
+    );
+  });
+
   it("Should select only sessions modified after a given time", async (done) => {
     const testSessions = await insertTestSessions(
       user.id,
@@ -141,7 +182,7 @@ describe("Select All Sessions", () => {
         { type: "long_break" },
       ],
       {
-        sleep: 5,
+        sleep: 100,
         defaults: { taskId: task.id },
       }
     );
@@ -164,6 +205,99 @@ describe("Select All Sessions", () => {
 
     expect(sessions).not.toEqual(
       arrayContainingObjectsContaining(testSessions)
+    );
+
+    done();
+  });
+
+  it("Should only return sessions with startTimes in the provided range: start", async (done) => {
+    const { timedSessions, sortedKeys } = await setupTimedSessions(
+      new Date().toISOString()
+    );
+
+    const after = sortedKeys[2];
+    let sessionsAfter: (SessionModel &
+      Required<Pick<SessionModel, "id">>)[] = [];
+    let sessionsBefore: typeof sessionsAfter = [];
+    sortedKeys.forEach((timestamp) => {
+      const date = timedSessions.get(timestamp);
+      if (date) {
+        if (timestamp >= after) {
+          sessionsAfter.push(date);
+        } else {
+          sessionsBefore.push(date);
+        }
+      }
+    });
+
+    const sessions = await Sessions.select(user.id, { start: after });
+
+    expect(sessions).toEqual(arrayContainingObjectsContaining(sessionsAfter));
+    expect(sessions).not.toEqual(
+      arrayContainingObjectsContaining(sessionsBefore)
+    );
+
+    done();
+  });
+
+  it("Should only return sessions with startTimes in the provided range: end", async (done) => {
+    const { timedSessions, sortedKeys } = await setupTimedSessions(
+      new Date().toISOString()
+    );
+
+    const before = sortedKeys[4];
+    let sessionsAfter: (SessionModel &
+      Required<Pick<SessionModel, "id">>)[] = [];
+    let sessionsBefore: typeof sessionsAfter = [];
+    sortedKeys.forEach((timestamp) => {
+      const date = timedSessions.get(timestamp);
+      if (date) {
+        if (timestamp < before) {
+          sessionsBefore.push(date);
+        } else {
+          sessionsAfter.push(date);
+        }
+      }
+    });
+
+    const sessions = await Sessions.select(user.id, { end: before });
+
+    expect(sessions).toEqual(arrayContainingObjectsContaining(sessionsBefore));
+    expect(sessions).not.toEqual(
+      arrayContainingObjectsContaining(sessionsAfter)
+    );
+
+    done();
+  });
+
+  it("Should only return sessions with startTimes in the provided range: start and end", async (done) => {
+    const { timedSessions, sortedKeys } = await setupTimedSessions(
+      new Date().toISOString()
+    );
+
+    const after = sortedKeys[1];
+    const before = sortedKeys[3];
+    let sessionsIn: (SessionModel & Required<Pick<SessionModel, "id">>)[] = [];
+    let sessionsOut: typeof sessionsIn = [];
+    sortedKeys.forEach((timestamp) => {
+      const date = timedSessions.get(timestamp);
+      if (date) {
+        if (timestamp >= after && timestamp < before) {
+          sessionsIn.push(date);
+        } else {
+          sessionsOut.push(date);
+        }
+      }
+    });
+
+    const sessions = await Sessions.select(user.id, {
+      start: after,
+      end: before,
+    });
+
+    expect(sessions).toEqual(arrayContainingObjectsContaining(sessionsIn));
+    expect(sessions).toEqual(
+      expect.not.arrayContaining(wrapObjectContaining(sessionsOut))
     );
 
     done();
@@ -194,8 +328,45 @@ describe("Select One Session", () => {
 });
 
 describe("Update Session", () => {
-  it.todo("Should update allowed fields successfully");
-  it.todo("Should call validateSession");
-  it.todo("Should not set disallowed fields and throw error");
-  it.todo("Should not allow userId and taskId->task->userId mismatch");
+  it("Should update allowed fields successfully", async () => {
+    const insertedSession = await Sessions.create(user.id, validSession);
+    const updatedSession = {
+      taskId: insertedSession.taskId,
+      startTimestamp: new Date("2020-11-18T18:00:00.000Z"),
+      duration: 522200000,
+      type: "long_break",
+      notes: "this is a new note",
+    };
+
+    return expect(
+      Sessions.update(user.id, insertedSession.id, updatedSession)
+    ).resolves.toMatchObject(updatedSession);
+  });
+
+  it("Should call validateSession", async () => {
+    const session = await Sessions.create(user.id, validSession);
+    mockValidator.mockClear();
+    const sessionUpdates = { type: session.type };
+    await Sessions.update(user.id, session.id, sessionUpdates);
+    return expect(mockValidator).toHaveBeenCalledWith(
+      sessionUpdates,
+      Method.PARTIAL
+    );
+  });
+
+  it("Should not set disallowed fields", async () => {
+    const session = await Sessions.create(user.id, validSession);
+    const sessionUpdates = { isRetroAdded: false };
+    return expect(() =>
+      Sessions.update(user.id, session.id, sessionUpdates)
+    ).rejects.toThrow(/"isRetroAdded" is not allowed/);
+  });
+
+  it("Should not allow userId and taskId->task->userId mismatch", async () => {
+    const session = await Sessions.create(user.id, validSession);
+
+    return expect(() =>
+      Sessions.update(user.id, session.id, { taskId: otherUserTask.id })
+    ).rejects.toThrow(ForeignKeyIntegrityConstraintViolationError);
+  });
 });

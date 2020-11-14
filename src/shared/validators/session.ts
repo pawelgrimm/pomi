@@ -22,8 +22,8 @@ const sessionSchema = Joi.object({
     .uuid({ version: "uuidv4" })
     .alter({
       [Method.CREATE]: (schema) => schema.forbidden(),
-      [Method.UPDATE]: (schema) => schema.required(),
-      [Method.PARTIAL]: (schema) => schema.required(),
+      [Method.UPDATE]: (schema) => schema.optional(),
+      [Method.PARTIAL]: (schema) => schema.optional(),
     }),
   taskId: Joi.string()
     .trim()
@@ -45,7 +45,11 @@ const sessionSchema = Joi.object({
     .allow("session", "break", "long-break")
     .alter(standardFieldAlter),
   notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
-  isRetroAdded: Joi.boolean().default(false).optional(),
+  isRetroAdded: Joi.boolean().alter({
+    [Method.CREATE]: (schema) => schema.default(false).optional(),
+    [Method.UPDATE]: (schema) => schema.forbidden(),
+    [Method.PARTIAL]: (schema) => schema.forbidden(),
+  }),
 });
 
 /**
@@ -60,8 +64,8 @@ const sessionSchemas = new Map<SessionMethods, Schema>([
       })
       .tailor(Method.CREATE),
   ],
-  [Method.UPDATE, sessionSchema.unknown(false).tailor(Method.UPDATE)],
-  [Method.PARTIAL, sessionSchema.unknown(false).tailor(Method.PARTIAL)],
+  [Method.UPDATE, sessionSchema.unknown().tailor(Method.UPDATE)],
+  [Method.PARTIAL, sessionSchema.unknown().tailor(Method.PARTIAL)],
 ]);
 
 /**
@@ -85,11 +89,7 @@ export const validateSession = (
  * Schema representing valid options for GET sessions options
  */
 const sessionSelectOptionsSchema = Joi.object({
-  syncToken: Joi.string()
-    .trim()
-    .optional()
-    .default("*")
-    .custom(validateSyncToken),
+  syncToken: Joi.string().trim().custom(validateSyncToken).optional(),
   start: Joi.date().iso().optional(),
   end: Joi.date()
     .iso()

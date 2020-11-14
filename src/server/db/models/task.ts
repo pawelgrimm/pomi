@@ -46,7 +46,8 @@ export class Task extends Model {
 
     return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM tasks
-        WHERE ${sql.join(whereClauses, sql` AND `)};
+        WHERE ${sql.join(whereClauses, sql` AND `)}
+        ORDER BY last_modified DESC;
         `);
   }
 

@@ -44,7 +44,8 @@ export class Project extends Model {
 
     return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM projects
-        WHERE ${sql.join(whereClauses, sql` AND `)};
+        WHERE ${sql.join(whereClauses, sql` AND `)}
+        ORDER BY last_modified DESC;
         `);
   }
 

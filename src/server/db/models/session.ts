@@ -1,3 +1,4 @@
+import { snakeCase } from "lodash";
 import { raw, sql, SqlTokenType } from "../slonik";
 import { Model } from "./model";
 import {
@@ -25,7 +26,6 @@ const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
   duration: true,
   notes: true,
   type: true,
-  isRetroAdded: true,
 };
 
 /**
@@ -79,7 +79,8 @@ export class Session extends Model {
 
     return this.connection.any(sql`
         SELECT ${RETURN_COLS} FROM sessions
-        WHERE ${sql.join(whereClauses, sql` AND `)};
+        WHERE ${sql.join(whereClauses, sql` AND `)}
+        ORDER BY last_modified DESC;
         `);
   }
 
@@ -121,22 +122,22 @@ export class Session extends Model {
   async update(
     userId: string,
     sessionId: string,
-    session: Partial<SessionModel>
-  ): Promise<boolean> {
+    session: any
+  ): Promise<Required<SessionModel> | null> {
     const updateSets = Session.buildUpdateSets(
-      validateSession(session, Method.UPDATE)
+      validateSession(session, Method.PARTIAL)
     );
     if (updateSets.length < 1) {
-      return false;
+      return null;
     }
-    return this.connection
-      .query(
-        sql`
-      UPDATE sessions
-      SET ${sql.join(updateSets, sql`, `)}
-      WHERE id = ${sessionId} AND user_id = ${userId}`
-      )
-      .then(() => true);
+    return this.connection.one(
+      sql`
+        UPDATE sessions
+        SET ${sql.join(updateSets, sql`, `)}
+        WHERE id = ${sessionId} AND user_id = ${userId}
+        RETURNING ${RETURN_COLS};
+        `
+    );
   }
 
   /**
@@ -146,10 +147,14 @@ export class Session extends Model {
   private static buildAdditionalWhereClauses(options: SessionSelectOptions) {
     const { syncToken, start, end } = options;
     const whereClauses: SqlTokenType[] = [];
-    if (syncToken !== "*")
-      whereClauses.push(sql`last_modified >= ${syncToken}`);
-    if (start) whereClauses.push(sql`start_timestamp >= ${sqlDate(start)}`);
-    if (end) whereClauses.push(sql`start_timestamp < ${sqlDate(end)}`);
+    if (syncToken) {
+      if (syncToken !== "*") {
+        whereClauses.push(sql`last_modified >= ${syncToken}`);
+      }
+    } else {
+      if (start) whereClauses.push(sql`start_timestamp >= ${sqlDate(start)}`);
+      if (end) whereClauses.push(sql`start_timestamp < ${sqlDate(end)}`);
+    }
     return whereClauses;
   }
 
@@ -157,8 +162,20 @@ export class Session extends Model {
     const setClauses: SqlTokenType[] = [];
     Object.entries(session).forEach(([key, value]) => {
       if (UPDATEABLE_COLUMNS[key] && value != null) {
-        const newValue = value instanceof Date ? sqlDate(value) : value;
-        setClauses.push(sql`${sql.identifier([key])} = ${newValue}}`);
+        let valueToUse: any = value;
+        switch (key) {
+          case "startTimestamp":
+            valueToUse = sqlDate(value as Date);
+            break;
+          case "duration":
+            valueToUse = sqlDuration(value as number);
+            break;
+          default:
+            break;
+        }
+        setClauses.push(
+          sql`${sql.identifier([snakeCase(key)])} = ${valueToUse}`
+        );
       }
     });
     return setClauses;

@@ -34,7 +34,7 @@ export type SessionTypeString = keyof typeof SessionType;
  * @property {Date} [end] - indicates end of time range to query
  */
 export type SessionSelectOptions = {
-  syncToken: string;
+  syncToken?: string;
   start?: Date;
   end?: Date;
 };

@@ -101,9 +101,9 @@ it("Should throw when bad method is passed to validator", () => {
 });
 
 describe("Session Select Options Validator", () => {
-  it("Should add the default syncToken value for empty options object", () => {
+  it("Should not add the default syncToken value for empty options object", () => {
     const validatedOptions = validateSessionSelectOptions({});
-    expect(validatedOptions).toEqual({
+    expect(validatedOptions).not.toEqual({
       syncToken: "*",
     });
   });

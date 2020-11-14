@@ -2,7 +2,6 @@ import { Projects, pool } from "../../index";
 import { v4 as uuid } from "uuid";
 import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";
 import { ProjectModel, UserModel } from "../../../../shared/types";
-import { resetTestDb } from "../../../setupTest";
 import {
   arrayContainingObjectsContaining,
   getSyncTokenForProject,
@@ -21,13 +20,9 @@ beforeAll(() => {
     email: "projects@example.com",
   };
 
-  return new Promise(async (resolve) => {
-    await resetTestDb();
-    await pool.query(
-      sql`INSERT INTO users(id, display_name, email) VALUES (${user.id}, ${user.display_name}, ${user.email})`
-    );
-    resolve();
-  });
+  return pool.query(
+    sql`INSERT INTO users(id, display_name, email) VALUES (${user.id}, ${user.display_name}, ${user.email})`
+  );
 });
 
 afterAll(() => {
@@ -121,7 +116,7 @@ describe("Select All Projects", () => {
   });
   it("Should select only projects modified after a given time", async (done) => {
     const testProjects = await insertTestProjects(user.id, [{}, {}, {}], {
-      sleep: 5,
+      sleep: 100,
     });
 
     const lastProject = testProjects.pop();
@@ -151,7 +146,7 @@ describe("Select All Projects", () => {
     const testProjects = await insertTestProjects(
       user.id,
       [{}, { isArchived: true }, {}],
-      { sleep: 5 }
+      { sleep: 100 }
     );
 
     const oldProject = testProjects.shift();
