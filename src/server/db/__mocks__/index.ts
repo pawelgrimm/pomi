@@ -5,7 +5,6 @@ import { Session } from "../models/session";
 jest.mock("../models/task");
 jest.mock("../models/project");
 jest.mock("../models/session");
-// jest.mock("../");
 
 // @ts-ignore
 export const Tasks = new Task();

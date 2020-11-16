@@ -17,7 +17,8 @@ const RETURN_COLS = raw(`
   extract('epoch' from duration) * 1000.0   duration, 
   notes, 
   type, 
-  is_retro_added`);
+  is_retro_added,
+  last_modified`);
 
 type Boolified<T> = { [P in keyof T | string]: boolean };
 const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {

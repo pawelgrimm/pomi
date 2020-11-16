@@ -1,6 +1,6 @@
 import Router from "express-promise-router";
 import { Projects, Sessions, Tasks, pool } from "../db";
-import { authenticate } from "../middleware";
+import { authenticate, validationErrorHandler } from "../middleware";
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.use(authenticate);
 /*      NEW SESSION      */
 router.post("/", async ({ body }, res) => {
   const { userId } = res.locals;
-  const { task, ...session } = body;
+  const { project, task, session } = body;
 
   // Determine if a task was provided
   let newTask;
@@ -20,8 +20,7 @@ router.post("/", async ({ body }, res) => {
       let taskId: string = session.taskId || task?.id;
       if (!taskId && task?.title) {
         //We will need to create a task
-        const project = task?.project;
-        let projectId: string = project?.id;
+        let projectId: string = task?.projectId || project?.id;
         if (!projectId && project?.title) {
           //Create a project
           newProject = await Projects.connect(transaction).create(
@@ -79,5 +78,7 @@ router.patch("/:id", async (req, res) => {
   const success = await Sessions.update(userId, sessionId, session);
   res.status(success ? 200 : 422).send();
 });
+
+router.use(validationErrorHandler);
 
 export default router;

@@ -1,17 +1,23 @@
-import { makeMockConnect, makeMocks } from "./generic";
-import { createValidTask } from "../../../../shared/utils/testing-helpers";
+import {
+  makeMockConnect,
+  makeMocks,
+} from "../../../../shared/utils/testing-helpers/mock-helper";
+import { v4 as uuid } from "uuid";
+
+const createValidTask = () => ({
+  id: uuid(),
+  projectId: uuid(),
+  isCompleted: false,
+  title: "",
+});
 
 export const {
   mockCreate,
   mockSelect,
   mockSelectOne,
+  mockConnectCreate,
   mockNewConnection,
 } = makeMocks(createValidTask);
-
-export const mockConnectCreate = jest.fn(
-  (userId: string, task: {}) =>
-    new Promise((resolve) => resolve({ ...createValidTask(), ...task }))
-);
 
 export const Task = jest.fn().mockImplementation(() => {
   return {

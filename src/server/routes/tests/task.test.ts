@@ -8,20 +8,6 @@ import { arrayContainingObjectsContaining } from "../../../shared/utils";
 // Set up mock
 jest.mock("../../db/index");
 
-// const mockTasks = Task as jest.MockedClass<typeof Task>;
-// const {
-//   create: mockCreate,
-//   select: mockSelect,
-//   selectOne: mockSelectOne,
-// } = mockTasks.prototype;
-//
-// const createMockTask = () => ({
-//   id: uuid(),
-//   projectId: uuid(),
-//   isCompleted: false,
-//   title: "",
-// });
-
 let user = { id: uuid() };
 
 beforeEach(() => jest.clearAllMocks());
