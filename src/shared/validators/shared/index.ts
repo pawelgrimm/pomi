@@ -7,6 +7,8 @@ export enum Method {
   CREATE = "CREATE",
   UPDATE = "UPDATE",
   PARTIAL = "PARTIAL",
+  SYNC = "SYNC",
+  SELECT = "SELECT",
 }
 
 /**

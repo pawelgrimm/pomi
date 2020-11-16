@@ -1,15 +1,15 @@
 /* PLOP_INJECT_IMPORT */
 import { TaskModel, TaskSelectOptions } from "./task";
-import { ProjectModel, ProjectSelectOptions } from "./project";
-import { SessionModel, SessionSelectOptions } from "./session";
+import { ProjectModel, ProjectOptions } from "./project";
+import { SessionModel, SessionOptions } from "./session";
 import { UserModel } from "./user";
 
 export type {
   /* PLOP_INJECT_EXPORT */
-  SessionSelectOptions,
+  SessionOptions,
   TaskSelectOptions,
   TaskModel,
-  ProjectSelectOptions,
+  ProjectOptions,
   ProjectModel,
   SessionModel,
   UserModel,

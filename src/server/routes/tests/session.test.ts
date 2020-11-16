@@ -2,10 +2,9 @@
 import request from "supertest";
 import app from "../../server";
 import {
-  mockCreate,
   mockSelect,
   mockSelectOne,
-  mockConnect,
+  mockConnectUpdate,
   mockConnectCreate as mockSessionCreate,
 } from "../../db/models/session";
 import { mockConnectCreate as mockTaskCreate } from "../../db/models/task";
@@ -202,6 +201,87 @@ describe("POST sessions/", () => {
   });
 });
 
+describe("GET sessions/sync", () => {
+  it("Should get all sessions and a new sync token", async (done) => {
+    const { syncToken, sessions } = await request(app)
+      .get("/api/sessions/sync")
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200)
+      .then((res) => res.body);
+
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {
+      syncToken: "*",
+    });
+
+    expect(syncToken).toBeDefined();
+    expect(sessions).toBeDefined();
+
+    done();
+  });
+
+  it("Should get all sessions using sync token", async (done) => {
+    const sync_token = "2020-12-20T12:00:00.000Z";
+    const { syncToken, sessions } = await request(app)
+      .get(`/api/sessions/sync?sync_token=${sync_token}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200)
+      .then((res) => res.body);
+
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {
+      syncToken: sync_token,
+    });
+
+    expect(syncToken).toBeDefined();
+    expect(syncToken).not.toEqual(sync_token);
+    expect(sessions).toBeDefined();
+
+    done();
+  });
+
+  it("Should return error for malformed synctoken", async (done) => {
+    const sync_token = "this-is-not-an-iso-8601-date";
+
+    const { errors } = await request(app)
+      .get(`/api/sessions/sync?sync_token=${sync_token}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .set("X-Test-Suppress-Error-Logging", "true")
+      .expect(422)
+      .then((res) => res.body);
+
+    expect(errors).toEqual({
+      paths: arrayContainingObjectsContaining([
+        {
+          name: "syncToken",
+          message: expect.stringMatching(/could not be parsed/),
+        },
+      ]),
+    });
+
+    done();
+  });
+
+  it("Should return error for forbidden parameters", async (done) => {
+    const start = "2020-11-01";
+
+    const { errors } = await request(app)
+      .get(`/api/sessions/sync?start=${start}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .set("X-Test-Suppress-Error-Logging", "true")
+      .expect(422)
+      .then((res) => res.body);
+
+    expect(errors).toEqual({
+      paths: arrayContainingObjectsContaining([
+        {
+          name: "start",
+          message: expect.stringMatching(/"start" is not allowed/),
+        },
+      ]),
+    });
+    done();
+  });
+});
+
 describe("GET sessions/", () => {
   it("Should get all sessions", async (done) => {
     await request(app)
@@ -209,96 +289,143 @@ describe("GET sessions/", () => {
       .set("Authorization", `Bearer ${user.id}`)
       .expect(200);
 
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {});
+
+    done();
+  });
+
+  it("Should pass start and end options", async (done) => {
+    const start = "2020-11-01";
+    const end = "2020-11-30";
+
+    // Start only
+    await request(app)
+      .get(`/api/sessions?start=${start}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200);
+
     expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      syncToken: "*",
+      start: new Date(start),
+    });
+
+    mockSelect.mockClear();
+
+    // End only
+    await request(app)
+      .get(`/api/sessions?end=${end}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200);
+
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {
+      end: new Date(end),
+    });
+
+    mockSelect.mockClear();
+
+    // Start and End
+    await request(app)
+      .get(`/api/sessions?start=${start}&end=${end}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200);
+
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {
+      start: new Date(start),
+      end: new Date(end),
     });
 
     done();
   });
-  // it("Should get only new tasks", async (done) => {
-  //   const syncToken = new Date().toISOString();
-  //
-  //   await request(app)
-  //       .get(`/api/tasks?sync_token=${syncToken}`)
-  //       .set("Authorization", `Bearer ${user.id}`)
-  //       .expect(200);
-  //
-  //   expect(mockSelect).toHaveBeenCalledWith(user.id, {
-  //     includeCompleted: false,
-  //     syncToken,
-  //   });
-  //
-  //   done();
-  // });
-  //
-  // it("A bad sync token should return a 422 error", async (done) => {
-  //   const syncToken = "this-is-not-an-iso-8601-date";
-  //
-  //   const { body } = await request(app)
-  //       .get(`/api/tasks?sync_token=${syncToken}`)
-  //       .set("Authorization", `Bearer ${user.id}`)
-  //       .set("X-Test-Suppress-Error-Logging", "true")
-  //       .expect(422);
-  //
-  //   expect(body).toEqual({
-  //     errors: {
-  //       paths: arrayContainingObjectsContaining([
-  //         {
-  //           name: "syncToken",
-  //           message: /could not be parsed/,
-  //         },
-  //       ]),
-  //     },
-  //   });
-  //   done();
-  // });
-  //
-  // it("A bad value for includeCompleted should return a 422 error", async (done) => {
-  //   const { body } = await request(app)
-  //       .get(`/api/tasks?include_completed=tamales`)
-  //       .set("Authorization", `Bearer ${user.id}`)
-  //       .set("X-Test-Suppress-Error-Logging", "true")
-  //       .expect(422);
-  //
-  //   expect(body).toEqual({
-  //     errors: {
-  //       paths: arrayContainingObjectsContaining([
-  //         {
-  //           name: "includeCompleted",
-  //           message: /could not be parsed/,
-  //         },
-  //       ]),
-  //     },
-  //   });
-  //   done();
-  // });
-  //
-  // it("Should get tasks including completed tasks", async (done) => {
-  //   await request(app)
-  //       .get("/api/tasks?include_completed=1")
-  //       .set("Authorization", `Bearer ${user.id}`)
-  //       .expect(200);
-  //
-  //   expect(mockSelect).toHaveBeenCalledWith(user.id, {
-  //     includeCompleted: true,
-  //     syncToken: "*",
-  //   });
-  //   done();
-  // });
-  //
-  // it("Should return correctly when user has no tasks", async (done) => {
-  //   mockSelect.mockImplementationOnce(
-  //       () => new Promise((resolve) => resolve([]))
-  //   );
-  //
-  //   const { body } = await request(app)
-  //       .get("/api/tasks")
-  //       .set("Authorization", `Bearer ${user.id}`)
-  //       .expect(404);
-  //
-  //   expect(body).toEqual({
-  //     tasks: [],
-  //   });
-  //   done();
-  // });
+
+  it("Should throw error for forbidden parameters", async (done) => {
+    const sync_token = "2020-12-20T12:00:00.000Z";
+    const { errors } = await request(app)
+      .get(`/api/sessions?sync_token=${sync_token}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .set("X-Test-Suppress-Error-Logging", "true")
+      .expect(422)
+      .then((res) => res.body);
+
+    expect(errors).toEqual({
+      paths: arrayContainingObjectsContaining([
+        {
+          name: "syncToken",
+          message: expect.stringMatching(/"syncToken" is not allowed/),
+        },
+      ]),
+    });
+
+    done();
+  });
+});
+
+describe("GET sessions/:id", () => {
+  it("Should get specific sessions", async (done) => {
+    const sessionId = uuid();
+
+    await request(app)
+      .get(`/api/sessions/${sessionId}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200)
+      .then((res) => res.body);
+
+    expect(mockSelectOne).toHaveBeenCalledWith(user.id, sessionId);
+    done();
+  });
+
+  it("Should return error when session is not found", async () => {
+    mockSelectOne.mockImplementationOnce(
+      () => new Promise((resolve) => resolve(null))
+    );
+
+    const body = request(app)
+      .get(`/api/sessions/${uuid()}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(404)
+      .then((res) => res.body);
+
+    return expect(body).resolves.toEqual({
+      session: null,
+    });
+  });
+});
+
+describe("PATCH sessions/:id", () => {
+  it("Should update specific session", async (done) => {
+    const updates = {
+      ...validSession,
+      notes: "some new notes",
+      duration: 13504444,
+    };
+
+    const { session } = await request(app)
+      .patch(`/api/sessions/${updates.id}`)
+      .send({ session: updates })
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(200)
+      .then((res) => res.body);
+
+    expect(mockConnectUpdate).toHaveBeenCalledWith(user.id, updates.id, {
+      ...updates,
+      startTimestamp: updates.startTimestamp.toISOString(),
+    });
+    expect(session).toBeDefined();
+
+    done();
+  });
+
+  it("Should return correctly when session is not found", async () => {
+    mockSelectOne.mockImplementationOnce(
+      () => new Promise((resolve) => resolve(null))
+    );
+
+    const body = request(app)
+      .get(`/api/sessions/${uuid()}`)
+      .set("Authorization", `Bearer ${user.id}`)
+      .expect(404)
+      .then((res) => res.body);
+
+    return expect(body).resolves.toEqual({
+      session: null,
+    });
+  });
 });

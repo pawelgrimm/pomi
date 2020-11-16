@@ -1,6 +1,6 @@
 import {
   SessionModel,
-  SessionSelectOptions,
+  SessionOptions,
   SessionType,
   SessionTypeString,
 } from "../../types/session";

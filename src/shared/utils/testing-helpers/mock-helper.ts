@@ -26,18 +26,27 @@ export const makeMockConnectCreate = (generate: () => {}) =>
   jest.fn(() => new Promise((resolve) => resolve(generate())));
 
 export const makeMockConnect = (
-  mockCreate: (userId: string, object: {}) => {}
+  mockCreate: (userId: string, object: {}) => {},
+  mockUpdate?: (userId: string, objectId: string, object: {}) => {}
 ) =>
   jest.fn(() => {
     return {
       create: mockCreate,
+      update: mockUpdate,
     };
   });
+
+export const makeMockUpdate = (generate: () => {}) =>
+  jest.fn(
+    (userId, objectId, object: {}) =>
+      new Promise((resolve) => resolve(generate()))
+  );
 
 export const makeMocks = (generate: () => {}) => ({
   mockCreate: makeMockCreate(generate),
   mockSelect: makeMockSelect(generate),
   mockSelectOne: makeMockSelectOne(generate),
-  mockConnectCreate: makeMockConnectCreate(generate),
+  mockConnectCreate: makeMockCreate(generate),
+  mockConnectUpdate: makeMockUpdate(generate),
   mockNewConnection: makeMockNewConnection(),
 });

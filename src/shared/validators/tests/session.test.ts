@@ -1,4 +1,4 @@
-import { validateSession, validateSessionSelectOptions } from "../session";
+import { validateSession, validateSessionOptions } from "../session";
 import { SessionModel } from "../../types";
 import { v4 as uuid } from "uuid";
 import { Method } from "../shared";
@@ -102,7 +102,7 @@ it("Should throw when bad method is passed to validator", () => {
 
 describe("Session Select Options Validator", () => {
   it("Should not add the default syncToken value for empty options object", () => {
-    const validatedOptions = validateSessionSelectOptions({});
+    const validatedOptions = validateSessionOptions({});
     expect(validatedOptions).not.toEqual({
       syncToken: "*",
     });
@@ -110,21 +110,21 @@ describe("Session Select Options Validator", () => {
 
   it("Should not overwrite a provided syncToken", () => {
     const syncToken = "2020-11-13T02:59:29.853Z";
-    const validatedOptions = validateSessionSelectOptions({ syncToken });
+    const validatedOptions = validateSessionOptions({ syncToken });
     expect(validatedOptions).toEqual({ syncToken });
   });
 
   it("Should throw an error when sync token format is invalid", () => {
     const badSyncToken = "2012-11-13-badly";
-    expect(() =>
-      validateSessionSelectOptions({ syncToken: badSyncToken })
-    ).toThrow(/could not be parsed as an ISO 8601 date string/);
+    expect(() => validateSessionOptions({ syncToken: badSyncToken })).toThrow(
+      /could not be parsed as an ISO 8601 date string/
+    );
   });
 
   it("Should accept 1806 ISO strings for start and end", () => {
     const start = "2020-11-13T02:59:29.853Z";
     const end = "2020-11-13T02:59:29.854Z";
-    const validatedOptions = validateSessionSelectOptions({ start, end });
+    const validatedOptions = validateSessionOptions({ start, end });
     expect(validatedOptions).toMatchObject({
       start: new Date(start),
       end: new Date(end),
@@ -133,14 +133,14 @@ describe("Session Select Options Validator", () => {
 
   it("Should throw if start is malformed", () => {
     const start = "not a date";
-    expect(() => validateSessionSelectOptions({ start })).toThrow(
+    expect(() => validateSessionOptions({ start })).toThrow(
       /"start" must be in ISO 8601 date format/
     );
   });
 
   it("Should throw if end is malformed", () => {
     const end = "not a date";
-    expect(() => validateSessionSelectOptions({ end })).toThrow(
+    expect(() => validateSessionOptions({ end })).toThrow(
       /"end" must be in ISO 8601 date format/
     );
   });
@@ -148,20 +148,20 @@ describe("Session Select Options Validator", () => {
   it("Should throw if end > start", () => {
     const start = "2020-11-13T02:59:29.853Z";
     const end = "2020-11-13T02:59:29.000Z";
-    expect(() => validateSessionSelectOptions({ start, end })).toThrow(
+    expect(() => validateSessionOptions({ start, end })).toThrow(
       /"end" must be greater than/
     );
   });
 
   it("should throw if end = start", () => {
     const start = "2020-11-13T02:59:29.853Z";
-    expect(() => validateSessionSelectOptions({ start, end: start })).toThrow(
+    expect(() => validateSessionOptions({ start, end: start })).toThrow(
       /"end" must be greater than/
     );
   });
 
   it("should not throw if only end is provided", () => {
     const end = "2020-11-13T02:59:29.853Z";
-    expect(() => validateSessionSelectOptions({ end })).not.toThrow();
+    expect(() => validateSessionOptions({ end })).not.toThrow();
   });
 });

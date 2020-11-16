@@ -1,13 +1,13 @@
 import { parseStringToBoolean, validateSyncToken } from "../models";
-import { ProjectSelectOptions } from "../../types";
+import { ProjectOptions } from "../../types";
 
 /**
  * Parse a ProjectSelectOptions object, validate the options, and set defaults for undefined options.
- * @param {ProjectSelectOptions} options - options provided to select()
+ * @param {ProjectOptions} options - options provided to select()
  */
 export const parseSelectAllOptions = <T extends string | boolean = boolean>(
-  options: ProjectSelectOptions<T> = {}
-): Required<ProjectSelectOptions> => {
+  options: ProjectOptions<T> = {}
+): Required<ProjectOptions> => {
   const { syncToken = "*" } = options;
   let includeArchived = parseStringToBoolean(
     "includeArchived",

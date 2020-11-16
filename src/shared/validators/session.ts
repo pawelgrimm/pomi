@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { Schema } from "@hapi/joi";
-import { SessionModel, SessionSelectOptions } from "../types";
+import { SessionModel, SessionOptions } from "../types";
 import { InvalidMethodError } from "./errors";
 import { Method, standardFieldAlter } from "./shared";
 import camelcaseKeys from "camelcase-keys";
@@ -85,31 +85,60 @@ export const validateSession = (
   return Joi.attempt(session, schema) as SessionModel;
 };
 
+type SessionOptionMethods = Method.SYNC | Method.SELECT;
+
 /**
  * Schema representing valid options for GET sessions options
  */
 const sessionSelectOptionsSchema = Joi.object({
-  syncToken: Joi.string().trim().custom(validateSyncToken).optional(),
-  start: Joi.date().iso().optional(),
+  syncToken: Joi.string()
+    .trim()
+    .custom(validateSyncToken)
+    .alter({
+      [Method.SYNC]: (schema) => schema.default("*").optional(),
+      [Method.SELECT]: (schema) => schema.forbidden(),
+    }),
+  start: Joi.date()
+    .iso()
+    .alter({
+      [Method.SYNC]: (schema) => schema.forbidden(),
+      [Method.SELECT]: (schema) => schema.optional(),
+    }),
   end: Joi.date()
     .iso()
-    .optional()
     .when("start", {
       is: Joi.exist(),
       then: Joi.date().greater(Joi.ref("start")),
+    })
+    .alter({
+      [Method.SYNC]: (schema) => schema.forbidden(),
+      [Method.SELECT]: (schema) => schema.optional(),
     }),
 });
 
 /**
- * Validate session select options and set defaults
- * @param sessionSelectOptions - a SessionSelectOptions-like object
+ * A map of schemas by method type
  */
-export const validateSessionSelectOptions = (
-  sessionSelectOptions: {} = {}
-): SessionSelectOptions => {
-  sessionSelectOptions = camelcaseKeys(sessionSelectOptions);
-  return Joi.attempt(
-    sessionSelectOptions,
-    sessionSelectOptionsSchema
-  ) as SessionSelectOptions;
+const sessionOptionsSchemas = new Map<SessionOptionMethods, Schema>([
+  [Method.SYNC, sessionSelectOptionsSchema.unknown().tailor(Method.SYNC)],
+  [Method.SELECT, sessionSelectOptionsSchema.unknown().tailor(Method.SELECT)],
+]);
+
+/**
+ * Validate session select options and set defaults
+ * @param options - a SessionSelectOptions-like object
+ * @param method - a string representing the validation type to use, like "CREATE" or "PATCH"
+ * @returns validated options
+ */
+export const validateSessionOptions = (
+  options: any,
+  method: SessionOptionMethods = Method.SELECT
+): SessionOptions => {
+  options = camelcaseKeys(options);
+
+  const schema = sessionOptionsSchemas.get(method);
+
+  if (!schema) throw new InvalidMethodError(method);
+
+  return Joi.attempt(options, schema) as SessionOptions;
 };

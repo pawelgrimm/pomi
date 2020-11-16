@@ -3,9 +3,9 @@ import { raw, sql, SqlTokenType } from "../slonik";
 import { Model } from "./model";
 import {
   validateSession,
-  validateSessionSelectOptions,
+  validateSessionOptions,
 } from "../../../shared/validators";
-import { SessionModel, SessionSelectOptions } from "../../../shared/types";
+import { SessionModel, SessionOptions } from "../../../shared/types";
 
 import { sqlDate, sqlDuration } from "../../../shared/utils";
 import { Method } from "../../../shared/validators/shared";
@@ -66,15 +66,15 @@ export class Session extends Model {
   /**
    * Get multiple sessions for a user
    * @param userId - id of session-owning user
-   * @param {SessionSelectOptions} options - additional options used to customize query
+   * @param {SessionOptions} options - additional options used to customize query
    */
   async select(
     userId: string,
-    options?: SessionSelectOptions
+    options?: SessionOptions
   ): Promise<Readonly<Required<SessionModel>[]>> {
     const whereClauses: SqlTokenType[] = [sql`user_id = ${userId}`];
 
-    const parsedOptions = validateSessionSelectOptions(options);
+    const parsedOptions = validateSessionOptions(options);
 
     whereClauses.push(...Session.buildAdditionalWhereClauses(parsedOptions));
 
@@ -143,9 +143,9 @@ export class Session extends Model {
 
   /**
    * Build additional where clauses based on options
-   * @param options {SessionSelectOptions} options - options provided to select()
+   * @param options {SessionOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(options: SessionSelectOptions) {
+  private static buildAdditionalWhereClauses(options: SessionOptions) {
     const { syncToken, start, end } = options;
     const whereClauses: SqlTokenType[] = [];
     if (syncToken) {

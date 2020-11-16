@@ -228,4 +228,5 @@ export const createValidSession = (): Required<SessionModel> => ({
   notes: "",
   type: "session",
   isRetroAdded: false,
+  lastModified: new Date("2020-10-23T20:00:00.000Z"),
 });

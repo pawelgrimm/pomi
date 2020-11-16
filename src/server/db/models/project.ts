@@ -1,6 +1,6 @@
 import { sql, raw } from "../slonik";
 import { Model } from "./model";
-import { ProjectModel, ProjectSelectOptions } from "../../../shared/types";
+import { ProjectModel, ProjectOptions } from "../../../shared/types";
 import { parseSelectAllOptions } from "../../../shared/utils/projects";
 import { validateProject } from "../../../shared/validators";
 
@@ -30,11 +30,11 @@ export class Project extends Model {
   /**
    * Get multiple projects for a user
    * @param userId - id of project-owning user
-   * @param {ProjectSelectOptions} options - additional options used to customize query
+   * @param {ProjectOptions} options - additional options used to customize query
    */
   async select(
     userId: string,
-    options?: ProjectSelectOptions
+    options?: ProjectOptions
   ): Promise<Readonly<Required<ProjectModel>[]>> {
     const whereClauses = [sql`user_id = ${userId}`];
 
@@ -66,10 +66,10 @@ export class Project extends Model {
 
   /**
    * Build additional where clauses based on options
-   * @param options {ProjectSelectOptions} options - options provided to select()
+   * @param options {ProjectOptions} options - options provided to select()
    */
   private static buildAdditionalWhereClauses(
-    options: Required<ProjectSelectOptions>
+    options: Required<ProjectOptions>
   ) {
     const { includeArchived, syncToken } = options;
     const whereClauses = [];
