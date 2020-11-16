@@ -9,7 +9,8 @@ export const {
 } = makeMocks(createValidTask);
 
 export const mockConnectCreate = jest.fn(
-  () => new Promise((resolve) => resolve(createValidTask()))
+  (userId: string, task: {}) =>
+    new Promise((resolve) => resolve({ ...createValidTask(), ...task }))
 );
 
 export const Task = jest.fn().mockImplementation(() => {

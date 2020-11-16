@@ -1,5 +1,8 @@
 import { makeMockConnect, makeMocks } from "./generic";
-import { createValidProject } from "../../../../shared/utils/testing-helpers";
+import {
+  createValidProject,
+  createValidTask,
+} from "../../../../shared/utils/testing-helpers";
 
 export const {
   mockCreate,
@@ -9,7 +12,8 @@ export const {
 } = makeMocks(createValidProject);
 
 export const mockConnectCreate = jest.fn(
-  () => new Promise((resolve) => resolve(createValidProject()))
+  (userId, project) =>
+    new Promise((resolve) => resolve({ ...createValidTask(), ...project }))
 );
 export const Project = jest.fn().mockImplementation(() => {
   return {

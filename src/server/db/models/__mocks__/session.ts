@@ -9,7 +9,8 @@ export const {
 } = makeMocks(createValidSession);
 
 export const mockConnectCreate = jest.fn(
-  () => new Promise((resolve) => resolve(createValidSession()))
+  (userId, session) =>
+    new Promise((resolve) => resolve({ ...createValidSession(), ...session }))
 );
 
 export const Session = jest.fn().mockImplementation(() => {

@@ -1,11 +1,10 @@
-import { DatabaseConnection, DatabasePoolType } from "../../slonik";
-import { mockConnectCreate } from "./session";
-import { createValidSession } from "../../../../shared/utils/testing-helpers";
-
 export const makeMockCreate = (generate: () => {}) =>
   jest
     .fn()
-    .mockImplementation(() => new Promise((resolve) => resolve(generate())));
+    .mockImplementation(
+      (userId, object: {}) =>
+        new Promise((resolve) => resolve({ ...generate(), ...object }))
+    );
 
 export const makeMockSelect = (generate: () => {}) =>
   jest
@@ -26,7 +25,9 @@ export const makeMockNewConnection = () =>
 export const makeMockConnectCreate = (generate: () => {}) =>
   jest.fn(() => new Promise((resolve) => resolve(generate())));
 
-export const makeMockConnect = (mockCreate: () => {}) =>
+export const makeMockConnect = (
+  mockCreate: (userId: string, object: {}) => {}
+) =>
   jest.fn(() => {
     return {
       create: mockCreate,
