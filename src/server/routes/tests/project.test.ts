@@ -1,31 +1,16 @@
 import request from "supertest";
 import app from "../../server";
-import { Project } from "../../db/models";
+// @ts-ignore
+import { mockCreate, mockSelect, mockSelectOne } from "../../db/models/project";
 import { v4 as uuid } from "uuid";
 import { arrayContainingObjectsContaining } from "../../../shared/utils";
 
 // Set up mock
-jest.mock("../../db/models");
-const mockProjects = Project as jest.MockedClass<typeof Project>;
-
-const {
-  create: mockCreate,
-  select: mockSelect,
-  selectOne: mockSelectOne,
-} = mockProjects.prototype;
-
-const createMockProject = () => ({ id: uuid(), title: "", isArchived: false });
-
-mockSelect.mockImplementation(
-  () => new Promise((resolve) => resolve([createMockProject()]))
-);
-mockSelectOne.mockImplementation(
-  () => new Promise((resolve) => resolve(createMockProject()))
-);
+jest.mock("../../db/index");
 
 let user = { id: uuid() };
 
-beforeEach(() => mockProjects.mockClear());
+beforeEach(() => jest.clearAllMocks());
 
 const validProject = {
   title: "a test project",

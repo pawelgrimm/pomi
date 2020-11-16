@@ -197,3 +197,35 @@ export const insertRandomTestUser = async () => {
         WHERE id = ${user.id}
         RETURNING id, display_name, email, default_project;`);
 };
+
+/**
+ * Create a new valid project
+ */
+export const createValidProject = () => ({
+  id: uuid(),
+  title: "",
+  isArchived: false,
+});
+
+/**
+ * Create a new valid task
+ */
+export const createValidTask = () => ({
+  id: uuid(),
+  projectId: uuid(),
+  isCompleted: false,
+  title: "",
+});
+
+/**
+ * Create a new valid session
+ */
+export const createValidSession = (): Required<SessionModel> => ({
+  id: uuid(),
+  taskId: uuid(),
+  startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
+  duration: 500000,
+  notes: "",
+  type: "session",
+  isRetroAdded: false,
+});

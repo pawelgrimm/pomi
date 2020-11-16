@@ -17,7 +17,7 @@ router.post("/", async ({ body }, res) => {
   let newSession;
   await pool.connect(async (connection) => {
     await connection.transaction(async (transaction) => {
-      let taskId: string = task?.id;
+      let taskId: string = session.taskId || task?.id;
       if (!taskId && task?.title) {
         //We will need to create a task
         const project = task?.project;

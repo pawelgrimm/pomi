@@ -1,57 +1,76 @@
+// @ts-nocheck
 import request from "supertest";
 import app from "../../server";
-import { Session } from "../../db/models";
-import { SessionModel } from "../../../shared/types";
+import {
+  mockCreate,
+  mockSelect,
+  mockSelectOne,
+  mockConnect,
+  mockConnectCreate,
+} from "../../db/models/session";
 import { v4 as uuid } from "uuid";
+import { createValidSession } from "../../../shared/utils/testing-helpers";
 
 // Set up mock
-jest.mock("../../db/models");
-
-const mockSessions = Session as jest.MockedClass<typeof Session>;
-
-// A Mock of Sessions
-const Sessions = mockSessions.prototype;
-
-const createMockSession = (): Required<SessionModel> => ({
-  id: uuid(),
-  taskId: uuid(),
-  startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
-  duration: 500000,
-  notes: "",
-  type: "session",
-  isRetroAdded: false,
-});
-
-Sessions.select.mockImplementation(
-  () => new Promise((resolve) => resolve([createMockSession()]))
-);
-
-Sessions.selectOne.mockImplementation(
-  () => new Promise((resolve) => resolve(createMockSession()))
-);
+jest.mock("../../db/index");
 
 let user = { id: uuid() };
 
-beforeEach(() => mockSessions.mockClear());
+beforeEach(() => jest.clearAllMocks());
 
-const validSession = createMockSession();
+const validSession = createValidSession();
 
-describe("Session create tests", () => {
+describe("Sessions - POST", () => {
   it("should create a session", async (done) => {
-    const { body } = await request(app)
+    await request(app)
       .post("/api/sessions")
       .set("Authorization", `Bearer ${user.id}`)
       .send(validSession)
       .expect(201);
 
-    expect(await Sessions.select(user.id)).toContainEqual({
-      id: body.id,
-      start_timestamp: new Date(validSession.startTimestamp),
-      notes: validSession.notes,
-      duration: validSession.duration,
+    expect(mockConnectCreate).toHaveBeenCalledWith(user.id, {
+      ...validSession,
+      startTimestamp: validSession.startTimestamp.toISOString(),
     });
     done();
   });
+
+  it("Should create a task if needed", async (done) => {
+    const requestSession = {
+      ...validSession,
+      taskId: undefined,
+    };
+
+    const requestTask = { title: "a new task", projectId: uuid() };
+
+    const response = await request(app)
+      .post("/api/sessions")
+      .set("Authorization", `Bearer ${user.id}`)
+      .send({ ...requestSession, task: requestTask })
+      .expect(201);
+
+    console.log(response);
+
+    expect(mockConnectCreate).toHaveBeenCalledWith(user.id, {
+      ...requestSession,
+      startTimestamp: requestSession.startTimestamp.toISOString(),
+      taskId: response.task.taskId,
+    });
+
+    expect(response).toEqual(
+      expect.objectContaining({
+        task: { taskId: expect.any(String) },
+        session: requestSession,
+      })
+    );
+
+    done();
+  });
+  it.todo("Should create a project if needed");
+  it.todo("Should create a task and project if needed");
+  it.todo("Should not create a session if project creation failed");
+  it.todo("Should not create a session if task creation failed");
+
   // it("should not create a session", async (done) => {
   //   const res = await request(app).post("/api/sessions").expect(400);
   //

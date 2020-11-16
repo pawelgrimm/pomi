@@ -1,36 +1,30 @@
 import request from "supertest";
 import app from "../../server";
-import { Task } from "../../db/models";
+// @ts-ignore
+import { mockCreate, mockSelect, mockSelectOne } from "../../db/models/task";
 import { v4 as uuid } from "uuid";
 import { arrayContainingObjectsContaining } from "../../../shared/utils";
 
 // Set up mock
-jest.mock("../../db/models");
+jest.mock("../../db/index");
 
-const mockTasks = Task as jest.MockedClass<typeof Task>;
-const {
-  create: mockCreate,
-  select: mockSelect,
-  selectOne: mockSelectOne,
-} = mockTasks.prototype;
-
-const createMockTask = () => ({
-  id: uuid(),
-  projectId: uuid(),
-  isCompleted: false,
-  title: "",
-});
-
-mockSelect.mockImplementation(
-  () => new Promise((resolve) => resolve([createMockTask()]))
-);
-mockSelectOne.mockImplementation(
-  () => new Promise((resolve) => resolve(createMockTask()))
-);
+// const mockTasks = Task as jest.MockedClass<typeof Task>;
+// const {
+//   create: mockCreate,
+//   select: mockSelect,
+//   selectOne: mockSelectOne,
+// } = mockTasks.prototype;
+//
+// const createMockTask = () => ({
+//   id: uuid(),
+//   projectId: uuid(),
+//   isCompleted: false,
+//   title: "",
+// });
 
 let user = { id: uuid() };
 
-beforeEach(() => mockTasks.mockClear());
+beforeEach(() => jest.clearAllMocks());
 
 const validTask = {
   title: "a test task",
