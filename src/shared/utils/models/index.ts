@@ -1,5 +1,5 @@
 import { ParseOptionsError } from "../../../server/errors";
-import { isValid, parseISO } from "date-fns";
+export { createSyncToken, validateSyncToken } from "./syncToken";
 
 /**
  * Convert a string value to a boolean
@@ -32,20 +32,4 @@ export const parseStringToBoolean = (
       message: `"${value}" could not be parsed to a boolean value`,
     },
   ]);
-};
-
-/**
- * Check if a sync token is valid
- * @param syncToken the sync token to validate
- */
-export const validateSyncToken = (syncToken: string) => {
-  if (syncToken !== "*" && !isValid(parseISO(syncToken))) {
-    throw new ParseOptionsError([
-      {
-        name: "syncToken",
-        message: `"${syncToken}" could not be parsed as an ISO 8601 date string.`,
-      },
-    ]);
-  }
-  return syncToken;
 };
