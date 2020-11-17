@@ -10,16 +10,6 @@ import { SessionModel, SessionOptions } from "../../../shared/types";
 import { sqlDate, sqlDuration } from "../../../shared/utils";
 import { Method } from "../../../shared/validators/shared";
 
-const RETURN_COLS = raw(`
-  id, 
-  task_id, 
-  start_timestamp, 
-  extract('epoch' from duration) * 1000.0   duration, 
-  notes, 
-  type, 
-  is_retro_added,
-  last_modified`);
-
 type Boolified<T> = { [P in keyof T | string]: boolean };
 const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
   taskId: true,
@@ -33,6 +23,17 @@ const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
  * Class representing data access layer for the sessions table
  */
 export class Session extends Model {
+  static RETURN_COLS = raw(
+    `id, 
+      task_id, 
+      start_timestamp, 
+      extract('epoch' from duration) * 1000.0   duration, 
+      notes, 
+      type, 
+      is_retro_added,
+      last_modified`
+  );
+
   /**
    * Create one session in the sessions table
    * @param userId - id of user assigned to object
@@ -59,7 +60,7 @@ export class Session extends Model {
                 ${notes},
                 ${type},
                 ${isRetroAdded})
-        RETURNING ${RETURN_COLS};
+        RETURNING ${Session.RETURN_COLS};
    `);
   }
 
@@ -79,7 +80,7 @@ export class Session extends Model {
     whereClauses.push(...Session.buildAdditionalWhereClauses(parsedOptions));
 
     return this.connection.any(sql`
-        SELECT ${RETURN_COLS} FROM sessions
+        SELECT ${Session.RETURN_COLS} FROM sessions
         WHERE ${sql.join(whereClauses, sql` AND `)}
         ORDER BY last_modified DESC;
         `);
@@ -95,7 +96,7 @@ export class Session extends Model {
   //   userId: string
   // ): Promise<Readonly<Required<SessionModel>[]>> {
   //   return this.connection.any(sql`
-  //       SELECT ${RETURN_COLS} FROM sessions
+  //       SELECT ${Session.RETURN_COLS} FROM sessions
   //       WHERE user_id = ${userId} AND start_timestamp > current_date;`);
   // }
 
@@ -109,7 +110,7 @@ export class Session extends Model {
     sessionId: string
   ): Promise<Required<SessionModel> | null> {
     return this.connection.maybeOne(sql`
-        SELECT ${RETURN_COLS} FROM sessions
+        SELECT ${Session.RETURN_COLS} FROM sessions
         WHERE user_id = ${userId} AND id = ${sessionId};
         `);
   }
@@ -136,7 +137,7 @@ export class Session extends Model {
         UPDATE sessions
         SET ${sql.join(updateSets, sql`, `)}
         WHERE id = ${sessionId} AND user_id = ${userId}
-        RETURNING ${RETURN_COLS};
+        RETURNING ${Session.RETURN_COLS};
         `
     );
   }

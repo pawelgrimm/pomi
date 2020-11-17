@@ -4,12 +4,12 @@ import { ProjectModel, ProjectOptions } from "../../../shared/types";
 import { parseSelectAllOptions } from "../../../shared/utils/projects";
 import { validateProject } from "../../../shared/validators";
 
-const RETURN_COLS = raw("id, title, is_archived");
-
 /**
  * Class representing the projects table.
  */
 export class Project extends Model {
+  static RETURN_COLS = raw("id, title, is_archived, last_modified");
+
   /**
    * Create one project in the projects table
    * @param userId - id of user assigned to object
@@ -23,7 +23,7 @@ export class Project extends Model {
     return this.connection.one(sql`
         INSERT INTO projects(user_id, title, is_archived)
         VALUES (${userId}, ${title}, ${isArchived})
-        RETURNING ${RETURN_COLS};
+        RETURNING ${Project.RETURN_COLS};
     `);
   }
 
@@ -43,7 +43,7 @@ export class Project extends Model {
     whereClauses.push(...Project.buildAdditionalWhereClauses(parsedOptions));
 
     return this.connection.any(sql`
-        SELECT ${RETURN_COLS} FROM projects
+        SELECT ${Project.RETURN_COLS} FROM projects
         WHERE ${sql.join(whereClauses, sql` AND `)}
         ORDER BY last_modified DESC;
         `);
@@ -59,7 +59,7 @@ export class Project extends Model {
     projectId: string
   ): Promise<Required<ProjectModel> | null> {
     return this.connection.maybeOne(sql`
-        SELECT ${RETURN_COLS} FROM projects
+        SELECT ${Project.RETURN_COLS} FROM projects
         WHERE user_id = ${userId} AND id = ${projectId};
         `);
   }

@@ -4,15 +4,15 @@ import { ParseOptionsError } from "../../../server/errors";
 
 export const createSyncToken = (
   results: [
-    readonly Required<SessionModel>[],
-    readonly Required<TaskModel>[],
-    readonly Required<ProjectModel>[]
+    readonly Required<SessionModel>[] | null,
+    readonly Required<TaskModel>[] | null,
+    readonly Required<ProjectModel>[] | null
   ],
   fallback?: string
 ) => {
   const lastModified = Math.max(
     ...results.map((model) =>
-      model.length > 0 ? model[0].lastModified.valueOf() : 0
+      model && model.length > 0 ? model[0].lastModified.valueOf() : 0
     )
   );
   return lastModified > 0

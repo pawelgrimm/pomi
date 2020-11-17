@@ -4,12 +4,14 @@ import { validateTask } from "../../../shared/validators";
 import { TaskModel, TaskSelectOptions } from "../../../shared/types";
 import { parseSelectAllOptions } from "../../../shared/utils/tasks";
 
-const RETURN_COLS = raw("id, title, project_id, is_completed");
-
 /**
  * Class representing data access layer for the tasks table
  */
 export class Task extends Model {
+  static RETURN_COLS = raw(
+    "id, title, project_id, is_completed, last_modified"
+  );
+
   /**
    * Create one task in the tasks table
    * @param userId - id of user assigned to object
@@ -25,7 +27,7 @@ export class Task extends Model {
                 COALESCE(${projectId}, (SELECT default_project FROM users WHERE id = ${userId})), 
                 ${title}, 
                 ${isCompleted})
-        RETURNING ${RETURN_COLS};
+        RETURNING ${Task.RETURN_COLS};
     `);
   }
 
@@ -45,7 +47,7 @@ export class Task extends Model {
     whereClauses.push(...Task.buildAdditionalWhereClauses(parsedOptions));
 
     return this.connection.any(sql`
-        SELECT ${RETURN_COLS} FROM tasks
+        SELECT ${Task.RETURN_COLS} FROM tasks
         WHERE ${sql.join(whereClauses, sql` AND `)}
         ORDER BY last_modified DESC;
         `);
@@ -61,7 +63,7 @@ export class Task extends Model {
     taskId: string
   ): Promise<Required<TaskModel> | null> {
     return this.connection.maybeOne(sql`
-        SELECT ${RETURN_COLS} FROM tasks
+        SELECT ${Task.RETURN_COLS} FROM tasks
         WHERE user_id = ${userId} AND id = ${taskId};
         `);
   }

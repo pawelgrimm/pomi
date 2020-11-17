@@ -9,6 +9,7 @@ const createValidTask = () => ({
   projectId: uuid(),
   isCompleted: false,
   title: "",
+  lastModified: new Date("2020-10-25T12:00:00.000Z"),
 });
 
 export const {
