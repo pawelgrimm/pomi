@@ -11,9 +11,11 @@
    - [PATCH /](#patch-)
  - [/projects](#projects)
    - [GET /:id](#get-id-1)
+   - [POST /](#post--1)
    - [PATCH /:id](#patch-id)
  - [/tasks](#tasks)
    - [GET /:id](#get-id-2)
+   - [POST /](#post--2)
    - [PATCH /:id](#patch-id-1)
     
 All endpoints require user authorization. 
@@ -26,6 +28,7 @@ Gets user info
 
 ```typescript
 {
+	id: string,
 	displayName: string,
 	email: string,
 	defaultProject: string
@@ -260,6 +263,34 @@ Gets the project with the provided id
 }
 ```
 
+### POST /
+Creates a new project.
+
+#### *Request*
+
+```typescript
+{
+	project: {
+		title?: string,
+		isArchived?: boolean
+	}
+}
+```
+
+#### *Response*
+
+```typescript
+{
+	project: {
+		id: string,
+		title?: string,
+		isArchived: boolean,
+		lastUpdated: Date
+	}
+}
+```
+
+
 ### PATCH /:id 
 Update a project
 
@@ -309,21 +340,18 @@ Gets the task with the provided id
 }
 ```
 
-### PATCH /:id 
-Update a project
+### POST /
+Creates a new task. If a projectId is not provided, it is assigned to the user's default project.
 
-**Sub-routes**
-
- - /un_complete { isCompleted: false }
- - /complete { isCompleted: true }
-   
 #### *Request*
 
 ```typescript
 {
-	projectId?: string,
-	title?: string,
-	isCompleted: boolean
+	task: {
+		projectId?: string,
+		title?: string,
+		isCompleted?: boolean
+	}
 }
 ```
 
@@ -340,3 +368,38 @@ Update a project
 	}
 }
 ```
+
+### PATCH /:id 
+Update a project
+
+**Sub-routes**
+
+ - /un_complete { isCompleted: false }
+ - /complete { isCompleted: true }
+   
+#### *Request*
+
+```typescript
+{
+	task: {
+		id?: string,
+		projectId?: string,
+		title?: string,
+		isCompleted?: boolean
+	}
+}
+```
+
+#### *Response*
+
+```typescript
+{
+	task: {
+		id: string,
+		projectId: string,
+		title?: string,
+		isCompleted: boolean,
+		lastUpdated: Date
+	}
+}
+``````
