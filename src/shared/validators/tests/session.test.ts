@@ -102,7 +102,7 @@ it("Should throw when bad method is passed to validator", () => {
 
 describe("Session Select Options Validator", () => {
   it("Should not add the default syncToken value for empty options object", () => {
-    const validatedOptions = validateSessionOptions({});
+    const validatedOptions = validateSessionOptions({}, Method.SYNC);
     expect(validatedOptions).not.toEqual({
       syncToken: "*",
     });
@@ -110,21 +110,38 @@ describe("Session Select Options Validator", () => {
 
   it("Should not overwrite a provided syncToken", () => {
     const syncToken = "2020-11-13T02:59:29.853Z";
-    const validatedOptions = validateSessionOptions({ syncToken });
+    const validatedOptions = validateSessionOptions({ syncToken }, Method.SYNC);
     expect(validatedOptions).toEqual({ syncToken });
   });
 
   it("Should throw an error when sync token format is invalid", () => {
     const badSyncToken = "2012-11-13-badly";
-    expect(() => validateSessionOptions({ syncToken: badSyncToken })).toThrow(
-      /could not be parsed as an ISO 8601 date string/
+    expect(() =>
+      validateSessionOptions({ syncToken: badSyncToken }, Method.SYNC)
+    ).toThrow(/could not be parsed as an ISO 8601 date string/);
+  });
+
+  it("Should throw if unknown option is provided", () => {
+    const what = "2012-11-13-badly";
+    expect(() => validateSessionOptions({ what }, Method.SYNC)).toThrow(
+      /"what" is not allowed/
+    );
+  });
+
+  it("Should throw if option is forbidden for method", () => {
+    const start = "2020-11-13T02:59:29.853Z";
+    expect(() => validateSessionOptions({ start }, Method.SYNC)).toThrow(
+      /"start" is not allowed/
     );
   });
 
   it("Should accept 1806 ISO strings for start and end", () => {
     const start = "2020-11-13T02:59:29.853Z";
     const end = "2020-11-13T02:59:29.854Z";
-    const validatedOptions = validateSessionOptions({ start, end });
+    const validatedOptions = validateSessionOptions(
+      { start, end },
+      Method.SELECT
+    );
     expect(validatedOptions).toMatchObject({
       start: new Date(start),
       end: new Date(end),
@@ -133,14 +150,14 @@ describe("Session Select Options Validator", () => {
 
   it("Should throw if start is malformed", () => {
     const start = "not a date";
-    expect(() => validateSessionOptions({ start })).toThrow(
+    expect(() => validateSessionOptions({ start }, Method.SELECT)).toThrow(
       /"start" must be in ISO 8601 date format/
     );
   });
 
   it("Should throw if end is malformed", () => {
     const end = "not a date";
-    expect(() => validateSessionOptions({ end })).toThrow(
+    expect(() => validateSessionOptions({ end }, Method.SELECT)).toThrow(
       /"end" must be in ISO 8601 date format/
     );
   });
@@ -148,20 +165,34 @@ describe("Session Select Options Validator", () => {
   it("Should throw if end > start", () => {
     const start = "2020-11-13T02:59:29.853Z";
     const end = "2020-11-13T02:59:29.000Z";
-    expect(() => validateSessionOptions({ start, end })).toThrow(
+    expect(() => validateSessionOptions({ start, end }, Method.SELECT)).toThrow(
       /"end" must be greater than/
     );
   });
 
   it("should throw if end = start", () => {
     const start = "2020-11-13T02:59:29.853Z";
-    expect(() => validateSessionOptions({ start, end: start })).toThrow(
-      /"end" must be greater than/
-    );
+    expect(() =>
+      validateSessionOptions({ start, end: start }, Method.SELECT)
+    ).toThrow(/"end" must be greater than/);
   });
 
   it("should not throw if only end is provided", () => {
     const end = "2020-11-13T02:59:29.853Z";
-    expect(() => validateSessionOptions({ end })).not.toThrow();
+    expect(() => validateSessionOptions({ end }, Method.SELECT)).not.toThrow();
+  });
+
+  it("Should throw if option is forbidden for method", () => {
+    const syncToken = "2020-11-13T02:59:29.853Z";
+    expect(() => validateSessionOptions({ syncToken }, Method.SELECT)).toThrow(
+      /"syncToken" is not allowed/
+    );
+  });
+
+  it("Should throw if unknown option is provided", () => {
+    const goose = "2020-11-13T02:59:29.853Z";
+    expect(() => validateSessionOptions({ goose }, Method.SELECT)).toThrow(
+      /"goose" is not allowed/
+    );
   });
 });

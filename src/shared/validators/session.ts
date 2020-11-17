@@ -64,8 +64,8 @@ const sessionSchemas = new Map<SessionMethods, Schema>([
       })
       .tailor(Method.CREATE),
   ],
-  [Method.UPDATE, sessionSchema.unknown().tailor(Method.UPDATE)],
-  [Method.PARTIAL, sessionSchema.unknown().tailor(Method.PARTIAL)],
+  [Method.UPDATE, sessionSchema.tailor(Method.UPDATE)],
+  [Method.PARTIAL, sessionSchema.tailor(Method.PARTIAL)],
 ]);
 
 /**
@@ -95,7 +95,7 @@ const sessionSelectOptionsSchema = Joi.object({
     .trim()
     .custom(validateSyncToken)
     .alter({
-      [Method.SYNC]: (schema) => schema.default("*").optional(),
+      [Method.SYNC]: (schema) => schema.optional(),
       [Method.SELECT]: (schema) => schema.forbidden(),
     }),
   start: Joi.date()
@@ -120,8 +120,8 @@ const sessionSelectOptionsSchema = Joi.object({
  * A map of schemas by method type
  */
 const sessionOptionsSchemas = new Map<SessionOptionMethods, Schema>([
-  [Method.SYNC, sessionSelectOptionsSchema.unknown().tailor(Method.SYNC)],
-  [Method.SELECT, sessionSelectOptionsSchema.unknown().tailor(Method.SELECT)],
+  [Method.SYNC, sessionSelectOptionsSchema.tailor(Method.SYNC)],
+  [Method.SELECT, sessionSelectOptionsSchema.tailor(Method.SELECT)],
 ]);
 
 /**

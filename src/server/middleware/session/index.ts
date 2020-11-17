@@ -1,16 +1,8 @@
 import { RequestHandler } from "express";
 import { validateSessionOptions } from "../../../shared/validators";
 import { Method } from "../../../shared/validators/shared";
-import { ParseOptionsError } from "../../errors";
 import { ValidationError } from "joi";
-
-const convertValidatorErrorToParseOptionsError = (error: ValidationError) => {
-  const paths = error.details.map(({ path, message }) => {
-    const name = path.join(", ");
-    return { name, message };
-  });
-  throw new ParseOptionsError(paths);
-};
+import { convertValidatorErrorToParseOptionsError } from "../shared/helpers";
 
 export const parseSyncOptions: RequestHandler = (req, res, next) => {
   try {

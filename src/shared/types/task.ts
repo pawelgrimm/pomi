@@ -1,5 +1,9 @@
-interface TaskModel {
-  id?: string;
+import { Model, SyncOptions } from "./model";
+
+/**
+ * A row from the tasks table
+ */
+export interface TaskModel extends Model {
   projectId?: string;
   title?: string;
   isCompleted?: boolean;
@@ -12,9 +16,6 @@ interface TaskModel {
  *  only projects modified after the last sync are queried
  * @property {T extends string | boolean = boolean} includeArchived - indicates if completed tasks should be queried
  */
-type TaskSelectOptions<T extends string | boolean = boolean> = {
-  syncToken?: string;
-  includeCompleted?: T;
-};
-
-export type { TaskModel, TaskSelectOptions };
+export interface TaskSelectOptions extends SyncOptions {
+  includeCompleted?: boolean;
+}

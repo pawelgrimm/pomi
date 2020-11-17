@@ -1,3 +1,15 @@
-import { authenticate, validationErrorHandler, logError } from "./shared";
+import {
+  authenticate,
+  logError,
+  validationErrorHandler,
+  camelCaseQueryParams,
+  parseSyncOptions,
+} from "./shared";
 
-export { authenticate, validationErrorHandler, logError };
+export {
+  authenticate,
+  logError,
+  validationErrorHandler,
+  camelCaseQueryParams,
+  parseSyncOptions,
+};

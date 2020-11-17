@@ -68,12 +68,10 @@ export class Project extends Model {
    * Build additional where clauses based on options
    * @param options {ProjectOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(
-    options: Required<ProjectOptions>
-  ) {
+  private static buildAdditionalWhereClauses(options: ProjectOptions) {
     const { includeArchived, syncToken } = options;
     const whereClauses = [];
-    if (syncToken !== "*") {
+    if (syncToken && syncToken !== "*") {
       whereClauses.push(sql`last_modified >= ${syncToken}`);
     } else if (!includeArchived) {
       whereClauses.push(sql`is_archived = FALSE`);

@@ -1,5 +1,9 @@
-interface ProjectModel {
-  id?: string;
+import { Model, SyncOptions } from "./model";
+
+/**
+ * A row from the projects table
+ */
+export interface ProjectModel extends Model {
   title?: string;
   isArchived?: boolean;
 }
@@ -11,9 +15,6 @@ interface ProjectModel {
  *  only projects modified after the last sync are queried
  * @property {T extends string | boolean = boolean} includeArchived - indicates if archived projects should be queried
  */
-type ProjectSelectOptions<T extends string | boolean = boolean> = {
-  syncToken?: string;
-  includeArchived?: T;
-};
-
-export type { ProjectModel, ProjectSelectOptions };
+export interface ProjectOptions extends SyncOptions {
+  includeArchived?: boolean;
+}

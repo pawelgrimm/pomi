@@ -1,15 +1,15 @@
+import { Model, SyncOptions } from "./model";
+
 /**
- * Model representing a row in the sessions table
+ * A row from the sessions table
  */
-export interface SessionModel {
-  id?: string;
+export interface SessionModel extends Model {
   taskId: string;
   startTimestamp: Date;
   duration: number;
   type: keyof typeof SessionType;
   notes?: string;
   isRetroAdded?: boolean;
-  lastModified?: Date;
 }
 
 /**
@@ -34,8 +34,7 @@ export type SessionTypeString = keyof typeof SessionType;
  * @property {Date} [start] - indicates start of time range to query
  * @property {Date} [end] - indicates end of time range to query
  */
-export type SessionOptions = {
-  syncToken?: string;
+export interface SessionOptions extends SyncOptions {
   start?: Date;
   end?: Date;
-};
+}

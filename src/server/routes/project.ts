@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
   res.status(201).send({ project });
 });
 
-/*      GET ALL PROJECTS FOR USER     */
+/*      GET ALL PROJECTS     */
 router.get("/", parseOptions, async (req, res) => {
   const { userId, options } = res.locals;
   const projects = await Projects.select(userId, options);

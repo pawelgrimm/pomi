@@ -11,7 +11,7 @@ beforeEach(() => {
   };
 });
 
-describe("User Validator ", () => {
+describe("User Validator", () => {
   it("Should pass validation when all required fields are provided", () => {
     const validatedUser = validateUser(validUser);
     expect(validatedUser).toEqual(validUser);
@@ -37,4 +37,8 @@ describe("User Validator ", () => {
       /"id" is not allowed to be empty/
     );
   });
+});
+
+describe("User Sync Options Validator", () => {
+  it.todo("Add some tests");
 });

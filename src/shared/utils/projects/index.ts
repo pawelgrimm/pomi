@@ -5,11 +5,10 @@ import { ProjectOptions } from "../../types";
  * Parse a ProjectSelectOptions object, validate the options, and set defaults for undefined options.
  * @param {ProjectOptions} options - options provided to select()
  */
-export const parseSelectAllOptions = <T extends string | boolean = boolean>(
-  options: ProjectOptions<T> = {}
-): Required<ProjectOptions> => {
-  const { syncToken = "*" } = options;
-  let includeArchived = parseStringToBoolean(
+export const parseSelectAllOptions = (options: any = {}): ProjectOptions => {
+  const { syncToken } = options;
+
+  const includeArchived = parseStringToBoolean(
     "includeArchived",
     options.includeArchived
   );

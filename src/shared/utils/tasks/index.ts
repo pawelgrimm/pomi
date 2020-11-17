@@ -5,11 +5,10 @@ import { TaskSelectOptions } from "../../types";
  * Parse a TaskSelectOptions object, validate the options, and set defaults for undefined options.
  * @param {TaskSelectOptions} options - options provided to select()
  */
-export const parseSelectAllOptions = <T extends string | boolean = boolean>(
-  options: TaskSelectOptions<T> = {}
-): Required<TaskSelectOptions> => {
+export const parseSelectAllOptions = (options: any = {}): TaskSelectOptions => {
   const { syncToken = "*" } = options;
-  let includeCompleted = parseStringToBoolean(
+
+  const includeCompleted = parseStringToBoolean(
     "includeCompleted",
     options.includeCompleted
   );

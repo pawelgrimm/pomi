@@ -1,3 +1,6 @@
+/**
+ * A row in the users table
+ */
 interface UserModel {
   id: string;
   display_name: string;

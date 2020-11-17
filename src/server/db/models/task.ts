@@ -79,12 +79,10 @@ export class Task extends Model {
    * Build additional where clauses based on options
    * @param options {TaskSelectOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(
-    options: Required<TaskSelectOptions>
-  ) {
+  private static buildAdditionalWhereClauses(options: TaskSelectOptions) {
     const { includeCompleted, syncToken } = options;
     const whereClauses = [];
-    if (syncToken !== "*") {
+    if (syncToken && syncToken !== "*") {
       whereClauses.push(sql`last_modified >= ${syncToken}`);
     } else if (!includeCompleted) {
       whereClauses.push(sql`is_completed = FALSE`);

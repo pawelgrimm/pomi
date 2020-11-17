@@ -1,6 +1,11 @@
 import Joi from "joi";
 
-import { ProjectModel } from "../types";
+import { ProjectModel, ProjectOptions } from "../types";
+import { validateSyncToken } from "../utils/models";
+import { Method } from "./shared";
+import { Schema } from "@hapi/joi";
+import camelcaseKeys from "camelcase-keys";
+import { InvalidMethodError } from "./errors";
 
 /**
  * A Joi schema representing a ProjectModel
@@ -20,4 +25,50 @@ export const validateProject = (project: any): ProjectModel => {
     project,
     projectSchema.options({ stripUnknown: true })
   ) as ProjectModel;
+};
+
+type ProjectOptionMethods = Method.SYNC | Method.SELECT;
+
+/**
+ * Schema representing valid options for GET projects options
+ */
+const projectSelectOptionsSchema = Joi.object({
+  syncToken: Joi.string()
+    .trim()
+    .custom(validateSyncToken)
+    .alter({
+      [Method.SYNC]: (schema) => schema.default("*").optional(),
+      [Method.SELECT]: (schema) => schema.forbidden(),
+    }),
+  includeArchived: Joi.boolean().alter({
+    [Method.SYNC]: (schema) => schema.forbidden(),
+    [Method.SELECT]: (schema) => schema.optional(),
+  }),
+});
+
+/**
+ * A map of schemas by method type
+ */
+const projectOptionsSchemas = new Map<ProjectOptionMethods, Schema>([
+  [Method.SYNC, projectSelectOptionsSchema.unknown().tailor(Method.SYNC)],
+  [Method.SELECT, projectSelectOptionsSchema.unknown().tailor(Method.SELECT)],
+]);
+
+/**
+ * Validate project select options and set defaults
+ * @param options - a ProjectSelectOptions-like object
+ * @param method - a string representing the validation type to use, like "CREATE" or "PATCH"
+ * @returns validated options
+ */
+export const validateProjectOptions = (
+  options: any,
+  method: ProjectOptionMethods = Method.SELECT
+): ProjectOptions => {
+  options = camelcaseKeys(options);
+
+  const schema = projectOptionsSchemas.get(method);
+
+  if (!schema) throw new InvalidMethodError(method);
+
+  return Joi.attempt(options, schema) as ProjectOptions;
 };
