@@ -1,11 +1,10 @@
-import { Project } from "./project";
-import { ProjectOptions } from "../../../shared/types";
+export { Project } from "./project";
+export { Task } from "./task";
+export { Session } from "./session";
+export { User } from "./user";
 
-import { Task } from "./task";
-import { TaskSelectOptions } from "../../../shared/types";
-
-import { Session } from "./session";
-import { SessionOptions } from "../../../shared/types";
-
-export { Project, Task, Session };
-export type { ProjectOptions, TaskSelectOptions, SessionOptions };
+export type {
+  ProjectOptions,
+  TaskSelectOptions,
+  SessionOptions,
+} from "../../../shared/types";

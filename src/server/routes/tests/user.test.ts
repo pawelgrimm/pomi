@@ -9,17 +9,43 @@ import { mockSelect as mockProjectSelect } from "../../db/models/project";
 // @ts-ignore
 import { mockSelect as mockTaskSelect } from "../../db/models/task";
 
+// @ts-ignore
+import { mockSelect } from "../../db/models/user";
+
 // Set up mock
 jest.mock("../../db/index");
 
 beforeEach(() => jest.clearAllMocks());
 
-const user = { id: uuid() };
+const userId = uuid();
 
-describe("Require Authentication", () => {});
+describe("Require Authentication", () => {
+  it("Should require authorization on all paths", () => {
+    return Promise.all([
+      request(app)
+        .get("/api/users")
+        .set("X-Test-Suppress-Error-Logging", "true")
+        .expect(401),
+      request(app)
+        .get("/api/users/sync")
+        .set("X-Test-Suppress-Error-Logging", "true")
+        .expect(401),
+    ]);
+  });
+});
 
 describe("GET users/", () => {
-  it.todo("simple get test");
+  it("Should call user model", async (done) => {
+    const { user } = await request(app)
+      .get("/api/users")
+      .set("Authorization", `Bearer ${userId}`)
+      .expect(200)
+      .then((res) => res.body);
+
+    expect(mockSelect).toHaveBeenCalled();
+    expect(user).toBeDefined();
+    done();
+  });
 });
 
 describe("GET users/sync", () => {
@@ -27,19 +53,19 @@ describe("GET users/sync", () => {
     const sync_token = "2020-11-10T05:00:00.000Z";
     const { sessions, tasks, projects } = await request(app)
       .get(`/api/users/sync?sync_token=${sync_token}`)
-      .set("Authorization", `Bearer ${user.id}`)
+      .set("Authorization", `Bearer ${userId}`)
       .expect(200)
       .then((res) => res.body);
 
-    expect(mockSessionSelect).toHaveBeenCalledWith(user.id, {
+    expect(mockSessionSelect).toHaveBeenCalledWith(userId, {
       syncToken: sync_token,
     });
     expect(sessions).toBeDefined();
-    expect(mockProjectSelect).toHaveBeenCalledWith(user.id, {
+    expect(mockProjectSelect).toHaveBeenCalledWith(userId, {
       syncToken: sync_token,
     });
     expect(projects).toBeDefined();
-    expect(mockTaskSelect).toHaveBeenCalledWith(user.id, {
+    expect(mockTaskSelect).toHaveBeenCalledWith(userId, {
       syncToken: sync_token,
     });
     expect(tasks).toBeDefined();
@@ -51,7 +77,7 @@ describe("GET users/sync", () => {
     const sync_token = "2020-11-10T05:00:00.000Z";
     const { syncToken } = await request(app)
       .get(`/api/users/sync?sync_token=${sync_token}`)
-      .set("Authorization", `Bearer ${user.id}`)
+      .set("Authorization", `Bearer ${userId}`)
       .expect(200)
       .then((res) => res.body);
 
@@ -60,10 +86,11 @@ describe("GET users/sync", () => {
 
     done();
   });
+
   it("Should return token even if one was not provided", () => {
     const syncToken = request(app)
       .get(`/api/users/sync`)
-      .set("Authorization", `Bearer ${user.id}`)
+      .set("Authorization", `Bearer ${userId}`)
       .expect(200)
       .then((res) => res.body.syncToken);
 
@@ -78,7 +105,7 @@ describe("GET users/sync", () => {
     const sync_token = "2020-11-10T05:00:00.000Z";
     const syncToken = request(app)
       .get(`/api/users/sync?sync_token=${sync_token}`)
-      .set("Authorization", `Bearer ${user.id}`)
+      .set("Authorization", `Bearer ${userId}`)
       .expect(200)
       .then((res) => res.body.syncToken);
 
@@ -92,7 +119,7 @@ describe("GET users/sync", () => {
 
     const syncToken = request(app)
       .get(`/api/users/sync`)
-      .set("Authorization", `Bearer ${user.id}`)
+      .set("Authorization", `Bearer ${userId}`)
       .expect(200)
       .then((res) => res.body.syncToken);
 

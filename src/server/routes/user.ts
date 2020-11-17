@@ -1,6 +1,5 @@
 import Router from "express-promise-router";
 import { Projects, Sessions, Tasks, Users } from "../db";
-import { validateUser, ValidationError } from "../../shared/validators";
 import { authenticate, parseSyncOptions } from "../middleware";
 import { SyncOptions } from "../../shared/types";
 import { createSyncToken } from "../../shared/utils/models";
@@ -30,7 +29,8 @@ router.use(authenticate);
 router.get("/", async (req, res) => {
   const { userId } = res.locals as { userId: string };
 
-  const user = await Users.selectOneById(userId);
+  const user = await Users.select(userId);
+
   res.status(200).send({ user });
 });
 

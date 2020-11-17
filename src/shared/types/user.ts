@@ -3,9 +3,9 @@
  */
 interface UserModel {
   id: string;
-  display_name: string;
+  displayName: string;
   email: string;
-  default_project?: string;
+  defaultProject?: string;
 }
 
 export type { UserModel };
