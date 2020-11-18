@@ -1,23 +1,32 @@
-import { sql, raw } from "../slonik";
-import { Model } from "./model";
-import { validateTask } from "../../../shared/validators";
-import { TaskModel, TaskSelectOptions } from "../../../shared/types";
-import { parseSelectAllOptions } from "../../../shared/utils/tasks";
+import { sql, raw, SqlTokenType } from "../slonik";
+import { applyMixins, Model, ModelWithSelectMultiple } from "./model";
+import { TaskModel, TaskOptions } from "../../../shared/types";
+import { validateTask, validateTaskOptions } from "../../../shared/validators";
+
+// Set up mix-ins
+abstract class TaskBase extends Model<TaskModel> {}
+interface TaskBase extends ModelWithSelectMultiple<TaskModel, TaskOptions> {}
+applyMixins(TaskBase, [ModelWithSelectMultiple]);
 
 /**
  * Class representing data access layer for the tasks table
  */
-export class Task extends Model {
-  static RETURN_COLS = raw(
+export class Task extends TaskBase {
+  protected tableName = sql.identifier(["tasks"]);
+
+  protected RETURN_COLS: SqlTokenType = raw(
     "id, title, project_id, is_completed, last_modified"
   );
+
+  protected validateModelOptionsForSelect = (options: any) =>
+    validateTaskOptions(options);
 
   /**
    * Create one task in the tasks table
    * @param userId - id of user assigned to object
    * @param task - task to insert
    */
-  async create(userId: string, task: TaskModel): Promise<Required<TaskModel>> {
+  create(userId: string, task: TaskModel): Promise<Required<TaskModel>> {
     const { title = "", projectId = null, isCompleted = false } = validateTask(
       task
     );
@@ -27,30 +36,20 @@ export class Task extends Model {
                 COALESCE(${projectId}, (SELECT default_project FROM users WHERE id = ${userId})), 
                 ${title}, 
                 ${isCompleted})
-        RETURNING ${Task.RETURN_COLS};
+        RETURNING ${this.RETURN_COLS};
     `);
   }
 
   /**
    * Get multiple tasks for a user
    * @param userId - id of task-owning user
-   * @param {TaskSelectOptions} options - additional options used to customize query
+   * @param {TaskOptions} options - additional options used to customize query
    */
-  async select(
+  select(
     userId: string,
-    options?: TaskSelectOptions
+    options: TaskOptions = {}
   ): Promise<Readonly<Required<TaskModel>[]>> {
-    const whereClauses = [sql`user_id = ${userId}`];
-
-    const parsedOptions = parseSelectAllOptions(options);
-
-    whereClauses.push(...Task.buildAdditionalWhereClauses(parsedOptions));
-
-    return this.connection.any(sql`
-        SELECT ${Task.RETURN_COLS} FROM tasks
-        WHERE ${sql.join(whereClauses, sql` AND `)}
-        ORDER BY last_modified DESC;
-        `);
+    return super.select(userId, options);
   }
 
   /**
@@ -58,14 +57,8 @@ export class Task extends Model {
    * @param userId - id of task-owning user
    * @param taskId - id of task to query
    */
-  async selectOne(
-    userId: string,
-    taskId: string
-  ): Promise<Required<TaskModel> | null> {
-    return this.connection.maybeOne(sql`
-        SELECT ${Task.RETURN_COLS} FROM tasks
-        WHERE user_id = ${userId} AND id = ${taskId};
-        `);
+  selectOne(userId: string, taskId: string) {
+    return super.selectOne(userId, taskId);
   }
 
   /**
@@ -73,15 +66,15 @@ export class Task extends Model {
    * @param userId - id of task-owning user
    * @param taskId - id of task to update
    */
-  async complete(userId: string, taskId: string): Promise<boolean> {
+  complete(userId: string, taskId: string): Promise<boolean> {
     throw new Error("Not yet implemented");
   }
 
   /**
    * Build additional where clauses based on options
-   * @param options {TaskSelectOptions} options - options provided to select()
+   * @param options {TaskOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(options: TaskSelectOptions) {
+  protected buildAdditionalWhereClauses(options: TaskOptions) {
     const { includeCompleted, syncToken } = options;
     const whereClauses = [];
     if (syncToken && syncToken !== "*") {

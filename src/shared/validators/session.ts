@@ -11,7 +11,7 @@ const NOTES_LENGTH_LIMIT = 1000;
 /**
  * List of methods allowed when validating a session
  */
-type SessionMethods = Method.CREATE | Method.UPDATE | Method.PARTIAL;
+export type SessionMethods = Method.CREATE | Method.UPDATE | Method.PARTIAL;
 
 /**
  * Schema used to validate sessions before inserting them into the database
@@ -85,7 +85,7 @@ export const validateSession = (
   return Joi.attempt(session, schema) as SessionModel;
 };
 
-type SessionOptionMethods = Method.SYNC | Method.SELECT;
+export type SessionOptionMethods = Method.SYNC | Method.SELECT;
 
 /**
  * Schema representing valid options for GET sessions options
@@ -131,14 +131,18 @@ const sessionOptionsSchemas = new Map<SessionOptionMethods, Schema>([
  * @returns validated options
  */
 export const validateSessionOptions = (
-  options: any,
-  method: SessionOptionMethods = Method.SELECT
+  options: any = {},
+  method?: SessionOptionMethods
 ): SessionOptions => {
   options = camelcaseKeys(options);
 
-  const schema = sessionOptionsSchemas.get(method);
+  let schema: Schema = sessionSelectOptionsSchema;
 
-  if (!schema) throw new InvalidMethodError(method);
+  if (method) {
+    schema = sessionOptionsSchemas.get(method) || schema;
+
+    if (!schema) throw new InvalidMethodError(method);
+  }
 
   return Joi.attempt(options, schema) as SessionOptions;
 };

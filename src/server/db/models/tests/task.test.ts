@@ -22,7 +22,7 @@ let project: typeof defaultProject;
 beforeAll(() => {
   user = {
     id: uuid(),
-    display_name: "tasksTestUser",
+    displayName: "tasksTestUser",
     email: "tasks@example.com",
   };
 
@@ -37,7 +37,7 @@ beforeAll(() => {
     // create user
     await pool.query(sql`
         INSERT INTO users(id, display_name, email) 
-        VALUES (${user.id}, ${user.display_name}, ${user.email});`);
+        VALUES (${user.id}, ${user.displayName}, ${user.email});`);
 
     // create default project
     const newProjects = await pool.many(

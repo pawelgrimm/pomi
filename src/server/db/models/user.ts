@@ -1,4 +1,4 @@
-import { sql, raw } from "../slonik";
+import { sql, raw, SqlTokenType } from "../slonik";
 import { Model } from "./model";
 import { validateUser } from "../../../shared/validators";
 import { UserModel } from "../../../shared/types";
@@ -6,8 +6,12 @@ import { UserModel } from "../../../shared/types";
 /**
  * Class representing data access layer for the users table
  */
-export class User extends Model {
-  static RETURN_COLS = raw("id, display_name, email, default_project");
+export class User extends Model<UserModel> {
+  protected tableName = sql.identifier(["tasks"]);
+
+  protected RETURN_COLS: SqlTokenType = raw(
+    "id, display_name, email, default_project"
+  );
 
   /**
    * Create one user in the users table
@@ -18,7 +22,7 @@ export class User extends Model {
     return this.connection.one(sql`
         INSERT INTO users(id, display_name, email) 
           VALUES (${id}, ${displayName}, ${email})
-        RETURNING ${User.RETURN_COLS};
+        RETURNING ${this.RETURN_COLS};
         `);
   }
 
@@ -28,7 +32,7 @@ export class User extends Model {
    */
   select(userId: string): Promise<Readonly<Required<UserModel>[] | null>> {
     return this.connection.maybeOne(sql`
-        SELECT ${User.RETURN_COLS} FROM users
+        SELECT ${this.RETURN_COLS} FROM users
         WHERE id=${userId}
         `);
   }

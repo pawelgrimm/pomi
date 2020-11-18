@@ -1,29 +1,45 @@
-import { sql, raw } from "../slonik";
-import { Model } from "./model";
+import { sql, raw, SqlTokenType } from "../slonik";
+import { applyMixins, Model, ModelWithSelectMultiple } from "./model";
 import { ProjectModel, ProjectOptions } from "../../../shared/types";
-import { parseSelectAllOptions } from "../../../shared/utils/projects";
-import { validateProject } from "../../../shared/validators";
+import {
+  validateProject,
+  validateProjectOptions,
+} from "../../../shared/validators";
+
+// Set up mix-ins
+abstract class ProjectBase extends Model<ProjectModel> {}
+interface ProjectBase
+  extends ModelWithSelectMultiple<ProjectModel, ProjectOptions> {}
+applyMixins(ProjectBase, [ModelWithSelectMultiple]);
 
 /**
  * Class representing the projects table.
  */
-export class Project extends Model {
-  static RETURN_COLS = raw("id, title, is_archived, last_modified");
+export class Project extends ProjectBase {
+  protected tableName = sql.identifier(["projects"]);
+
+  protected RETURN_COLS: SqlTokenType = raw(
+    "id, title, is_archived, last_modified"
+  );
+
+  protected validateModelOptionsForSelect = (options: any) =>
+    validateProjectOptions(options);
 
   /**
    * Create one project in the projects table
    * @param userId - id of user assigned to object
    * @param project - project to insert
    */
-  async create(
+  create(
     userId: string,
     project: ProjectModel
   ): Promise<Required<ProjectModel>> {
     const { title = "", isArchived = false } = validateProject(project);
+    // noinspection SqlResolve
     return this.connection.one(sql`
-        INSERT INTO projects(user_id, title, is_archived)
+        INSERT INTO ${this.tableName}(user_id, title, is_archived)
         VALUES (${userId}, ${title}, ${isArchived})
-        RETURNING ${Project.RETURN_COLS};
+        RETURNING ${this.RETURN_COLS};
     `);
   }
 
@@ -32,43 +48,15 @@ export class Project extends Model {
    * @param userId - id of project-owning user
    * @param {ProjectOptions} options - additional options used to customize query
    */
-  async select(
-    userId: string,
-    options?: ProjectOptions
-  ): Promise<Readonly<Required<ProjectModel>[]>> {
-    const whereClauses = [sql`user_id = ${userId}`];
-
-    const parsedOptions = parseSelectAllOptions(options);
-
-    whereClauses.push(...Project.buildAdditionalWhereClauses(parsedOptions));
-
-    return this.connection.any(sql`
-        SELECT ${Project.RETURN_COLS} FROM projects
-        WHERE ${sql.join(whereClauses, sql` AND `)}
-        ORDER BY last_modified DESC;
-        `);
-  }
-
-  /**
-   * Get a project for a user
-   * @param userId - id of project-owning user
-   * @param projectId - id of project to query
-   */
-  async selectOne(
-    userId: string,
-    projectId: string
-  ): Promise<Required<ProjectModel> | null> {
-    return this.connection.maybeOne(sql`
-        SELECT ${Project.RETURN_COLS} FROM projects
-        WHERE user_id = ${userId} AND id = ${projectId};
-        `);
+  select(userId: string, options: ProjectOptions = {}) {
+    return super.select(userId, options);
   }
 
   /**
    * Build additional where clauses based on options
    * @param options {ProjectOptions} options - options provided to select()
    */
-  private static buildAdditionalWhereClauses(options: ProjectOptions) {
+  protected buildAdditionalWhereClauses(options: ProjectOptions) {
     const { includeArchived, syncToken } = options;
     const whereClauses = [];
     if (syncToken && syncToken !== "*") {
@@ -77,5 +65,14 @@ export class Project extends Model {
       whereClauses.push(sql`is_archived = FALSE`);
     }
     return whereClauses;
+  }
+
+  /**
+   * Get a project for a user
+   * @param userId - id of project-owning user
+   * @param projectId - id of project to query
+   */
+  selectOne(userId: string, projectId: string) {
+    return super.selectOne(userId, projectId);
   }
 }

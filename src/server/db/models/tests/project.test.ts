@@ -16,12 +16,12 @@ let user: UserModel;
 beforeAll(() => {
   user = {
     id: uuid(),
-    display_name: "projectsTestUser",
+    displayName: "projectsTestUser",
     email: "projects@example.com",
   };
 
   return pool.query(
-    sql`INSERT INTO users(id, display_name, email) VALUES (${user.id}, ${user.display_name}, ${user.email})`
+    sql`INSERT INTO users(id, display_name, email) VALUES (${user.id}, ${user.displayName}, ${user.email})`
   );
 });
 

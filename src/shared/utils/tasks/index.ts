@@ -1,11 +1,11 @@
 import { parseStringToBoolean, validateSyncToken } from "../models";
-import { TaskSelectOptions } from "../../types";
+import { TaskOptions } from "../../types";
 
 /**
  * Parse a TaskSelectOptions object, validate the options, and set defaults for undefined options.
- * @param {TaskSelectOptions} options - options provided to select()
+ * @param {TaskOptions} options - options provided to select()
  */
-export const parseSelectAllOptions = (options: any = {}): TaskSelectOptions => {
+export const parseSelectAllOptions = (options: any = {}): TaskOptions => {
   const { syncToken = "*" } = options;
 
   const includeCompleted = parseStringToBoolean(

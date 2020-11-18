@@ -1,5 +1,10 @@
 import Joi from "joi";
-import { TaskModel } from "../types";
+import { TaskOptions, TaskModel } from "../types";
+import { Method } from "./shared";
+import { validateSyncToken } from "../utils/models";
+import { Schema } from "@hapi/joi";
+import camelcaseKeys from "camelcase-keys";
+import { InvalidMethodError } from "./errors";
 
 /**
  * A Joi schema representing a TaskModel
@@ -20,4 +25,57 @@ export const validateTask = (task: any): TaskModel => {
     task,
     taskSchema.options({ stripUnknown: true })
   ) as TaskModel;
+};
+
+type TaskOptionMethods = Method.SYNC | Method.SELECT;
+
+/**
+ * Schema representing valid options for GET tasks options
+ */
+const taskSelectOptionsSchema = Joi.object({
+  syncToken: Joi.string()
+    .trim()
+    .custom(validateSyncToken)
+    .optional()
+    .alter({
+      [Method.SYNC]: (schema) => schema.default("*").optional(),
+      [Method.SELECT]: (schema) => schema.forbidden(),
+    }),
+  includeCompleted: Joi.boolean()
+    .optional()
+    .alter({
+      [Method.SYNC]: (schema) => schema.forbidden(),
+      [Method.SELECT]: (schema) => schema.optional(),
+    }),
+});
+
+/**
+ * A map of schemas by method type
+ */
+const taskOptionsSchemas = new Map<TaskOptionMethods, Schema>([
+  [Method.SYNC, taskSelectOptionsSchema.unknown().tailor(Method.SYNC)],
+  [Method.SELECT, taskSelectOptionsSchema.unknown().tailor(Method.SELECT)],
+]);
+
+/**
+ * Validate task select options and set defaults
+ * @param options - a TasSelectOptions-like object
+ * @param method - a string representing the validation type to use, like "CREATE" or "PATCH"
+ * @returns validated options
+ */
+export const validateTaskOptions = (
+  options: any,
+  method?: TaskOptionMethods
+): TaskOptions => {
+  options = camelcaseKeys(options);
+
+  let schema: Schema = taskSelectOptionsSchema;
+
+  if (method) {
+    schema = taskOptionsSchemas.get(method) || schema;
+
+    if (!schema) throw new InvalidMethodError(method);
+  }
+
+  return Joi.attempt(options, schema) as TaskOptions;
 };

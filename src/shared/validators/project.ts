@@ -36,14 +36,17 @@ const projectSelectOptionsSchema = Joi.object({
   syncToken: Joi.string()
     .trim()
     .custom(validateSyncToken)
+    .optional()
     .alter({
       [Method.SYNC]: (schema) => schema.default("*").optional(),
       [Method.SELECT]: (schema) => schema.forbidden(),
     }),
-  includeArchived: Joi.boolean().alter({
-    [Method.SYNC]: (schema) => schema.forbidden(),
-    [Method.SELECT]: (schema) => schema.optional(),
-  }),
+  includeArchived: Joi.boolean()
+    .optional()
+    .alter({
+      [Method.SYNC]: (schema) => schema.forbidden(),
+      [Method.SELECT]: (schema) => schema.optional(),
+    }),
 });
 
 /**
@@ -62,13 +65,17 @@ const projectOptionsSchemas = new Map<ProjectOptionMethods, Schema>([
  */
 export const validateProjectOptions = (
   options: any,
-  method: ProjectOptionMethods = Method.SELECT
+  method?: ProjectOptionMethods
 ): ProjectOptions => {
   options = camelcaseKeys(options);
 
-  const schema = projectOptionsSchemas.get(method);
+  let schema: Schema = projectSelectOptionsSchema;
 
-  if (!schema) throw new InvalidMethodError(method);
+  if (method) {
+    schema = projectOptionsSchemas.get(method) || schema;
+
+    if (!schema) throw new InvalidMethodError(method);
+  }
 
   return Joi.attempt(options, schema) as ProjectOptions;
 };

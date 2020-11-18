@@ -16,6 +16,6 @@ export interface TaskModel extends Model {
  *  only projects modified after the last sync are queried
  * @property {T extends string | boolean = boolean} includeArchived - indicates if completed tasks should be queried
  */
-export interface TaskSelectOptions extends SyncOptions {
+export interface TaskOptions extends SyncOptions {
   includeCompleted?: boolean;
 }

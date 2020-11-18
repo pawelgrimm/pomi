@@ -5,6 +5,6 @@ export { User } from "./user";
 
 export type {
   ProjectOptions,
-  TaskSelectOptions,
+  TaskOptions,
   SessionOptions,
 } from "../../../shared/types";
