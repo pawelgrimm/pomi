@@ -29,7 +29,7 @@ router.use(authenticate);
 router.get("/", async (req, res) => {
   const { userId } = res.locals as { userId: string };
 
-  const user = await Users.select(userId);
+  const user = await Users.selectOne(userId);
 
   res.status(200).send({ user });
 });

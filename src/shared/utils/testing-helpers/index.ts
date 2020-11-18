@@ -1,7 +1,8 @@
 import { ProjectModel, SessionModel, TaskModel, UserModel } from "../../types";
-import { pool, Projects, Sessions } from "../../../server/db";
+import { pool, Projects, Sessions, Users } from "../../../server/db";
 import { sql } from "slonik";
 import { v4 as uuid } from "uuid";
+import { User } from "../../../server/db/models";
 
 /**
  * Pause execution for the specified duration. Don't forget to add await, as this returns a Promise.
@@ -112,6 +113,7 @@ export const getSyncTokenForProject = async (projectId: string) => {
  */
 export const getSyncTokenForObject = async (model: string, id: string) => {
   const table = sql.identifier([model]);
+  // noinspection SqlResolve
   const lastModifiedTime = await pool.oneFirst<number>(sql`
         SELECT last_modified FROM ${table}
         WHERE id = ${id}
@@ -171,24 +173,56 @@ export const insertTestTasks = async (
 };
 
 /**
+ * Insert an array of users into the test database
+ * @param testUsers an array of users
+ */
+export const insertTestUsers = async (
+  testUsers: Partial<UserModel>[]
+): Promise<Array<UserModel>> => {
+  const randomId = uuid();
+  const fallbacks: UserModel = {
+    id: randomId,
+    displayName: `user-${randomId}`,
+    email: `${randomId}@example.com`,
+  };
+
+  return Promise.all(
+    testUsers.map(async (user) => await Users.create({ ...fallbacks, ...user }))
+  );
+};
+
+/**
+ * Insert a user into the database
+ */
+export const insertTestUser = (
+  overrideUserParams?: Partial<UserModel>,
+  overrideDefaultProjectParams?: Partial<ProjectModel>
+) => insertRandomTestUser(overrideUserParams, overrideDefaultProjectParams);
+
+/**
  * Insert a random user into the database
  */
-export const insertRandomTestUser = async () => {
+export const insertRandomTestUser = async (
+  overrideUserParams: Partial<UserModel> = {},
+  overrideDefaultProjectParams: Partial<ProjectModel> = {}
+) => {
   const randomId = uuid();
 
   const user = {
     id: randomId,
-    display_name: `user-${randomId}`,
+    displayName: `user-${randomId}`,
     email: `${randomId}@example.com`,
+    ...overrideUserParams,
   };
 
   await pool.one(sql`
         INSERT INTO users(id, display_name, email) 
-        VALUES (${user.id}, ${user.display_name}, ${user.email})
+        VALUES (${user.id}, ${user.displayName}, ${user.email})
         RETURNING id, display_name, email;`);
 
   const defaultProject = await Projects.create(user.id, {
     title: "default project",
+    ...overrideDefaultProjectParams,
   });
 
   return pool.one<Required<UserModel>>(sql`
@@ -197,6 +231,15 @@ export const insertRandomTestUser = async () => {
         WHERE id = ${user.id}
         RETURNING id, display_name, email, default_project;`);
 };
+
+/**
+ * Create a new valid user
+ */
+export const createValidUser = (): UserModel => ({
+  id: uuid(),
+  displayName: "createValidUser",
+  email: "createValidUser@example.com",
+});
 
 /**
  * Create a new valid project
