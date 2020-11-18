@@ -24,7 +24,7 @@ const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
 };
 
 // Set up mix-ins
-abstract class SessionBase extends Model<SessionModel> {}
+abstract class SessionBase extends Model {}
 interface SessionBase
   extends ModelWithUpdate<SessionModel>,
     ModelWithSelectMultiple<SessionModel, SessionOptions> {}

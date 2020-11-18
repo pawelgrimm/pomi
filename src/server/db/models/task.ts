@@ -4,7 +4,7 @@ import { TaskModel, TaskOptions } from "../../../shared/types";
 import { validateTask, validateTaskOptions } from "../../../shared/validators";
 
 // Set up mix-ins
-abstract class TaskBase extends Model<TaskModel> {}
+abstract class TaskBase extends Model {}
 interface TaskBase extends ModelWithSelectMultiple<TaskModel, TaskOptions> {}
 applyMixins(TaskBase, [ModelWithSelectMultiple]);
 

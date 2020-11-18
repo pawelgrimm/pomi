@@ -7,7 +7,7 @@ import {
 } from "../../../shared/validators";
 
 // Set up mix-ins
-abstract class ProjectBase extends Model<ProjectModel> {}
+abstract class ProjectBase extends Model {}
 interface ProjectBase
   extends ModelWithSelectMultiple<ProjectModel, ProjectOptions> {}
 applyMixins(ProjectBase, [ModelWithSelectMultiple]);

@@ -7,7 +7,7 @@ type ConstructableThis<T> = { new (...args: any[]): T };
 /**
  * Abstract class representing data access layer for a database table
  */
-export abstract class Model<MT extends ModelType = ModelType> {
+export abstract class Model {
   protected abstract RETURN_COLS: SqlTokenType;
   protected abstract tableName: IdentifierSqlTokenType;
 
@@ -34,19 +34,6 @@ export abstract class Model<MT extends ModelType = ModelType> {
    */
   connect<T extends Model = Model>(this: T, connection: DatabaseConnection): T {
     return new (Object.getPrototypeOf(this).constructor)(connection);
-  }
-
-  /**
-   * Get a single object for a user
-   * @param userId - id of object-owning user
-   * @param objectId - id of object to query
-   */
-  selectOne(userId: string, objectId: string): Promise<Required<MT> | null> {
-    // noinspection SqlResolve
-    return this.connection.maybeOne(sql`
-        SELECT ${this.RETURN_COLS} FROM ${this.tableName}
-        WHERE user_id = ${userId} AND id = ${objectId};
-        `);
   }
 }
 
@@ -82,9 +69,54 @@ export function applyMixins(derivedCtor: any, constructors: any[]) {
   });
 }
 
+export abstract class ModelWithSelect<
+  MT extends ModelType = ModelType
+> extends Model {
+  /**
+   * Get a single object for a user
+   * @param userId - id of object-owning user
+   * @param objectId - id of object to query
+   */
+  selectOne(userId: string, objectId: string): Promise<Required<MT> | null> {
+    // noinspection SqlResolve
+    return this.connection.maybeOne(sql`
+        SELECT ${this.RETURN_COLS} FROM ${this.tableName}
+        WHERE user_id = ${userId} AND id = ${objectId};
+        `);
+  }
+}
+
+export abstract class ModelWithSelectMultiple<
+  MT extends ModelType = ModelType,
+  SO extends SyncOptions = SyncOptions
+> extends ModelWithSelect<MT> {
+  protected abstract validateModelOptionsForSelect: (options: any) => SO;
+  protected abstract buildAdditionalWhereClauses(options: SO): SqlTokenType[];
+
+  /**
+   * Get multiple objects for a user
+   * @param userId - id of object-owning user
+   * @param options - additional options used to customize query
+   */
+  select(userId: string, options?: SO): Promise<Readonly<Required<MT>[]>> {
+    const whereClauses: SqlTokenType[] = [sql`user_id = ${userId}`];
+
+    const parsedOptions = this.validateModelOptionsForSelect(options);
+
+    whereClauses.push(...this.buildAdditionalWhereClauses(parsedOptions));
+
+    // noinspection SqlResolve
+    return this.connection.any(sql`
+        SELECT ${this.RETURN_COLS} FROM ${this.tableName}
+        WHERE ${sql.join(whereClauses, sql` AND `)}
+        ORDER BY last_modified DESC;
+        `);
+  }
+}
+
 export abstract class ModelWithUpdate<
   MT extends ModelType = ModelType
-> extends Model<MT> {
+> extends Model {
   protected abstract validateModelForUpdate: (object: any) => MT;
   protected abstract buildUpdateSets(object: Partial<MT>): SqlTokenType[];
 
@@ -114,33 +146,5 @@ export abstract class ModelWithUpdate<
         RETURNING ${this.RETURN_COLS};
         `
     );
-  }
-}
-
-export abstract class ModelWithSelectMultiple<
-  MT extends ModelType = ModelType,
-  SO extends SyncOptions = SyncOptions
-> extends Model<MT> {
-  protected abstract validateModelOptionsForSelect: (options: any) => SO;
-  protected abstract buildAdditionalWhereClauses(options: SO): SqlTokenType[];
-
-  /**
-   * Get multiple objects for a user
-   * @param userId - id of object-owning user
-   * @param options - additional options used to customize query
-   */
-  select(userId: string, options?: SO): Promise<Readonly<Required<MT>[]>> {
-    const whereClauses: SqlTokenType[] = [sql`user_id = ${userId}`];
-
-    const parsedOptions = this.validateModelOptionsForSelect(options);
-
-    whereClauses.push(...this.buildAdditionalWhereClauses(parsedOptions));
-
-    // noinspection SqlResolve
-    return this.connection.any(sql`
-        SELECT ${this.RETURN_COLS} FROM ${this.tableName}
-        WHERE ${sql.join(whereClauses, sql` AND `)}
-        ORDER BY last_modified DESC;
-        `);
   }
 }
