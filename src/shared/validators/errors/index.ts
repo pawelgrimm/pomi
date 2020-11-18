@@ -1,3 +1,1 @@
-import { InvalidMethodError } from "./InvalidMethodError";
-
-export { InvalidMethodError };
+export * from "./InvalidMethodError";
