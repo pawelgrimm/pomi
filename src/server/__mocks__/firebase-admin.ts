@@ -17,3 +17,5 @@ export const initializeApp = jest.fn();
 firebaseAdmin.initializeApp = initializeApp;
 firebaseAdmin.credential = credential;
 firebaseAdmin.auth = auth;
+
+export default firebaseAdmin;
