@@ -182,7 +182,7 @@ export const insertTestUsers = async (
 ): Promise<Array<UserModel>> => {
   const randomId = uuid();
   const fallbacks: UserModel = {
-    id: randomId,
+    firebaseId: randomId,
     displayName: `user-${randomId}`,
     email: `${randomId}@example.com`,
   };
@@ -209,17 +209,21 @@ export const insertRandomTestUser = async (
 ) => {
   const randomId = uuid();
 
-  const user = {
-    id: randomId,
+  let user: UserModel & Required<Pick<UserModel, "firebaseId">> = {
+    firebaseId: randomId,
     displayName: `user-${randomId}`,
     email: `${randomId}@example.com`,
     ...overrideUserParams,
   };
 
-  await pool.one(sql`
-        INSERT INTO users(id, display_name, email) 
-        VALUES (${user.id}, ${user.displayName}, ${user.email})
-        RETURNING id, display_name, email;`);
+  user = await pool.one(sql`
+        INSERT INTO users(firebase_id, display_name, email) 
+        VALUES (${user.firebaseId}, ${user.displayName}, ${user.email})
+        RETURNING id, firebase_id, display_name, email;`);
+
+  if (!user.id) {
+    throw new Error("User returned from database must have an id");
+  }
 
   const defaultProject = await Projects.create(user.id, {
     title: "default project",
@@ -237,7 +241,7 @@ export const insertRandomTestUser = async (
  * Create a new valid user
  */
 export const createValidUser = (): UserModel => ({
-  id: uuid(),
+  firebaseId: uuid(),
   displayName: "createValidUser",
   email: "createValidUser@example.com",
 });
