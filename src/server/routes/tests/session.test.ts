@@ -13,8 +13,10 @@ import { v4 as uuid } from "uuid";
 import {
   arrayContainingObjectsContaining,
   createValidSession,
+  objectWithDatesAsStrings,
 } from "../../../shared/utils/testing-helpers";
-import { ValidationError } from "../../../shared/validators";
+import * as JoiError from "joi/lib/errors";
+const ValidationError = JoiError.ValidationError;
 
 // Set up mock
 jest.mock("../../db/index");
@@ -57,10 +59,11 @@ describe("POST sessions/", () => {
     expect(mockTaskCreate).not.toHaveBeenCalled();
     expect(task).toBeUndefined();
 
-    expect(mockSessionCreate).toHaveBeenCalledWith(user.id, {
-      ...validSession,
-      startTimestamp: validSession.startTimestamp.toISOString(),
-    });
+    expect(mockSessionCreate).toHaveBeenCalledWith(
+      user.id,
+      objectWithDatesAsStrings(validSession)
+    );
+    expect(session).toBeDefined();
 
     done();
   });
@@ -87,8 +90,7 @@ describe("POST sessions/", () => {
     expect(task).toBeDefined();
 
     expect(mockSessionCreate).toHaveBeenCalledWith(user.id, {
-      ...requestSession,
-      startTimestamp: requestSession.startTimestamp.toISOString(),
+      ...objectWithDatesAsStrings(requestSession),
       taskId: task.id,
     });
     expect(session).toBeDefined();
@@ -127,8 +129,7 @@ describe("POST sessions/", () => {
     expect(task).toBeDefined();
 
     expect(mockSessionCreate).toHaveBeenCalledWith(user.id, {
-      ...requestSession,
-      startTimestamp: requestSession.startTimestamp.toISOString(),
+      ...objectWithDatesAsStrings(requestSession),
       taskId: task.id,
     });
     expect(session).toBeDefined();
@@ -209,9 +210,7 @@ describe("GET sessions/sync", () => {
       .expect(200)
       .then((res) => res.body);
 
-    expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      syncToken: "*",
-    });
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {});
 
     expect(syncToken).toBeDefined();
     expect(sessions).toBeDefined();
@@ -404,10 +403,11 @@ describe("PATCH sessions/:id", () => {
       .expect(200)
       .then((res) => res.body);
 
-    expect(mockConnectUpdate).toHaveBeenCalledWith(user.id, updates.id, {
-      ...updates,
-      startTimestamp: updates.startTimestamp.toISOString(),
-    });
+    expect(mockConnectUpdate).toHaveBeenCalledWith(
+      user.id,
+      updates.id,
+      objectWithDatesAsStrings(updates)
+    );
     expect(session).toBeDefined();
 
     done();

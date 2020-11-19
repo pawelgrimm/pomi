@@ -3,6 +3,7 @@ import { pool, Projects, Sessions, Users } from "../../../server/db";
 import { sql } from "slonik";
 import { v4 as uuid } from "uuid";
 import { User } from "../../../server/db/models";
+import { parseISO, isValid } from "date-fns";
 
 /**
  * Pause execution for the specified duration. Don't forget to add await, as this returns a Promise.
@@ -273,3 +274,15 @@ export const createValidSession = (): Required<SessionModel> => ({
   isRetroAdded: false,
   lastModified: new Date("2020-10-23T20:00:00.000Z"),
 });
+
+export const objectWithDatesAsStrings = (object: any) => {
+  const newObject: any = {};
+  Object.entries(object).forEach(([key, value]) => {
+    let newValue = value;
+    if (value instanceof Date) {
+      newValue = value.toISOString();
+    }
+    newObject[key] = newValue;
+  });
+  return newObject;
+};
