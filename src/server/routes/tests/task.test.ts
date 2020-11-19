@@ -74,10 +74,7 @@ describe("GET tasks/", () => {
       .set("Authorization", `Bearer ${user.id}`)
       .expect(200);
 
-    expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      includeCompleted: false,
-      syncToken: "*",
-    });
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {});
 
     done();
   });
@@ -90,7 +87,6 @@ describe("GET tasks/", () => {
       .expect(200);
 
     expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      includeCompleted: false,
       syncToken,
     });
 
@@ -147,7 +143,6 @@ describe("GET tasks/", () => {
 
     expect(mockSelect).toHaveBeenCalledWith(user.id, {
       includeCompleted: true,
-      syncToken: "*",
     });
     done();
   });

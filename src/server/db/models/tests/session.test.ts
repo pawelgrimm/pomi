@@ -24,7 +24,7 @@ const getSyncTokenForSession = (sessionId: string) => {
   return getSyncTokenForObject("sessions", sessionId);
 };
 
-let user: Readonly<UserModel>;
+let user: Readonly<Required<UserModel>>;
 let otherUser: typeof user;
 let project: Readonly<Required<ProjectModel>>;
 let task: Readonly<Required<TaskModel>>;

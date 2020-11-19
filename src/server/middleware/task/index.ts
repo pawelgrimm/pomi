@@ -1,7 +1,6 @@
-import { RequestHandler } from "express";
-import { parseSelectAllOptions } from "../../../shared/utils/tasks";
+import { validateTaskOptions } from "../../../shared/validators";
+import { createParseOptionsMiddleware } from "../shared/createParseOptionsMiddleware";
 
-export const parseOptions: RequestHandler = (req, res, next) => {
-  res.locals.options = parseSelectAllOptions(req.query);
-  next();
-};
+export const parseSelectOptions = createParseOptionsMiddleware((options) =>
+  validateTaskOptions(options)
+);

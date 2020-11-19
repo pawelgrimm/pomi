@@ -1,6 +1,6 @@
 import Router from "express-promise-router";
 import { authenticate, validationErrorHandler } from "../middleware";
-import { parseOptions } from "../middleware/task";
+import { parseSelectOptions } from "../middleware/task";
 import { Tasks } from "../db";
 import { validateTask } from "../../shared/validators";
 
@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
 });
 
 /*      GET ALL TASKS     */
-router.get("/", parseOptions, async (req, res) => {
+router.get("/", parseSelectOptions, async (req, res) => {
   const { userId, options } = res.locals;
   const tasks = await Tasks.select(userId, options);
 

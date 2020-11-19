@@ -42,6 +42,8 @@ const taskSelectOptionsSchema = Joi.object({
       [Method.SELECT]: (schema) => schema.forbidden(),
     }),
   includeCompleted: Joi.boolean()
+    .falsy(0, "0")
+    .truthy(1, "1")
     .optional()
     .alter({
       [Method.SYNC]: (schema) => schema.forbidden(),

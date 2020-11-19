@@ -5,24 +5,17 @@ import { ProjectModel, UserModel } from "../../../../shared/types";
 import {
   arrayContainingObjectsContaining,
   getSyncTokenForProject,
+  insertRandomTestUser,
   insertTestProjects,
 } from "../../../../shared/utils";
 
 import * as validators from "../../../../shared/validators";
 const mockValidator = jest.spyOn(validators, "validateProject");
 
-let user: UserModel;
+let user: Required<UserModel>;
 
-beforeAll(() => {
-  user = {
-    id: uuid(),
-    displayName: "projectsTestUser",
-    email: "projects@example.com",
-  };
-
-  return pool.query(
-    sql`INSERT INTO users(id, display_name, email) VALUES (${user.id}, ${user.displayName}, ${user.email})`
-  );
+beforeAll(async () => {
+  user = await insertRandomTestUser();
 });
 
 afterAll(() => {

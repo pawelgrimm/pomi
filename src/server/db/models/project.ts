@@ -1,5 +1,10 @@
 import { sql, raw, SqlTokenType } from "../slonik";
-import { applyMixins, Model, ModelWithSelectMultiple } from "./model";
+import {
+  applyMixins,
+  Model,
+  ModelWithSelect,
+  ModelWithSelectMultiple,
+} from "./model";
 import { ProjectModel, ProjectOptions } from "../../../shared/types";
 import {
   validateProject,
@@ -9,8 +14,9 @@ import {
 // Set up mix-ins
 abstract class ProjectBase extends Model {}
 interface ProjectBase
-  extends ModelWithSelectMultiple<ProjectModel, ProjectOptions> {}
-applyMixins(ProjectBase, [ModelWithSelectMultiple]);
+  extends ModelWithSelect<ProjectModel>,
+    ModelWithSelectMultiple<ProjectModel, ProjectOptions> {}
+applyMixins(ProjectBase, [ModelWithSelect, ModelWithSelectMultiple]);
 
 /**
  * Class representing the projects table.

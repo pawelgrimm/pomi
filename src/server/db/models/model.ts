@@ -89,7 +89,7 @@ export abstract class ModelWithSelect<
 export abstract class ModelWithSelectMultiple<
   MT extends ModelType = ModelType,
   SO extends SyncOptions = SyncOptions
-> extends ModelWithSelect<MT> {
+> extends Model {
   protected abstract validateModelOptionsForSelect: (options: any) => SO;
   protected abstract buildAdditionalWhereClauses(options: SO): SqlTokenType[];
 

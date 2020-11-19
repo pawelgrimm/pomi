@@ -1,12 +1,19 @@
 import { sql, raw, SqlTokenType } from "../slonik";
-import { applyMixins, Model, ModelWithSelectMultiple } from "./model";
+import {
+  applyMixins,
+  Model,
+  ModelWithSelect,
+  ModelWithSelectMultiple,
+} from "./model";
 import { TaskModel, TaskOptions } from "../../../shared/types";
 import { validateTask, validateTaskOptions } from "../../../shared/validators";
 
 // Set up mix-ins
 abstract class TaskBase extends Model {}
-interface TaskBase extends ModelWithSelectMultiple<TaskModel, TaskOptions> {}
-applyMixins(TaskBase, [ModelWithSelectMultiple]);
+interface TaskBase
+  extends ModelWithSelect<TaskModel>,
+    ModelWithSelectMultiple<TaskModel, TaskOptions> {}
+applyMixins(TaskBase, [ModelWithSelect, ModelWithSelectMultiple]);
 
 /**
  * Class representing data access layer for the tasks table

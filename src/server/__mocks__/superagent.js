@@ -17,7 +17,7 @@ const parser = function (res, fn) {
 };
 
 function rectifier(key, value) {
-  if (typeof value === "string") {
+  if (typeof value === "string" && key !== "syncToken") {
     const parsedDate = parseISO(value);
     return isValid(parsedDate) ? parsedDate : value;
   }

@@ -3,6 +3,7 @@ import { raw, sql, SqlTokenType } from "../slonik";
 import {
   applyMixins,
   Model,
+  ModelWithSelect,
   ModelWithSelectMultiple,
   ModelWithUpdate,
 } from "./model";
@@ -27,8 +28,13 @@ const UPDATEABLE_COLUMNS: Boolified<Partial<SessionModel>> = {
 abstract class SessionBase extends Model {}
 interface SessionBase
   extends ModelWithUpdate<SessionModel>,
+    ModelWithSelect<SessionModel>,
     ModelWithSelectMultiple<SessionModel, SessionOptions> {}
-applyMixins(SessionBase, [ModelWithUpdate, ModelWithSelectMultiple]);
+applyMixins(SessionBase, [
+  ModelWithUpdate,
+  ModelWithSelect,
+  ModelWithSelectMultiple,
+]);
 
 /**
  * Class representing data access layer for the sessions table
@@ -73,7 +79,7 @@ export class Session extends SessionBase {
     return this.connection.one(sql`
         INSERT INTO sessions(user_id, task_id, start_timestamp, duration, notes, type, is_retro_added)
         VALUES (${userId},
-                COALESCE(${taskId}, (SELECT default_task FROM users WHERE id = ${userId})),
+                ${taskId},
                 ${sqlDate(startTimestamp)},
                 ${sqlDuration(duration)},
                 ${notes},

@@ -42,6 +42,8 @@ const projectSelectOptionsSchema = Joi.object({
       [Method.SELECT]: (schema) => schema.forbidden(),
     }),
   includeArchived: Joi.boolean()
+    .falsy(0, "0")
+    .truthy(1, "1")
     .optional()
     .alter({
       [Method.SYNC]: (schema) => schema.forbidden(),

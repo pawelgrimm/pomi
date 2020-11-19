@@ -5,6 +5,7 @@ import { ProjectModel, TaskModel, UserModel } from "../../../../shared/types";
 import {
   arrayContainingObjectsContaining,
   getSyncTokenForObject,
+  insertRandomTestUser,
   insertTestTasks,
 } from "../../../../shared/utils";
 
@@ -15,16 +16,12 @@ const getSyncTokenForTask = (taskId: string) => {
   return getSyncTokenForObject("tasks", taskId);
 };
 
-let user: UserModel;
+let user: Readonly<Required<UserModel>>;
 let defaultProject: ProjectModel & Required<Pick<ProjectModel, "title">>;
 let project: typeof defaultProject;
 
-beforeAll(() => {
-  user = {
-    id: uuid(),
-    displayName: "tasksTestUser",
-    email: "tasks@example.com",
-  };
+beforeAll(async () => {
+  user = await insertRandomTestUser();
 
   defaultProject = {
     title: "default project",
@@ -34,11 +31,6 @@ beforeAll(() => {
   };
 
   return new Promise(async (resolve) => {
-    // create user
-    await pool.query(sql`
-        INSERT INTO users(id, display_name, email) 
-        VALUES (${user.id}, ${user.displayName}, ${user.email});`);
-
     // create default project
     const newProjects = await pool.many(
       sql`

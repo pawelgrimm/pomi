@@ -22,7 +22,7 @@ export const {
 export const User = jest.fn().mockImplementation(() => {
   return {
     create: mockCreate,
-    select: mockSelect,
+    selectOne: mockSelect,
     newConnection: mockNewConnection,
     connect: makeMockConnect(mockConnectCreate),
   };

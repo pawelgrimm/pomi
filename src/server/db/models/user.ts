@@ -22,7 +22,7 @@ export class User extends Model {
   create(
     user: UserModel,
     defaultProject: ProjectModel = {}
-  ): Promise<Readonly<Required<UserModel>[] | null>> {
+  ): Promise<Readonly<Required<UserModel>>> {
     const { id = "", displayName = "", email = null } = validateUser(
       user,
       Method.CREATE
@@ -37,7 +37,7 @@ export class User extends Model {
         userId,
         defaultProject
       );
-      return this.connect(transaction).connection.one(sql`
+      return this.connect(transaction).connection.one<Required<UserModel>>(sql`
         UPDATE users 
           SET default_project = ${projectId}
         WHERE id=${userId}

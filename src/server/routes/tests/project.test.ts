@@ -73,10 +73,7 @@ describe("GET projects/", () => {
       .set("Authorization", `Bearer ${user.id}`)
       .expect(200);
 
-    expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      includeArchived: false,
-      syncToken: "*",
-    });
+    expect(mockSelect).toHaveBeenCalledWith(user.id, {});
 
     done();
   });
@@ -88,10 +85,7 @@ describe("GET projects/", () => {
       .set("Authorization", `Bearer ${user.id}`)
       .expect(200);
 
-    expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      includeArchived: false,
-      syncToken,
-    });
+    expect(mockSelect).toHaveBeenCalledWith(user.id, { syncToken });
 
     done();
   });
@@ -144,10 +138,7 @@ describe("GET projects/", () => {
       .set("Authorization", `Bearer ${user.id}`)
       .expect(200);
 
-    expect(mockSelect).toHaveBeenCalledWith(user.id, {
-      includeArchived: true,
-      syncToken: "*",
-    });
+    expect(mockSelect).toHaveBeenCalledWith(user.id, { includeArchived: true });
     done();
   });
 

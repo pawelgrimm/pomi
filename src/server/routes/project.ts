@@ -1,8 +1,8 @@
 import Router from "express-promise-router";
 import { authenticate, validationErrorHandler } from "../middleware";
-import { parseOptions } from "../middleware/project";
 import { Projects } from "../db";
 import { validateProject } from "../../shared/validators";
+import { parseSelectOptions } from "../middleware/project";
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
 });
 
 /*      GET ALL PROJECTS     */
-router.get("/", parseOptions, async (req, res) => {
+router.get("/", parseSelectOptions, async (req, res) => {
   const { userId, options } = res.locals;
   const projects = await Projects.select(userId, options);
 
