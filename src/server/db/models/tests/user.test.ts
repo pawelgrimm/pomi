@@ -5,6 +5,7 @@ import {
 import { pool, Users } from "../../index";
 import { UserModel } from "../../../../shared/types";
 import { Method } from "../../../../shared/validators";
+import { v4 as uuid } from "uuid";
 
 // Set up mocks
 import * as validators from "../../../../shared/validators";
@@ -36,5 +37,18 @@ describe("Create user", () => {
     const validUser = createValidUser();
     await Users.create(validUser);
     return expect(mockValidator).toHaveBeenCalledWith(validUser, Method.CREATE);
+  });
+});
+
+describe("Get user", () => {
+  it("Should get user", async () => {
+    const validUser = await insertTestUser();
+    const user = Users.selectOne(validUser.id);
+    return expect(user).resolves.toEqual(validUser);
+  });
+
+  it("Should fail gracefully when user doesn't exist", () => {
+    const user = Users.selectOne(uuid());
+    return expect(user).resolves.toEqual(null);
   });
 });
