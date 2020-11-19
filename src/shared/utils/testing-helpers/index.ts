@@ -240,11 +240,14 @@ export const insertRandomTestUser = async (
 /**
  * Create a new valid user
  */
-export const createValidUser = (): UserModel => ({
-  firebaseId: uuid(),
-  displayName: "createValidUser",
-  email: "createValidUser@example.com",
-});
+export const createValidUser = (): UserModel => {
+  const randomId = uuid();
+  return {
+    firebaseId: randomId,
+    displayName: "createValidUser",
+    email: `${randomId}@example.com`,
+  };
+};
 
 /**
  * Create a new valid project
