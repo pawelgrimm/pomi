@@ -32,7 +32,7 @@ CREATE TABLE users
     id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     firebase_id  VARCHAR(255) UNIQUE                        NOT NULL,
     display_name VARCHAR(255)                               NOT NULL,
-    email        VARCHAR(255)                               NOT NULL,
+    email        VARCHAR(255) UNIQUE                        NOT NULL,
     created      TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
 
