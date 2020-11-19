@@ -19,17 +19,21 @@ admin.initializeApp({
 
 export const authenticate: RequestHandler = async (req, res, next) => {
   const authHeader = req.header("Authorization");
+  if (!authHeader) {
+    res.status(401);
+    next(new Error("'Authorization' header is missing"));
+    return;
+  }
   try {
-    // TODO: parse Bearer more elegantly for testing
-    const uid = authHeader?.slice(7);
-    if (!uid) {
+    const token = authHeader.match(/^Bearer (?<token>.+)$/)?.groups?.token;
+    if (!token) {
       res.status(401);
-      next(new Error("No auth header"));
+      next(new Error("Could not parse 'Authorization' header"));
+      return;
     }
+    const { uid } = await admin.auth().verifyIdToken(token);
     res.locals.userId = uid;
     next();
-    //
-    // const { uid } = await admin.auth().verifyIdToken(token);
   } catch (e) {
     res.status(401);
     next(e);
