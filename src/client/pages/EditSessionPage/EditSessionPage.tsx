@@ -11,6 +11,7 @@ import { useMutation, useQuery } from "react-query";
 import { fetchSession, patchSession } from "../../services/session/session";
 import { useSnackbar } from "notistack";
 import {
+  calculateEndTimestamp,
   getDate,
   getDateStringFromDate,
   getTimeFromDate,
@@ -18,6 +19,7 @@ import {
 import { Formik, Form, Field } from "formik";
 import { editButton } from "../../hooks/useAddSession/useAddSession";
 import { SessionModel } from "../../../shared/types";
+import { differenceInMilliseconds } from "date-fns";
 
 interface Props {
   children?: React.ReactNode;
@@ -42,13 +44,8 @@ const initialState: SessionState = {
 };
 
 const sessionToSessionState = (session: SessionModel): SessionState => {
-  const {
-    startTimestamp,
-    endTimestamp,
-    project = "",
-    task,
-    notes = "",
-  } = session;
+  const { startTimestamp, taskId, notes = "" } = session;
+  const endTimestamp = calculateEndTimestamp(session);
   const date = getDateStringFromDate(startTimestamp);
   const startTime = getTimeFromDate(startTimestamp).toString();
   const endTime = getTimeFromDate(endTimestamp).toString();
@@ -56,8 +53,8 @@ const sessionToSessionState = (session: SessionModel): SessionState => {
     date,
     startTime,
     endTime,
-    project,
-    task,
+    project: "",
+    task: taskId,
     notes,
   };
 };
@@ -96,12 +93,17 @@ const EditSessionPage: React.FC<Props> = () => {
       initialValues={session}
       onSubmit={(values, { setSubmitting }) => {
         const { date, startTime, endTime, ...rest } = values;
+        const startTimestamp = getDate(
+          values.date,
+          Number.parseInt(values.startTime)
+        );
+        const endTimestamp = getDate(
+          values.date,
+          Number.parseInt(values.endTime)
+        );
         let sessionUpdates: Partial<SessionModel> = {
-          startTimestamp: getDate(
-            values.date,
-            Number.parseInt(values.startTime)
-          ),
-          endTimestamp: getDate(values.date, Number.parseInt(values.endTime)),
+          startTimestamp,
+          duration: differenceInMilliseconds(endTimestamp, startTimestamp),
           ...rest,
         };
         updateSession({ id, session: sessionUpdates }).then((success) => {
