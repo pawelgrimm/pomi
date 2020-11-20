@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  DescriptionField,
-  ProjectField,
-  TextField,
-  ActionButton,
-} from "../../components";
+import { TextField, ActionButton } from "../../components";
 import { ButtonGroup } from "@material-ui/core";
 import { useParams, useHistory } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";

@@ -1,33 +1,33 @@
-import React from "react";
-import { Field, Form, Formik } from "formik";
-import { ActionButton, TextField } from "../../components";
-import { ButtonGroup } from "@material-ui/core";
+import React, { useState } from "react";
+import { Welcome } from "../../features/authentication/components/Welcome";
+import { EmailLogin } from "../../features/authentication/components/EmailLogin";
+import { EmailSignup } from "../../features/authentication/components/EmailSignup";
+
+export enum LoginState {
+  WELCOME = "WELCOME",
+  LOG_IN = "LOG_IN",
+  SIGN_UP = "SIGN_UP",
+}
+
+export type SetsLoginState = {
+  setLoginState: React.Dispatch<React.SetStateAction<LoginState>>;
+};
 
 export const LoginPage: React.FC = () => {
-  return (
-    <Formik
-      initialValues={{
-        email: "",
-        password: "",
-      }}
-      onSubmit={(values) => {
-        console.log(values);
-      }}
-    >
-      {({ submitForm }) => (
-        <Form>
-          <Field component={TextField} name="email" label="Email" />
-          <Field
-            component={TextField}
-            name="password"
-            label="Password"
-            type="password"
-          />
-          <ButtonGroup fullWidth orientation="vertical">
-            <ActionButton onClick={submitForm}>Login</ActionButton>
-          </ButtonGroup>
-        </Form>
-      )}
-    </Formik>
-  );
+  const [loginState, setLoginState] = useState<LoginState>(LoginState.WELCOME);
+
+  const switchCase = () => {
+    switch (loginState) {
+      case LoginState.WELCOME:
+        return <Welcome setLoginState={setLoginState} />;
+      case LoginState.LOG_IN:
+        return <EmailLogin setLoginState={setLoginState} />;
+      case LoginState.SIGN_UP:
+        return <EmailSignup setLoginState={setLoginState} />;
+      default:
+        return <Welcome setLoginState={setLoginState} />;
+    }
+  };
+
+  return switchCase();
 };

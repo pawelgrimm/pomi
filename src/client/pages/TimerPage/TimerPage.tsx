@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { Formik, Form, Field } from "formik";
 import { ActionButton, TimerDisplay, TextField } from "../../components";
-import { ButtonGroup, Tab, Tabs } from "@material-ui/core";
+import { Tab, Tabs } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useAddSession } from "../../hooks";
 import { SessionModel, SessionTypeString } from "../../../shared/types";
 import { differenceInMilliseconds } from "date-fns";
+import { SpacedContainer } from "../../components/SpacedContainer";
+import { useHistory } from "react-router-dom";
 
 const timerStartValues = [60 * 25, 60 * 5, 60 * 15];
 
@@ -38,6 +40,16 @@ const useTabStyles = makeStyles(
   },
   { name: "MuiTab" }
 );
+
+const LogoutPageButton: React.FC = () => {
+  const history = useHistory();
+  const onClick = () => history.push("/logout");
+  return (
+    <ActionButton variant="outlined" onClick={onClick}>
+      Logout Page
+    </ActionButton>
+  );
+};
 
 const TimerPage = () => {
   const [inProgress, setInProgress] = useState(false);
@@ -107,33 +119,34 @@ const TimerPage = () => {
               <Tab label="Break" classes={tabClasses} />
               <Tab label="Long Break" classes={tabClasses} />
             </Tabs>
-            <Field
-              component={TextField}
-              name="project"
-              type="text"
-              label="Project"
-              disabled={inProgress}
-            />
-            <Field
-              component={TextField}
-              name="task"
-              type="text"
-              label="Task"
-              disabled={inProgress}
-            />
-            <Field
-              component={TextField}
-              multiline
-              name="notes"
-              type="text"
-              label="Notes"
-              disabled={false}
-            />
-            <TimerDisplay
-              timerStartValue={timerStartValue}
-              isInProgress={inProgress}
-            />
-            <ButtonGroup fullWidth orientation="vertical">
+            <SpacedContainer>
+              <Field
+                component={TextField}
+                name="project"
+                type="text"
+                label="Project"
+                disabled={inProgress}
+              />
+              <Field
+                component={TextField}
+                name="task"
+                type="text"
+                label="Task"
+                disabled={inProgress}
+              />
+              <Field
+                component={TextField}
+                multiline
+                name="notes"
+                type="text"
+                label="Notes"
+                disabled={false}
+              />
+              <TimerDisplay
+                timerStartValue={timerStartValue}
+                isInProgress={inProgress}
+              />
+
               <ActionButton
                 onClick={() => {
                   submitForm().then();
@@ -141,7 +154,8 @@ const TimerPage = () => {
               >
                 {inProgress ? "Stop" : "Start"}
               </ActionButton>
-            </ButtonGroup>
+              <LogoutPageButton />
+            </SpacedContainer>
           </Form>
         )}
       </Formik>
