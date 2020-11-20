@@ -25,7 +25,7 @@ export const EmailSignup: React.FC<SetsLoginState> = ({ setLoginState }) => {
       <EmailAndPasswordForm
         onSubmit={onSubmit}
         setLoginState={setLoginState}
-        loginState={LoginState.LOG_IN}
+        loginState={LoginState.SIGN_UP}
       />
     </AuthLayout>
   );
