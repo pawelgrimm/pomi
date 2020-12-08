@@ -10,12 +10,12 @@
    - [POST /](#post-)
    - [PATCH /](#patch-)
  - [/projects](#projects)
-   - [GET /](#get--2)
    - [GET /:id](#get-id-1)
+   - [POST /](#post--1)
    - [PATCH /:id](#patch-id)
  - [/tasks](#tasks)
-   - [GET /](#get--3)
    - [GET /:id](#get-id-2)
+   - [POST /](#post--2)
    - [PATCH /:id](#patch-id-1)
     
 All endpoints require user authorization. 
@@ -28,8 +28,10 @@ Gets user info
 
 ```typescript
 {
+	id: string,
 	displayName: string,
-	email: string
+	email: string,
+	defaultProject: string
 }
 ```
 
@@ -40,65 +42,68 @@ Gets all [sessions,] task, and projects for user [that were updated since last s
 
 *query params*:
 
- - `sync_token=*`: last sync time
- - `include="tasks,projects"`: which models to include (comma seperated)
+ - [`sync_token`]: sync token from last sync. Defaults to `"*"` to get all sessions and a new sync token
+
 
 #### *Response*
 
 ```typescript
 {
-	sync: string,
+	syncToken: string,
 	sessions?: [{
 		taskId: string,
 		startTimestamp: Date,
-		endTimestamp: Date,
+		duration: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
 		edited: boolean,
 		retroAdded: boolean
+		lastUpdated: Date
   }],
 	tasks?: [{
 		id: string,
 		title?: string,
 		projectId: string,
-		isCompleted: boolean
+		isCompleted: boolean,
+		lastUpdated: Date
 	}],
 	projects?: [{
 		id: string,
 		title?: string,
-		isArchived: boolean
+		isArchived: boolean,
+		lastUpdated: Date
 	}]
 }
 ```
 
 ## /sessions
 ### GET / 
-Gets all sessions for user [that were updated since last sync]
+Gets all sessions for user [with a startTimestamp within the provided range]
 
 #### *Request*
 
 *query params*:
 
- - `sync_token=*`: last sync token
- - `start=today`: filter by start_timestamp
- - `end=today`: filter by start_timestamp
+ - [`start`]: select sessions with startTimestamp >= start
+ - [`end`]: select sessions with startTimestamp < end
 
 #### *Response*
 
 ```typescript
 {
-	sync_token: string,
 	sessions: [{
 		taskId: string,
 		startTimestamp: Date,
-		endTimestamp: Date,
+		duration: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
 		edited: boolean,
-		retroAdded: boolean
+		retroAdded: boolean,
+		lastUpdated: Date
 	}],
 }
 ```
+
 
 ### GET /:id
 Gets session with given id.
@@ -110,48 +115,40 @@ Gets session with given id.
 	session: {
 		taskId: string,
 		startTimestamp: Date,
-		endTimestamp: Date,
+		duration: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
 		edited: boolean,
-		retroAdded: boolean
+		retroAdded: boolean,
+		lastUpdated: Date
 	},
 }
 ```
 
 ### POST /
-Creates a new sessions. Creates a projects and/or task as needed (if title is provided instead of id).
+Creates a new session. Creates a projects and/or task as needed (if title is provided instead of id).
 
-Note: It would be cool if active/incomplete project/task titles were searched first before creating a new record #40 
+*Note: It would be cool if active/incomplete project/task titles were searched first before creating a new record #40*
 
 #### *Request*
 
 ```typescript
 {
-	~
-	task: { 
+	task?: { 
 		id: string, 
 		isCompleted?: boolean
-	} 
-	~
-	-OR- 
-	~
-	task: { 
-		title?: string, 
-		~
-		project: { id: string} ,
-		-OR- 
-		project: { title: string},
-		~
-		isCompleted?: boolean
+		projectId?: string
 	},
-	-AND-
-	startTimestamp: Date,
-	endTimestamp: Date,
-	note?: string
-	type: "session" | "break" | "long-break",
-	retroAdded?: boolean
-	~
+	project?: {
+		title: string
+	}
+	session: {
+		startTimestamp: Date,
+		duration: number,
+		note?: string
+		type: "session" | "break" | "long-break",
+		retroAdded?: boolean
+	}
 }
 
 ```
@@ -164,24 +161,27 @@ Note: It would be cool if active/incomplete project/task titles were searched fi
 		id: string
 		taskId: string,
 		startTimestamp: Date,
-		endTimestamp: Date,
+		duration: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
 		edited: boolean,
-		retroAdded: boolean
+		retroAdded: boolean,
+		lastUpdated: Date
 	},
   // Only if new task is created
 	task?: {
 		id: string,
 		title?: string,
 		projectId: string,
-		isCompleted: boolean
+		isCompleted: boolean,
+		lastUpdated: Date
 	},
 	// Only if new project is created
 	project?: {
 		id: string,
 		title?: string,
-		isArchived: boolean
+		isArchived: boolean,
+		lastUpdated: Date
 	}
 }
 ```
@@ -193,32 +193,21 @@ Used primarily by edit session workflow. Creates a projects and/or task as neede
 
 ```typescript
 {
-	~
-	task: { 
+	task?: { 
 		id: string, 
 		isCompleted?: boolean
-	} 
-	~
-	-OR- 
-	~
-	task: { 
-		title?: string, 
-		~
-		project: { id: string} ,
-		-OR- 
-		project: { title: string},
-		~
-		isCompleted?: boolean
+		projectId?: string
 	},
-	-AND-
-	// if provided, endTimestamp also required
-	startTimestamp: Date, 
-	// if provided, endTimestamp also required
-	endTimestamp: Date, 	
-	note?: string,
-	type: "session" | "break" | "long-break",
-	retroAdded?: boolean
-	~
+	project?: {
+		title: string
+	}
+	session: {
+		startTimestamp: Date,
+		duration: number,
+		note?: string
+		type: "session" | "break" | "long-break",
+		retroAdded?: boolean
+	}
 }
 
 ```
@@ -231,50 +220,32 @@ Used primarily by edit session workflow. Creates a projects and/or task as neede
 		id: string
 		taskId: string,
 		startTimestamp: Date,
-		endTimestamp: Date,
+		duration: Date,
 		note?: string,
 		type: "session" | "break" | "long-break",
-		edited: true
-		retroAdded: boolean
+		edited: boolean,
+		retroAdded: boolean,
+		lastUpdated: Date
 	},
-	// Only if new task is created
+  // Only if new task is created
 	task?: {
 		id: string,
 		title?: string,
-		project: { id: string },
-		isCompleted: boolean
+		projectId: string,
+		isCompleted: boolean,
+		lastUpdated: Date
 	},
 	// Only if new project is created
 	project?: {
 		id: string,
 		title?: string,
-		archived: boolean
-	}	
+		isArchived: boolean,
+		lastUpdated: Date
+	}
 }
 ```
 
 ## /projects
-### GET / 
-Gets all projects for user [that were updated since last sync]
-
-#### *Request*
-
-*query params*:
-
- - `sync_token=*`: last sync time
- - `include_archived=0`: include archived projects
-
-#### *Response*
-
-```typescript
-{
-	projects: [{
-		id: string,
-		title?: string,
-		isArchived: boolean
-	}]
-}
-```
 
 ### GET /:id
 Gets the project with the provided id
@@ -286,10 +257,39 @@ Gets the project with the provided id
 	project: {
 		id: string,
 		title?: string,
-		isArchived: boolean
+		isArchived: boolean,
+		lastUpdated: Date
 	}
 }
 ```
+
+### POST /
+Creates a new project.
+
+#### *Request*
+
+```typescript
+{
+	project: {
+		title?: string,
+		isArchived?: boolean
+	}
+}
+```
+
+#### *Response*
+
+```typescript
+{
+	project: {
+		id: string,
+		title?: string,
+		isArchived: boolean,
+		lastUpdated: Date
+	}
+}
+```
+
 
 ### PATCH /:id 
 Update a project
@@ -315,34 +315,13 @@ Update a project
 	project: {
 		id: string,
 		title?: string,
-		isArchived: boolean
+		isArchived: boolean,
+		lastUpdated: Date
 	}	
 }
 ```
 
 ## /tasks
-### GET / 
-Gets all tasks for user [that were updated since last sync]
-
-#### *Request*
-
-*query params*:
-
- - `sync_token=*`: last sync time
- - `include_completed=0`: include completed projects
-
-#### *Response*
-
-```typescript
-{
-	tasks: [{
-		id: string,
-		projectId: string,
-		title?: string,
-		isCompleted: boolean
-	}]
-}
-```
 
 ### GET /:id
 Gets the task with the provided id
@@ -355,7 +334,37 @@ Gets the task with the provided id
 		id: string,
 		projectId: string,
 		title?: string,
-		isCompleted: boolean
+		isCompleted: boolean,
+		lastUpdated: Date
+	}
+}
+```
+
+### POST /
+Creates a new task. If a projectId is not provided, it is assigned to the user's default project.
+
+#### *Request*
+
+```typescript
+{
+	task: {
+		projectId?: string,
+		title?: string,
+		isCompleted?: boolean
+	}
+}
+```
+
+#### *Response*
+
+```typescript
+{
+	task: {
+		id: string,
+		projectId: string,
+		title?: string,
+		isCompleted: boolean,
+		lastUpdated: Date
 	}
 }
 ```
@@ -372,9 +381,12 @@ Update a project
 
 ```typescript
 {
-	projectId?: string,
-	title?: string,
-	isCompleted: boolean
+	task: {
+		id?: string,
+		projectId?: string,
+		title?: string,
+		isCompleted?: boolean
+	}
 }
 ```
 
@@ -386,7 +398,8 @@ Update a project
 		id: string,
 		projectId: string,
 		title?: string,
-		isCompleted: boolean
+		isCompleted: boolean,
+		lastUpdated: Date
 	}
 }
-```
+``````

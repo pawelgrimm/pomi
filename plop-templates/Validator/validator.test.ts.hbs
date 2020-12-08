@@ -1,0 +1,37 @@
+import { validate{{pascalCase name}} } from "../{{camelCase name}}";
+import { {{pascalCase name}}Model } from "../../models";
+
+let valid{{pascalCase name}}: {{pascalCase name}}Model;
+
+beforeEach(() => {
+  valid{{pascalCase name}} = {
+    /* TODO: add properties from {{pascalCase name}}Model */
+  };
+});
+
+describe("{{pascalCase name}} Validator ", () => {
+  it("Should pass validation when all required fields are provided", () => {
+    const validated{{pascalCase name}} = validate{{pascalCase name}}(valid{{pascalCase name}});
+    expect(validated{{pascalCase name}}).toEqual(valid{{pascalCase name}});
+  });
+  it("should not pass validation when a required field is missing", () => {
+    const { /* TODO: add a required field */, ...rest } = valid{{pascalCase name}};
+    expect(() => validate{{pascalCase name}}({ ...rest })).toThrow(
+      /"/* TODO: add a required field */" is required/
+    );
+  });
+  it("Should not strip optional fields", () => {
+    /* TODO: intialize optional field */
+    const optionalField = new Object();
+    const {{camelCase name}}WithOptionalField = { optionalField, ...valid{{pascalCase name}} };
+    const stripped{{pascalCase name}} = validate{{pascalCase name}}({{camelCase name}}WithOptionalField);
+    expect(stripped{{pascalCase name}}).toMatchObject({ optionalField });
+  });
+  it("Should strip unknown fields", () => {
+    const stripped{{pascalCase name}} = validate{{pascalCase name}}({
+      extra: "junk",
+      ...valid{{pascalCase name}},
+    });
+    expect(stripped{{pascalCase name}}).not.toMatchObject({ extra: "junk" });
+  });
+});

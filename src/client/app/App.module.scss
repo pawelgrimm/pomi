@@ -1,0 +1,16 @@
+@use "../styles/tokens" as *;
+
+.app {
+  background: $background;
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 360px;
+}
+
+.mainContent {
+  flex: 1;
+  padding: $s-size $m-size;
+}

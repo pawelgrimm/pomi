@@ -1,0 +1,33 @@
+import Router from "express-promise-router";
+import { {{pascalCase name}}s } from "../db";
+import { validate{{pascalCase name}} } from "../../shared/validators";
+
+const router = Router();
+
+/*      NEW {{constantCase name}}      */
+router.post("/", async (req, res) => {
+  try {
+    const {{camelCase name}} = validate{{pascalCase name}}(req.body);
+    const row = await {{pascalCase name}}s.create({{camelCase name}});
+    res.status(201).send(row);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+/*      GET ALL {{constantCase name}}S     */
+// TODO: Add return fields
+router.get("/", async (req, res) => {
+  const rows = await {{pascalCase name}}s.selectAll();
+  res.status(200).send(rows);
+});
+
+/*      GET {{constantCase name}} BY ID    */
+// TODO: Add return fields
+router.get("/:id", async (req, res) => {
+  const id = req.params.id;
+  const rows = await {{pascalCase name}}s.selectOneById(id);
+  res.status(200).send(rows);
+});
+
+export default router;

@@ -1,0 +1,34 @@
+import { {{pascalCase name}}Model } from "../../../shared/models";
+import { PGQuery } from "../index";
+
+const RETURN_COLS = "id"
+
+const bind{{pascalCase name}}Queries = (query: PGQuery) => {
+  return {
+    create: ({{camelCase name}}: {{pascalCase name}}Model ) => {
+      const {/* creation params here */} = {{camelCase name}};
+      return query(
+        `
+        INSERT INTO {{camelCase name}}s(/* creation params here */) 
+          VALUES (/* creation values here */)
+        RETURNING id;`,
+        [/* creation values here */]
+      ).then((res) => res.rows[0])},
+
+    selectAll: () =>
+      query(
+        `
+        SELECT ${RETURN_COLS} FROM {{camelCase name}}s;`
+      ).then((res) => res.rows),
+
+    selectOneById: (id: number) =>
+      query(
+        `
+        SELECT ${RETURN_COLS} FROM {{camelCase name}}s
+        WHERE id = $1`,
+        [id]
+      ).then((res) => res.rows[0]),
+  };
+};
+
+export { bind{{pascalCase name}}Queries };
