@@ -1,15 +1,10 @@
 import * as admin from "firebase-admin";
-import {
-  project_id,
-  client_email,
-  private_key,
-} from "../../config/firebaseServiceAccountKey.json";
 import { RequestHandler } from "express";
 
 const serviceAccount = {
-  projectId: project_id,
-  clientEmail: client_email,
-  privateKey: private_key,
+  projectId: process.env.GCP_PROJECT_ID,
+  clientEmail: process.env.GCP_CLIENT_EMAIL,
+  privateKey: process.env.GCP_PRIVATE_KEY,
 };
 
 admin.initializeApp({
