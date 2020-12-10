@@ -5,7 +5,7 @@ import { SpacedContainer } from "../../../../components/SpacedContainer";
 import { ActionButton } from "../../../../components";
 import { FormikHelpers } from "formik/dist/types";
 import { LoginState, SetsLoginState } from "../../../../pages/LoginPage";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
 import { auth } from "../../../../services/auth";
 
 export type onSubmitFunction = (
@@ -16,12 +16,14 @@ export type onSubmitFunction = (
 type Props = SetsLoginState & {
   onSubmit: onSubmitFunction;
   loginState: LoginState.LOG_IN | LoginState.SIGN_UP;
+  error?: String;
 };
 
 export const EmailAndPasswordForm: React.FC<Props> = ({
   onSubmit,
   setLoginState,
   loginState,
+  error,
 }) => {
   const submitButtonText =
     loginState === LoginState.LOG_IN ? "Log In" : "Sign Up";
@@ -44,14 +46,29 @@ export const EmailAndPasswordForm: React.FC<Props> = ({
       }}
       onSubmit={onSubmit}
     >
-      {({ submitForm, values }) => (
+      {({ submitForm, values, isValid }) => (
         <Form>
-          <Field component={TextField} name="email" label="Email" />
+          {error && (
+            <Typography color="secondary" gutterBottom>
+              {error}
+            </Typography>
+          )}
+          <Field
+            component={TextField}
+            name="email"
+            label="Email"
+            validate={(value: string) =>
+              !value ? "Please enter an email address" : undefined
+            }
+          />
           <Field
             component={TextField}
             name="password"
             label="Password"
             type="password"
+            validate={(value: string) =>
+              !value ? "Please enter a password" : undefined
+            }
           />
           <SpacedContainer>
             {loginState === LoginState.LOG_IN && (
@@ -63,7 +80,9 @@ export const EmailAndPasswordForm: React.FC<Props> = ({
                 Forgot Password?
               </Button>
             )}
-            <ActionButton onClick={submitForm}>{submitButtonText}</ActionButton>
+            <ActionButton onClick={submitForm} disabled={!isValid}>
+              {submitButtonText}
+            </ActionButton>
             <ActionButton onClick={onCancel} variant="outlined">
               Cancel
             </ActionButton>
