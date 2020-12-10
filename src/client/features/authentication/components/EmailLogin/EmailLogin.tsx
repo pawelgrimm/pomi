@@ -18,7 +18,10 @@ export const EmailLogin: React.FC<SetsLoginState> = ({ setLoginState }) => {
     },
     [history]
   );
-  const onForgotPassword = () => {};
+  const onForgotPassword = useCallback(
+    () => setLoginState(LoginState.RESET_PASSWORD),
+    [setLoginState]
+  );
 
   return (
     <AuthLayout titleText="Log In">

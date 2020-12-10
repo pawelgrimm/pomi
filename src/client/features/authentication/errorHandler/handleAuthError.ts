@@ -1,6 +1,7 @@
 // Possible errors throw by GCP Auth module
 // https://firebase.google.com/docs/reference/js/firebase.auth.Auth#signinwithemailandpassword
 // https://firebase.google.com/docs/reference/js/firebase.auth.Auth#sendpasswordresetemail
+// https://firebase.google.com/docs/reference/js/firebase.auth.Auth#sendpasswordresetemail
 import React from "react";
 
 enum LoginError {

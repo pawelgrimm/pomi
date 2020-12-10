@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Welcome } from "../../features/authentication/components/Welcome";
 import { EmailLogin } from "../../features/authentication/components/EmailLogin";
 import { EmailSignup } from "../../features/authentication/components/EmailSignup";
-import { ResetPassword } from "../../features/authentication/components/ForgotPassword";
+import { ResetPassword } from "../../features/authentication/components/ResetPassword";
 
 export enum LoginState {
   WELCOME = "WELCOME",
