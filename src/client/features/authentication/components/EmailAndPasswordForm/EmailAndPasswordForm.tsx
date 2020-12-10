@@ -1,58 +1,61 @@
-import React from "react";
+import React, { useState } from "react";
+import { Typography } from "@material-ui/core";
 import { Field, Form, Formik } from "formik";
-import { TextField } from "../../../../components/Inputs";
-import { SpacedContainer } from "../../../../components/SpacedContainer";
-import { ActionButton } from "../../../../components";
-import { FormikHelpers } from "formik/dist/types";
-import { LoginState, SetsLoginState } from "../../../../pages/LoginPage";
-import { Button, Typography } from "@material-ui/core";
-import { auth } from "../../../../services/auth";
+import {
+  ActionButton,
+  SpacedContainer,
+  TextField,
+} from "../../../../components";
+import { LoginState } from "../../../../pages/LoginPage";
+import { SetsLoginState } from "../../types";
 
 export type onSubmitFunction = (
   values: any,
-  formikHelpers: FormikHelpers<any>
-) => void | Promise<any>;
+  setFieldError: (field: string, message: string) => void,
+  setFormError: React.Dispatch<React.SetStateAction<string | undefined>>
+) => void;
 
 type Props = SetsLoginState & {
   onSubmit: onSubmitFunction;
-  loginState: LoginState.LOG_IN | LoginState.SIGN_UP;
-  error?: String;
+  loginState: LoginState;
+  omitPasswordField?: boolean;
 };
 
 export const EmailAndPasswordForm: React.FC<Props> = ({
   onSubmit,
   setLoginState,
   loginState,
-  error,
+  omitPasswordField,
+  children,
 }) => {
+  const [formError, setFormError] = useState<string | undefined>();
+
   const submitButtonText =
-    loginState === LoginState.LOG_IN ? "Log In" : "Sign Up";
+    loginState === LoginState.LOG_IN
+      ? "Log In"
+      : loginState === LoginState.RESET_PASSWORD
+      ? "Reset Password"
+      : "Sign Up";
 
   const onCancel = () => setLoginState(LoginState.WELCOME);
-  const onForgotPassword = (email: string) => {
-    const actionCodeSettings = {
-      url: "http://localhost:3000/login",
-      handleCodeInApp: false,
-    };
-    auth
-      .sendPasswordResetEmail(email, actionCodeSettings)
-      .then(() => console.log("reset email sent"));
-  };
+  const onForgotPassword = () => setLoginState(LoginState.RESET_PASSWORD);
   return (
     <Formik
       initialValues={{
         email: "",
         password: "",
       }}
-      onSubmit={onSubmit}
+      onSubmit={(values, { setFieldError, setSubmitting }) => {
+        setFormError(undefined);
+        onSubmit(values, setFieldError, setFormError);
+        setSubmitting(false);
+      }}
     >
-      {({ submitForm, values, isValid }) => (
+      {({ submitForm, isValid }) => (
         <Form>
-          {error && (
-            <Typography color="secondary" gutterBottom>
-              {error}
-            </Typography>
-          )}
+          <Typography color="error" gutterBottom>
+            {formError}
+          </Typography>
           <Field
             component={TextField}
             name="email"
@@ -61,25 +64,19 @@ export const EmailAndPasswordForm: React.FC<Props> = ({
               !value ? "Please enter an email address" : undefined
             }
           />
-          <Field
-            component={TextField}
-            name="password"
-            label="Password"
-            type="password"
-            validate={(value: string) =>
-              !value ? "Please enter a password" : undefined
-            }
-          />
+          {!omitPasswordField && (
+            <Field
+              component={TextField}
+              name="password"
+              label="Password"
+              type="password"
+              validate={(value: string) =>
+                !value ? "Please enter a password" : undefined
+              }
+            />
+          )}
           <SpacedContainer>
-            {loginState === LoginState.LOG_IN && (
-              <Button
-                onClick={() => onForgotPassword(values.email)}
-                variant="text"
-                color="secondary"
-              >
-                Forgot Password?
-              </Button>
-            )}
+            {React.Children.toArray(children)}
             <ActionButton onClick={submitForm} disabled={!isValid}>
               {submitButtonText}
             </ActionButton>

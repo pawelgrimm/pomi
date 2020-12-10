@@ -1,8 +1,8 @@
 import React from "react";
-import { AuthLayout } from "../AuthLayout";
-import { ActionButton } from "../../../../components";
-import { LoginState, SetsLoginState } from "../../../../pages/LoginPage";
-import { SpacedContainer } from "../../../../components/SpacedContainer";
+import { LoginState } from "../../../../pages/LoginPage";
+import { ActionButton, SpacedContainer } from "../../../../components";
+import { AuthLayout } from "../";
+import { SetsLoginState } from "../../types";
 
 export const Welcome: React.FC<SetsLoginState> = ({ setLoginState }) => {
   const onLogIn = () => {
