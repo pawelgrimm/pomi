@@ -3,7 +3,6 @@ import {
   insertTestUser,
 } from "../../../../shared/utils/testing-helpers";
 import { pool, Users } from "../../index";
-import { UserModel } from "../../../../shared/types";
 import { Method } from "../../../../shared/validators";
 import { v4 as uuid } from "uuid";
 
@@ -11,14 +10,12 @@ import { v4 as uuid } from "uuid";
 import * as validators from "../../../../shared/validators";
 const mockValidator = jest.spyOn(validators, "validateUser");
 
-let testUser: UserModel;
-
 afterAll(() => {
   return pool.end();
 });
 
 beforeEach(async (done) => {
-  testUser = await insertTestUser();
+  await insertTestUser();
   mockValidator.mockClear();
   done();
 });
