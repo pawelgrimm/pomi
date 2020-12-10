@@ -1,4 +1,4 @@
-import { Sessions, pool, Projects, Tasks, Users } from "../../index";
+import { Sessions, pool, Projects, Tasks } from "../../index";
 import { v4 as uuid } from "uuid";
 import { add, sub } from "date-fns";
 import { ForeignKeyIntegrityConstraintViolationError, sql } from "slonik";

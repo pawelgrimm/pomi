@@ -38,7 +38,7 @@ export const EmailAndPasswordForm: React.FC<Props> = ({
       : "Sign Up";
 
   const onCancel = () => setLoginState(LoginState.WELCOME);
-  const onForgotPassword = () => setLoginState(LoginState.RESET_PASSWORD);
+
   return (
     <Formik
       initialValues={{
