@@ -12,11 +12,12 @@
  - [/projects](#projects)
    - [GET /:id](#get-id-1)
    - [POST /](#post--1)
-   - [PATCH /:id](#patch-id)
- - [/tasks](#tasks)
+   <!--- [PATCH /:id](#patch-id)-->
+
+- [/tasks](#tasks)
    - [GET /:id](#get-id-2)
    - [POST /](#post--2)
-   - [PATCH /:id](#patch-id-1)
+   <!--- [PATCH /:id](#patch-id-1)-->
     
 All endpoints require user authorization. 
 
@@ -291,7 +292,7 @@ Creates a new project.
 ```
 
 
-### PATCH /:id 
+<!--### PATCH /:id 
 Update a project
 
 **Sub-routes**
@@ -319,7 +320,7 @@ Update a project
 		lastUpdated: Date
 	}	
 }
-```
+```-->
 
 ## /tasks
 
@@ -369,7 +370,7 @@ Creates a new task. If a projectId is not provided, it is assigned to the user's
 }
 ```
 
-### PATCH /:id 
+<!--### PATCH /:id 
 Update a project
 
 **Sub-routes**
@@ -403,3 +404,4 @@ Update a project
 	}
 }
 ``````
+-->
