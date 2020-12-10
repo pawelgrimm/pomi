@@ -6,7 +6,12 @@ import { InvalidMethodError } from "./errors";
 
 // Schema used to validate users before inserting them into the database
 const userSchema = Joi.object({
-  id: Joi.string().max(255).alter(standardFieldAlter),
+  firebaseId: Joi.string()
+    .max(255)
+    .alter({
+      [Method.CREATE]: (schema) => schema.required(),
+      [Method.PARTIAL]: (schema) => schema.forbidden(),
+    }),
   displayName: Joi.string()
     .trim()
     .max(255)

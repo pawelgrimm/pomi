@@ -1,11 +1,5 @@
-import {
-  SessionModel,
-  SessionOptions,
-  SessionType,
-  SessionTypeString,
-} from "../../types/session";
-import { validateSyncToken } from "../models";
-import { addMilliseconds, differenceInMilliseconds } from "date-fns";
+import { SessionModel } from "../../types";
+import { addMilliseconds } from "date-fns";
 import { sqlDuration } from "..";
 
 /**
@@ -25,10 +19,7 @@ export const getDurationWithUnits = (duration?: number): string | null => {
  */
 export const calculateEndTimestamp = (
   session: Pick<SessionModel, "startTimestamp" | "duration">
-): Date | undefined => {
+): Date => {
   const { startTimestamp, duration } = session;
-  if (startTimestamp && duration) {
-    return addMilliseconds(startTimestamp, Number(duration));
-  }
-  return undefined;
+  return addMilliseconds(startTimestamp, Number(duration));
 };

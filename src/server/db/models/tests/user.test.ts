@@ -27,8 +27,11 @@ describe("Create user", () => {
   it("Should create a user (with a default project)", () => {
     const validUser = createValidUser();
     const user = Users.create(validUser);
+    const { firebaseId, ...expectedUser } = validUser;
+
     return expect(user).resolves.toEqual({
-      ...validUser,
+      ...expectedUser,
+      id: expect.any(String),
       defaultProject: expect.any(String),
     });
   });
@@ -50,5 +53,16 @@ describe("Get user", () => {
   it("Should fail gracefully when user doesn't exist", () => {
     const user = Users.selectOne(uuid());
     return expect(user).resolves.toEqual(null);
+  });
+});
+
+describe("Get by Firebase ID", () => {
+  it("Should get user by a firebase ID", async () => {
+    const firebaseId = uuid();
+    const validUser = await insertTestUser({ firebaseId });
+
+    const user = Users.getByFirebaseId(firebaseId);
+
+    return expect(user).resolves.toEqual(validUser);
   });
 });

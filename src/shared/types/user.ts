@@ -1,11 +1,10 @@
 /**
  * A row in the users table
  */
-interface UserModel {
-  id: string;
+export interface UserModel {
+  id?: string;
+  firebaseId?: string;
   displayName: string;
   email: string;
   defaultProject?: string;
 }
-
-export type { UserModel };

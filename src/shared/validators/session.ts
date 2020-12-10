@@ -93,7 +93,7 @@ export type SessionOptionMethods = Method.SYNC | Method.SELECT;
 const sessionSelectOptionsSchema = Joi.object({
   syncToken: Joi.string()
     .trim()
-    .custom(validateSyncToken)
+    .custom((value) => validateSyncToken(value))
     .alter({
       [Method.SYNC]: (schema) => schema.optional(),
       [Method.SELECT]: (schema) => schema.forbidden(),

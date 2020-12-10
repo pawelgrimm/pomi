@@ -15,8 +15,9 @@
     "noEmit": true,
     "jsx": "react",
     "noFallthroughCasesInSwitch": true,
-    "outDir": "/build"
+    "outDir": "/build",
+    "typeRoots": ["node_modules/@types", "src/server/@types"]
   },
-  "include": ["src"],
-  "exclude": ["src/server"]
+  "include": ["src/**/*"],
+  "exclude": ["src/server/**/*", "src/client/playground/**/*"]
 }

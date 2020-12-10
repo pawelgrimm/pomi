@@ -29,11 +29,14 @@ $$ language plpgsql;
 -- Create users table
 CREATE TABLE users
 (
-    id           VARCHAR(255) PRIMARY KEY,
-    display_name VARCHAR(255)                          NOT NULL,
-    email        VARCHAR(255)                          NOT NULL,
-    created      TIMESTAMPTZ DEFAULT current_timestamp NOT NULL
+    id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    firebase_id  VARCHAR(255) UNIQUE                        NOT NULL,
+    display_name VARCHAR(255)                               NOT NULL,
+    email        VARCHAR(255) UNIQUE                        NOT NULL,
+    created      TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL
 );
+
+CREATE INDEX users_firebase_id_idx ON users (firebase_id);
 
 CREATE TRIGGER set_users_created
     BEFORE INSERT
@@ -44,7 +47,7 @@ EXECUTE PROCEDURE set_created_column();
 CREATE TABLE projects
 (
     id            UUID UNIQUE  DEFAULT gen_random_uuid(),
-    user_id       VARCHAR(255) REFERENCES users          NOT NULL,
+    user_id       UUID REFERENCES users                  NOT NULL,
     title         VARCHAR(255) DEFAULT ''                NOT NULL,
     is_archived   BOOLEAN      DEFAULT FALSE             NOT NULL,
     created       TIMESTAMPTZ  DEFAULT current_timestamp NOT NULL,
@@ -72,7 +75,7 @@ CLUSTER projects USING projects_user_idx;
 CREATE TABLE tasks
 (
     id            UUID UNIQUE  DEFAULT gen_random_uuid(),
-    user_id       VARCHAR(255) REFERENCES users          NOT NULL,
+    user_id       UUID REFERENCES users                  NOT NULL,
     project_id    UUID                                   NOT NULL,
     title         VARCHAR(255) DEFAULT ''                NOT NULL,
     is_completed  BOOLEAN      DEFAULT FALSE             NOT NULL,
@@ -104,7 +107,7 @@ CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long_break');
 CREATE TABLE sessions
 (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         VARCHAR(255) REFERENCES users              NOT NULL,
+    user_id         UUID REFERENCES users                      NOT NULL,
     task_id         UUID                                       NOT NULL,
     start_timestamp TIMESTAMPTZ                                NOT NULL,
     duration        INTERVAL                                   NOT NULL,

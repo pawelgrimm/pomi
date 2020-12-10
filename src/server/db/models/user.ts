@@ -22,16 +22,19 @@ export class User extends Model {
   create(
     user: UserModel,
     defaultProject: ProjectModel = {}
-  ): Promise<Readonly<Required<UserModel>>> {
-    const { id = "", displayName = "", email = null } = validateUser(
-      user,
-      Method.CREATE
-    );
+  ): Promise<Required<UserModel>> {
+    const {
+      displayName = null,
+      email = null,
+      firebaseId = null,
+    } = validateUser(user, Method.CREATE);
     return this.connection.transaction(async (transaction) => {
-      const { id: userId } = await this.connect(transaction).connection.one(sql`
-        INSERT INTO users(id, display_name, email) 
-          VALUES (${id}, ${displayName}, ${email})
-        RETURNING ${this.RETURN_COLS};
+      const userId = await this.connect(transaction).connection.oneFirst<
+        string
+      >(sql`
+        INSERT INTO users(firebase_id, display_name, email) 
+          VALUES (${firebaseId}, ${displayName}, ${email})
+        RETURNING id;
         `);
       const { id: projectId } = await Projects.connect(transaction).create(
         userId,
@@ -44,6 +47,17 @@ export class User extends Model {
         RETURNING ${this.RETURN_COLS};
         `);
     });
+  }
+
+  /**
+   * Get the user linked to a Firebase id
+   * @param firebaseId - a Firebase user id
+   */
+  getByFirebaseId(firebaseId: string) {
+    return this.connection.one(sql`
+                SELECT ${this.RETURN_COLS}
+                FROM ${this.tableName}
+                WHERE firebase_id = ${firebaseId};`);
   }
 
   /**

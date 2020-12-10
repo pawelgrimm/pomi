@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, ButtonProps, withStyles } from "@material-ui/core";
+import { Button, ButtonProps, Theme, withStyles } from "@material-ui/core";
 
-const styles = () => ({
+const styles = (theme: Theme) => ({
   root: {
-    padding: "2px 4px",
+    padding: theme.spacing(0.25, 0.5),
     fontWeight: 400,
     fontSize: "1.5rem",
   },
@@ -13,8 +13,8 @@ const ActionButton = (props: ButtonProps) => {
   const { color, variant, ...rest } = props;
   return (
     <Button
-      color={color === "default" ? "primary" : color}
-      variant="contained"
+      color={color || "primary"}
+      variant={variant || "contained"}
       {...rest}
     />
   );

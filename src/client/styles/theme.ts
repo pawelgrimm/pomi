@@ -24,7 +24,7 @@ const theme = createMuiTheme({
   overrides: {
     MuiFormControl: {
       root: {
-        marginBottom: "14px",
+        marginBottom: "16px",
       },
     },
     MuiInputBase: {
