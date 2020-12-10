@@ -2,8 +2,6 @@ import { ProjectModel, SessionModel, TaskModel, UserModel } from "../../types";
 import { pool, Projects, Sessions, Users } from "../../../server/db";
 import { sql } from "slonik";
 import { v4 as uuid } from "uuid";
-import { User } from "../../../server/db/models";
-import { parseISO, isValid } from "date-fns";
 
 /**
  * Pause execution for the specified duration. Don't forget to add await, as this returns a Promise.
