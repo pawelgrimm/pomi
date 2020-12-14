@@ -1,5 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
-import authReducer from "../services/auth/auth";
+import authReducer from "../services/auth/authSlice";
 import projectsReducer from "../features/state/projectsSlice";
 import tasksReducer from "../features/state/tasksSlice";
 

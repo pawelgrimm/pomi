@@ -1,2 +1,2 @@
 export * from "./configure";
-export * from "./auth";
+export * from "./authSlice";
