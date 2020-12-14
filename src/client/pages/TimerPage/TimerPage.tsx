@@ -75,7 +75,7 @@ const TimerPage = () => {
             formikHelpers.setFieldValue("startTimestamp", new Date());
           } else {
             const session: SessionModel = {
-              startTimestamp: values.startTimestamp,
+              startTimestamp: values.startTimestamp.toISOString(),
               taskId: values.task,
               duration: differenceInMilliseconds(
                 values.startTimestamp,

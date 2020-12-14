@@ -126,11 +126,6 @@
       "last 1 safari version"
     ]
   },
-  "jest": {
-    "moduleNameMapper": {
-      "worker-loader!./clockWorker-script": "<rootDir>/src/__mocks__/ClockWorker"
-    }
-  },
   "nodemonConfig": {
     "watch": [
       "src/server",

@@ -16,4 +16,7 @@ module.exports = {
     "<rootDir>/src/server",
     "<rootDir>/src/shared",
   ],
+  moduleNameMapper: {
+    "worker-loader!./clockWorker-script": "<rootDir>/__mocks__/ClockWorker",
+  },
 };
