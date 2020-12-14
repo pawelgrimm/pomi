@@ -80,7 +80,7 @@ export class Session extends SessionBase {
         INSERT INTO sessions(user_id, task_id, start_timestamp, duration, notes, type, is_retro_added)
         VALUES (${userId},
                 ${taskId},
-                ${sqlDate(startTimestamp)},
+                ${startTimestamp},
                 ${sqlDuration(duration)},
                 ${notes},
                 ${type},
@@ -149,9 +149,6 @@ export class Session extends SessionBase {
       if (UPDATEABLE_COLUMNS[key] && value != null) {
         let valueToUse: any = value;
         switch (key) {
-          case "startTimestamp":
-            valueToUse = sqlDate(value as Date);
-            break;
           case "duration":
             valueToUse = sqlDuration(value as number);
             break;

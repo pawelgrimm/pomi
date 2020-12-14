@@ -5,7 +5,7 @@ import { Model, SyncOptions } from "./model";
  */
 export interface SessionModel extends Model {
   taskId: string;
-  startTimestamp: Date;
+  startTimestamp: string;
   duration: number;
   type: keyof typeof SessionType;
   notes?: string;

@@ -16,8 +16,8 @@ import {
 } from "../../../../shared/utils";
 
 import * as validators from "../../../../shared/validators";
-import { insertRandomTestUser } from "../../../../shared/utils/testing-helpers";
-import { Method } from "../../../../shared/validators/shared";
+import { insertRandomTestUser } from "../../../../shared/utils";
+import { Method } from "../../../../shared/validators";
 const mockValidator = jest.spyOn(validators, "validateSession");
 
 const getSyncTokenForSession = (sessionId: string) => {
@@ -60,7 +60,7 @@ let validSession: SessionModel;
 
 const createValidSession = (): SessionModel => ({
   taskId: task.id,
-  startTimestamp: new Date("2020-11-12T21:27:10.359Z"),
+  startTimestamp: "2020-11-12T21:27:10.359Z",
   duration: 1234888,
   type: "session",
 });
@@ -80,17 +80,17 @@ const setupTimedSessions = async (referenceTimestamp: string) => {
   const testSessions = await insertTestSessions(
     user.id,
     [
-      { startTimestamp: beforeBefore },
-      { startTimestamp: before },
-      { startTimestamp: reference },
-      { startTimestamp: after },
-      { startTimestamp: afterAfter },
+      { startTimestamp: beforeBefore.toISOString() },
+      { startTimestamp: before.toISOString() },
+      { startTimestamp: reference.toISOString() },
+      { startTimestamp: after.toISOString() },
+      { startTimestamp: afterAfter.toISOString() },
     ],
     { defaults: { taskId: task.id } }
   );
 
   const timedSessions = new Map<
-    Date,
+    string,
     SessionModel & Required<Pick<SessionModel, "id">>
   >();
 
@@ -230,7 +230,7 @@ describe("Select All Sessions", () => {
       }
     });
 
-    const sessions = await Sessions.select(user.id, { start: after });
+    const sessions = await Sessions.select(user.id, { start: new Date(after) });
 
     expect(sessions).toEqual(arrayContainingObjectsContaining(sessionsAfter));
     expect(sessions).not.toEqual(
@@ -260,7 +260,7 @@ describe("Select All Sessions", () => {
       }
     });
 
-    const sessions = await Sessions.select(user.id, { end: before });
+    const sessions = await Sessions.select(user.id, { end: new Date(before) });
 
     expect(sessions).toEqual(arrayContainingObjectsContaining(sessionsBefore));
     expect(sessions).not.toEqual(
@@ -291,8 +291,8 @@ describe("Select All Sessions", () => {
     });
 
     const sessions = await Sessions.select(user.id, {
-      start: after,
-      end: before,
+      start: new Date(after),
+      end: new Date(before),
     });
 
     expect(sessions).toEqual(arrayContainingObjectsContaining(sessionsIn));
@@ -332,7 +332,7 @@ describe("Update Session", () => {
     const insertedSession = await Sessions.create(user.id, validSession);
     const updatedSession = {
       taskId: insertedSession.taskId,
-      startTimestamp: new Date("2020-11-18T18:00:00.000Z"),
+      startTimestamp: "2020-11-18T18:00:00.000Z",
       duration: 522200000,
       type: "long_break",
       notes: "this is a new note",

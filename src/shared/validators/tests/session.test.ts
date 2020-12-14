@@ -9,7 +9,7 @@ let validSessionWithID: SessionModel & Required<Pick<SessionModel, "id">>;
 
 const createValidSession = (): SessionModel => ({
   taskId: uuid(),
-  startTimestamp: new Date("2020-10-23T15:00:00.000Z"),
+  startTimestamp: "2020-10-23T15:00:00.000Z",
   duration: 3600000,
   type: "break",
 });

@@ -21,5 +21,5 @@ export const calculateEndTimestamp = (
   session: Pick<SessionModel, "startTimestamp" | "duration">
 ): Date => {
   const { startTimestamp, duration } = session;
-  return addMilliseconds(startTimestamp, Number(duration));
+  return addMilliseconds(new Date(startTimestamp), Number(duration));
 };
