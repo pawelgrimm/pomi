@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { auth } from "./configure";
 import { useSelector } from "react-redux";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/rootReducer";
 
 export type AuthSliceState = { jwt?: string };
 
