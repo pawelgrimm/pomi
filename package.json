@@ -103,6 +103,7 @@
     "ts-node": "9.0.0",
     "typescript": "~3.8.2",
     "use-notification-hook": "0.0.4",
+    "utility-types": "3.10.0",
     "uuid": "8.3.1",
     "wait-on": "5.2.0",
     "webpack-cli": "4.1.0",
