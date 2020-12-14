@@ -9,12 +9,12 @@ import { v4 as uuid } from "uuid";
 const createValidSession = (): Required<SessionModel> => ({
   id: uuid(),
   taskId: uuid(),
-  startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
+  startTimestamp: "2020-10-23T19:59:29.853Z",
   duration: 500000,
   notes: "",
   type: "session",
   isRetroAdded: false,
-  lastModified: new Date("2020-10-25T12:00:00.000Z"),
+  lastModified: "2020-10-25T12:00:00.000Z",
 });
 
 export const {

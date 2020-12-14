@@ -41,8 +41,8 @@ const initialState: SessionState = {
 const sessionToSessionState = (session: SessionModel): SessionState => {
   const { startTimestamp, taskId, notes = "" } = session;
   const endTimestamp = calculateEndTimestamp(session);
-  const date = getDateStringFromDate(startTimestamp);
-  const startTime = getTimeFromDate(startTimestamp).toString();
+  const date = getDateStringFromDate(new Date(startTimestamp));
+  const startTime = getTimeFromDate(new Date(startTimestamp)).toString();
   const endTime = getTimeFromDate(endTimestamp).toString();
   return {
     date,
@@ -91,14 +91,18 @@ const EditSessionPage: React.FC<Props> = () => {
         const startTimestamp = getDate(
           values.date,
           Number.parseInt(values.startTime)
-        );
+        ).toISOString();
         const endTimestamp = getDate(
           values.date,
           Number.parseInt(values.endTime)
         );
         let sessionUpdates: Partial<SessionModel> = {
           startTimestamp,
-          duration: differenceInMilliseconds(endTimestamp, startTimestamp),
+          duration: differenceInMilliseconds(
+            endTimestamp,
+            new Date(startTimestamp)
+          ),
+
           ...rest,
         };
         updateSession({ id, session: sessionUpdates }).then((success) => {
