@@ -73,7 +73,7 @@ router.get("/sync", parseSyncOptions, async (req, res) => {
 
   let syncToken;
   if (sessions?.length > 0) {
-    syncToken = sessions[0]?.lastModified?.toISOString();
+    syncToken = sessions[0]?.lastModified;
   }
 
   res.status(sessions?.length > 0 ? 200 : 404).send({ sessions, syncToken });
