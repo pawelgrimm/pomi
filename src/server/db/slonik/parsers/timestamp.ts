@@ -5,7 +5,7 @@ import { TypeParserType } from "slonik";
  * @param value
  */
 const timestampParser = (value: string | null) => {
-  return value === null ? value : new Date(value);
+  return value === null ? value : new Date(value).toISOString();
 };
 
 /**

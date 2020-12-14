@@ -12,7 +12,7 @@ export const createSyncToken = (
 ) => {
   const lastModified = Math.max(
     ...results.map((model) =>
-      model && model.length > 0 ? model[0].lastModified.valueOf() : 0
+      model && model.length > 0 ? new Date(model[0].lastModified).valueOf() : 0
     )
   );
   return lastModified > 0

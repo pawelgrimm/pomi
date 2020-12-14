@@ -3,7 +3,7 @@
  */
 export interface Model {
   id?: string;
-  lastModified?: Date;
+  lastModified?: string;
 }
 
 /**

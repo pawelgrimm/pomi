@@ -29,7 +29,7 @@ const sessionSchema = Joi.object({
     .trim()
     .uuid({ version: "uuidv4" })
     .alter(standardFieldAlter),
-  startTimestamp: Joi.date().iso().alter(standardFieldAlter),
+  startTimestamp: Joi.date().iso().raw().alter(standardFieldAlter),
   duration: Joi.number().alter({
     [Method.CREATE]: (schema) => schema.required(),
     [Method.UPDATE]: (schema) => schema.required(),

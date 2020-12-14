@@ -71,7 +71,7 @@ export const insertTestSessions = async (
   }
 ): Promise<Array<SessionModel & Required<Pick<SessionModel, "id">>>> => {
   const fallbacks: SessionModel = {
-    startTimestamp: new Date(),
+    startTimestamp: new Date().toISOString(),
     duration: 454000,
     type: "session",
     ...options.defaults,
@@ -272,12 +272,12 @@ export const createValidTask = () => ({
 export const createValidSession = (): Required<SessionModel> => ({
   id: uuid(),
   taskId: uuid(),
-  startTimestamp: new Date("2020-10-23T19:59:29.853Z"),
+  startTimestamp: "2020-10-23T19:59:29.853Z",
   duration: 500000,
   notes: "",
   type: "session",
   isRetroAdded: false,
-  lastModified: new Date("2020-10-23T20:00:00.000Z"),
+  lastModified: "2020-10-23T20:00:00.000Z",
 });
 
 export const objectWithDatesAsStrings = (object: any) => {
