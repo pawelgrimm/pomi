@@ -47,11 +47,11 @@ EXECUTE PROCEDURE set_created_column();
 CREATE TABLE projects
 (
     id            UUID UNIQUE  DEFAULT gen_random_uuid(),
-    user_id       UUID REFERENCES users                  NOT NULL,
-    title         VARCHAR(255) DEFAULT ''                NOT NULL,
-    is_archived   BOOLEAN      DEFAULT FALSE             NOT NULL,
-    created       TIMESTAMPTZ  DEFAULT current_timestamp NOT NULL,
-    last_modified TIMESTAMPTZ  DEFAULT current_timestamp NOT NULL,
+    user_id       UUID REFERENCES users ON DELETE CASCADE   NOT NULL,
+    title         VARCHAR(255) DEFAULT ''                   NOT NULL,
+    is_archived   BOOLEAN      DEFAULT FALSE                NOT NULL,
+    created       TIMESTAMPTZ  DEFAULT current_timestamp    NOT NULL,
+    last_modified TIMESTAMPTZ  DEFAULT current_timestamp    NOT NULL,
     PRIMARY KEY (id, user_id)
 );
 
@@ -75,14 +75,14 @@ CLUSTER projects USING projects_user_idx;
 CREATE TABLE tasks
 (
     id            UUID UNIQUE  DEFAULT gen_random_uuid(),
-    user_id       UUID REFERENCES users                  NOT NULL,
-    project_id    UUID                                   NOT NULL,
-    title         VARCHAR(255) DEFAULT ''                NOT NULL,
-    is_completed  BOOLEAN      DEFAULT FALSE             NOT NULL,
-    created       TIMESTAMPTZ  DEFAULT current_timestamp NOT NULL,
-    last_modified TIMESTAMPTZ  DEFAULT current_timestamp NOT NULL,
+    user_id       UUID REFERENCES users ON DELETE CASCADE   NOT NULL,
+    project_id    UUID                                      NOT NULL,
+    title         VARCHAR(255) DEFAULT ''                   NOT NULL,
+    is_completed  BOOLEAN      DEFAULT FALSE                NOT NULL,
+    created       TIMESTAMPTZ  DEFAULT current_timestamp    NOT NULL,
+    last_modified TIMESTAMPTZ  DEFAULT current_timestamp    NOT NULL,
     PRIMARY KEY (id, user_id),
-    FOREIGN KEY (project_id, user_id) REFERENCES projects (id, user_id)
+    FOREIGN KEY (project_id, user_id) REFERENCES projects (id, user_id) ON DELETE CASCADE
 );
 
 CREATE TRIGGER set_tasks_created
@@ -107,7 +107,7 @@ CREATE TYPE SESSION_TYPE AS ENUM ('session', 'break', 'long_break');
 CREATE TABLE sessions
 (
     id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id         UUID REFERENCES users                      NOT NULL,
+    user_id         UUID REFERENCES users ON DELETE CASCADE    NOT NULL,
     task_id         UUID                                       NOT NULL,
     start_timestamp TIMESTAMPTZ                                NOT NULL,
     duration        INTERVAL                                   NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE sessions
     is_retro_added  BOOLEAN          DEFAULT FALSE             NOT NULL,
     created         TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL,
     last_modified   TIMESTAMPTZ      DEFAULT current_timestamp NOT NULL,
-    FOREIGN KEY (task_id, user_id) REFERENCES tasks (id, user_id)
+    FOREIGN KEY (task_id, user_id) REFERENCES tasks (id, user_id) ON DELETE CASCADE
 );
 
 CREATE TRIGGER set_sessions_created

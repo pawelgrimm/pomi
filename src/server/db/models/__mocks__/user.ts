@@ -5,12 +5,15 @@ import {
 import { v4 as uuid } from "uuid";
 import { UserModel } from "../../../../shared/types";
 
-const createValidUser = (): UserModel => ({
-  id: uuid(),
-  email: "test@exmaple.com",
-  displayName: "test user",
-  defaultProject: uuid(),
-});
+const createValidUser = (id: string = uuid()): UserModel => {
+  return {
+    id,
+    firebaseId: id,
+    email: "test@exmaple.com",
+    displayName: "test user",
+    defaultProject: uuid(),
+  };
+};
 
 export const {
   mockCreate,
@@ -19,11 +22,17 @@ export const {
   mockNewConnection,
 } = makeMocks(createValidUser);
 
+export const mockGetByFirebaseId = jest.fn(
+  (firebaseId?: string) =>
+    new Promise((resolve) => resolve(createValidUser(firebaseId)))
+);
+
 export const User = jest.fn().mockImplementation(() => {
   return {
     create: mockCreate,
     selectOne: mockSelect,
     newConnection: mockNewConnection,
     connect: makeMockConnect(mockConnectCreate),
+    getByFirebaseId: mockGetByFirebaseId,
   };
 });
