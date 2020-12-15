@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../app/rootReducer";
 import { fetchProjects } from "../../features/state/projectsSlice";
 import { fetchTasks } from "../../features/state/tasksSlice";
+import axios from "axios";
+import { login } from "./authAPI";
 
 export type AuthSliceState = {
   jwt?: string;
@@ -25,8 +27,16 @@ export const fetchIdTokenAndSyncEntities = createAsyncThunk(
     } catch (err) {
       return thunkAPI.rejectWithValue(err.toString());
     }
-    thunkAPI.dispatch(fetchProjects());
-    thunkAPI.dispatch(fetchTasks());
+    axios.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
+    login()
+      .then(() => {
+        thunkAPI.dispatch(fetchProjects());
+        thunkAPI.dispatch(fetchTasks());
+      })
+      .catch((err) => {
+        console.log("server error: ", err);
+      });
+
     return newToken;
   }
 );
