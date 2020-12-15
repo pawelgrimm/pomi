@@ -2,8 +2,6 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import { store } from "../../app/store";
 import { fetchIdTokenAndSyncEntities, logout } from "./authSlice";
-import { fetchProjects } from "../../features/state/projectsSlice";
-import { fetchTasks } from "../../features/state/tasksSlice";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBthDrLaM8N1UMq98McHsJC3_v5lvp7lgg",
@@ -20,7 +18,6 @@ firebase.initializeApp(firebaseConfig);
 export const auth = firebase.auth();
 
 auth.onIdTokenChanged(async (user) => {
-  console.log("state changed", user);
   if (user) {
     store.dispatch(fetchIdTokenAndSyncEntities());
   } else {
