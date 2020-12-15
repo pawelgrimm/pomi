@@ -1,6 +1,6 @@
 import express from "express";
 import { mountRoutes } from "./routes";
-import { logError } from "./middleware";
+import { handleError, logError } from "./middleware";
 import { camelCaseQueryParams } from "./middleware/shared";
 
 const app = express();
@@ -16,5 +16,6 @@ app.get("/*", function (req, res) {
 });
 
 app.use(logError);
+app.use(handleError);
 
 export default app;

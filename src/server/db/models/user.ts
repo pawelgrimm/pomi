@@ -54,7 +54,7 @@ export class User extends Model {
    * @param firebaseId - a Firebase user id
    */
   getByFirebaseId(firebaseId: string) {
-    return this.connection.one(sql`
+    return this.connection.maybeOne(sql`
                 SELECT ${this.RETURN_COLS}
                 FROM ${this.tableName}
                 WHERE firebase_id = ${firebaseId};`);

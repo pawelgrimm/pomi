@@ -1,5 +1,6 @@
 import * as admin from "firebase-admin";
-import { RequestHandler } from "express";
+import { NextFunction, RequestHandler } from "express";
+import { Users } from "../../db";
 
 const serviceAccount = {
   projectId: process.env.GCP_PROJECT_ID,
@@ -12,7 +13,7 @@ admin.initializeApp({
   databaseURL: "https://pomi-67d31.firebaseio.com",
 });
 
-export const authenticate: RequestHandler = async (req, res, next) => {
+export const parseAuthHeader: RequestHandler = async (req, res, next) => {
   const authHeader = req.header("Authorization");
   if (!authHeader) {
     res.status(401);
@@ -26,11 +27,31 @@ export const authenticate: RequestHandler = async (req, res, next) => {
       next(new Error("Could not parse 'Authorization' header"));
       return;
     }
-    const { uid } = await admin.auth().verifyIdToken(token);
-    res.locals.userId = uid;
+    const { uid: firebaseId } = await admin.auth().verifyIdToken(token);
+    res.locals.firebaseId = firebaseId;
     next();
   } catch (e) {
     res.status(401);
-    next(e);
+    next(new Error("Authorization token was invalid"));
+  }
+};
+
+export const authenticate: RequestHandler = async (req, res, next) => {
+  const innerNext: NextFunction = (err?: any) => {
+    if (err) {
+      next(err);
+    }
+  };
+  await parseAuthHeader(req, res, innerNext);
+
+  const firebaseId: string = res.locals.firebaseId;
+
+  const user = await Users.getByFirebaseId(firebaseId);
+  if (!user) {
+    res.status(424);
+    next(new Error("User does not exist. Create a user and try again."));
+  } else {
+    res.locals.userId = user.id;
+    next();
   }
 };

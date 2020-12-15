@@ -9,8 +9,14 @@ import { mockSelect as mockProjectSelect } from "../../db/models/project";
 // @ts-ignore
 import { mockSelect as mockTaskSelect } from "../../db/models/task";
 
-// @ts-ignore
-import { mockSelect } from "../../db/models/user";
+import {
+  // @ts-ignore
+  mockGetByFirebaseId,
+  // @ts-ignore
+  mockCreate,
+  // @ts-ignore
+  mockSelect,
+} from "../../db/models/user";
 
 // Set up mock
 jest.mock("../../db/index");
@@ -31,6 +37,18 @@ describe("Require Authentication", () => {
         .set("X-Test-Suppress-Error-Logging", "true")
         .expect(401),
     ]);
+  });
+});
+
+describe("POST users/login", () => {
+  it("Should create new user", () => {
+    const firebaseId = uuid();
+    // If the user doesn't exist in the mock database, then that get function would return null
+    mockGetByFirebaseId.mockImplementationOnce(async () => null);
+    return request(app)
+      .post("/api/users/login")
+      .set("Authorization", `Bearer ${firebaseId}`)
+      .expect(201);
   });
 });
 

@@ -1,26 +1,33 @@
 import Router from "express-promise-router";
+import * as admin from "firebase-admin";
 import { Projects, Sessions, Tasks, Users } from "../db";
-import { authenticate, parseSyncOptions } from "../middleware";
+import { authenticate, parseAuthHeader, parseSyncOptions } from "../middleware";
 import { SyncOptions } from "../../shared/types";
-import { createSyncToken } from "../../shared/utils/models";
+import { createSyncToken } from "../../shared/utils";
 
 const router = Router();
 
-/*      NEW USER      */
-// TODO: This one is probably not necessary -> new user creation will be handled in server via Firebase Auth
-router.post("/", async (req, res) => {
-  res.status(501).send();
-  // try {
-  //   const user = validateUser(req.body);
-  //   const row = await Users.create(user);
-  //   res.status(201).send(row);
-  // } catch (e) {
-  //   if (e instanceof ValidationError) {
-  //     res.status(400).send({ errors: e.details.map((error) => error.message) });
-  //   } else {
-  //     res.status(500).send();
-  //   }
-  // }
+/*      LOGIN + SYNC APP DB to FIREBASE DB     */
+router.post("/login", parseAuthHeader, async (req, res) => {
+  const firebaseId: string = res.locals.firebaseId;
+  const user = await Users.getByFirebaseId(firebaseId);
+
+  if (user) {
+    // TODO: Update app DB with user's email and displayName
+    res.status(200).send();
+  } else {
+    try {
+      const { displayName, email } = await admin.auth().getUser(firebaseId);
+      await Users.create({
+        displayName: displayName || "User",
+        email: email || "",
+        firebaseId,
+      });
+      res.status(201).send();
+    } catch (err) {
+      res.status(500).send();
+    }
+  }
 });
 
 router.use(authenticate);
