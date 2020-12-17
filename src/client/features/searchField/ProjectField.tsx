@@ -20,7 +20,7 @@ const filterProjects: FilterFunction<ProjectOptionType> = (options, params) => {
   return filtered;
 };
 
-export const ProjectField: React.FC = () => {
+export const ProjectField: React.FC<ProjectFieldProps> = ({ disabled }) => {
   const projects = useSelector(
     (state: RootState) => state.projects.data as Record<string, ExistingOption>
   );
@@ -29,11 +29,16 @@ export const ProjectField: React.FC = () => {
     <SearchField<ExistingOption>
       name="project"
       label="Project"
+      disabled={disabled}
       options={projects}
       filterOptions={filterProjects}
     />
   );
 };
+
+interface ProjectFieldProps {
+  disabled?: boolean;
+}
 
 // TODO: Remove cast to Required<ProjectModel>
 type ExistingOption = Required<ProjectModel>;

@@ -38,7 +38,7 @@ const createTaskFilter = (
   };
 };
 
-export const TaskField: React.FC = () => {
+export const TaskField: React.FC<TaskFieldProps> = ({ disabled }) => {
   const tasks = useSelector(
     (state: RootState) => state.tasks.data as Record<string, ExistingOption>
   );
@@ -58,11 +58,16 @@ export const TaskField: React.FC = () => {
     <SearchField<ExistingOption>
       name="task"
       label="Task"
+      disabled={disabled}
       options={tasks}
       filterOptions={filterTasks}
     />
   );
 };
+
+interface TaskFieldProps {
+  disabled?: boolean;
+}
 
 // TODO: Remove cast to Required<TaskModel>
 type ExistingOption = Required<TaskModel>;

@@ -54,7 +54,7 @@ const LogoutPageButton: React.FC = () => {
 };
 
 const TimerPage = () => {
-  const [inProgress, setInProgress] = useState(false);
+  const [isInProgress, setInProgress] = useState(false);
   const [timerStartValue, setTimerStartValue] = useState(60 * 25);
   const [type, setType] = useState(0);
 
@@ -72,7 +72,7 @@ const TimerPage = () => {
           startTimestamp: new Date(),
         }}
         onSubmit={(values, formikHelpers) => {
-          if (!inProgress) {
+          if (!isInProgress) {
             console.log("timer started");
             formikHelpers.setFieldValue("startTimestamp", new Date());
           } else {
@@ -99,7 +99,7 @@ const TimerPage = () => {
               value={type}
               onChange={(event, value) => {
                 console.log(value);
-                if (inProgress) {
+                if (isInProgress) {
                   submitForm().then(() => {
                     const timerType = value % 3;
                     const newTimerValue = timerStartValues[timerType];
@@ -122,8 +122,8 @@ const TimerPage = () => {
               <Tab label="Long Break" classes={tabClasses} />
             </Tabs>
             <FlexColumnContainer>
-              <ProjectField />
-              <TaskField />
+              <ProjectField disabled={isInProgress} />
+              <TaskField disabled={isInProgress} />
               <Field
                 component={TextField}
                 multiline
@@ -134,7 +134,7 @@ const TimerPage = () => {
               />
               <TimerDisplay
                 timerStartValue={timerStartValue}
-                isInProgress={inProgress}
+                isInProgress={isInProgress}
               />
 
               <ActionButton
@@ -142,7 +142,7 @@ const TimerPage = () => {
                   submitForm().then();
                 }}
               >
-                {inProgress ? "Stop" : "Start"}
+                {isInProgress ? "Stop" : "Start"}
               </ActionButton>
               <LogoutPageButton />
             </FlexColumnContainer>
