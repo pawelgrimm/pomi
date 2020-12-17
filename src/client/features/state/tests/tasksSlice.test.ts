@@ -8,6 +8,7 @@ import { arrayContainingObjectsContaining } from "../../../../shared/utils";
 import { AppDispatch } from "../../../app/store";
 import { RootState } from "../../../app/rootReducer";
 import { initialProjectsState } from "../projectsSlice";
+import { initialAuthState } from "../../../services/auth";
 
 jest.mock("../../../services/task/taskAPI");
 const mockedGetTasks = mocked(getTasks);
@@ -16,7 +17,7 @@ const middlewares = getDefaultMiddleware();
 const store = configureMockStore<RootState, AppDispatch>(middlewares)({
   projects: initialProjectsState,
   tasks: initialTasksState,
-  auth: {},
+  auth: initialAuthState,
 });
 
 beforeEach(() => {
