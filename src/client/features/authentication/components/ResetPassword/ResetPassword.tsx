@@ -3,7 +3,7 @@ import { LoginState } from "../../../../pages/LoginPage";
 import { AuthLayout, EmailAndPasswordForm, onSubmitFunction } from "../";
 import { useHistory } from "react-router-dom";
 import { auth } from "../../../../services/auth";
-import { ActionButton, SpacedContainer } from "../../../../components";
+import { ActionButton, FlexColumnContainer } from "../../../../components";
 import { Typography } from "@material-ui/core";
 import { SetsLoginState } from "../../types";
 import { handleAuthError } from "../../errorHandler";
@@ -29,14 +29,14 @@ export const ResetPassword: React.FC<SetsLoginState> = ({ setLoginState }) => {
   return (
     <AuthLayout titleText="Reset Password">
       {isResetSent ? (
-        <SpacedContainer>
+        <FlexColumnContainer>
           <Typography gutterBottom>
             Password reset instructions have been sent to your email!
           </Typography>
           <ActionButton color="primary" onClick={() => history.push("/")}>
             Continue
           </ActionButton>
-        </SpacedContainer>
+        </FlexColumnContainer>
       ) : (
         <EmailAndPasswordForm
           onSubmit={onSubmit}
