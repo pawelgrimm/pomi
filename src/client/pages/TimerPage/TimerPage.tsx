@@ -9,6 +9,7 @@ import { differenceInMilliseconds } from "date-fns";
 import { FlexColumnContainer } from "../../components/SpacedContainer";
 import { useHistory } from "react-router-dom";
 import { ProjectField } from "../../features/searchField/ProjectField";
+import { TaskField } from "../../features/searchField/TaskField";
 
 const timerStartValues = [60 * 25, 60 * 5, 60 * 15];
 
@@ -122,13 +123,7 @@ const TimerPage = () => {
             </Tabs>
             <FlexColumnContainer>
               <ProjectField />
-              <Field
-                component={TextField}
-                name="task"
-                type="text"
-                label="Task"
-                disabled={inProgress}
-              />
+              <TaskField />
               <Field
                 component={TextField}
                 multiline

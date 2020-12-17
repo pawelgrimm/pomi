@@ -38,4 +38,4 @@ export const ProjectField: React.FC = () => {
 // TODO: Remove cast to Required<ProjectModel>
 type ExistingOption = Required<ProjectModel>;
 
-type ProjectOptionType = OptionType<ExistingOption>;
+export type ProjectOptionType = OptionType<ExistingOption>;
