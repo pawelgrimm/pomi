@@ -12,11 +12,13 @@ const styles = (theme: Theme) => ({
 const ActionButton = (props: ButtonProps) => {
   const { color, variant, ...rest } = props;
   return (
-    <Button
-      color={color || "primary"}
-      variant={variant || "contained"}
-      {...rest}
-    />
+    <div className="MuiFormControl-root">
+      <Button
+        color={color || "primary"}
+        variant={variant || "contained"}
+        {...rest}
+      />
+    </div>
   );
 };
 

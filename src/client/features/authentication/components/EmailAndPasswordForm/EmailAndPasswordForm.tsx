@@ -3,7 +3,7 @@ import { Typography } from "@material-ui/core";
 import { Field, Form, Formik } from "formik";
 import {
   ActionButton,
-  SpacedContainer,
+  FlexColumnContainer,
   TextField,
 } from "../../../../components";
 import { LoginState } from "../../../../pages/LoginPage";
@@ -75,7 +75,7 @@ export const EmailAndPasswordForm: React.FC<Props> = ({
               }
             />
           )}
-          <SpacedContainer>
+          <FlexColumnContainer>
             {React.Children.toArray(children)}
             <ActionButton onClick={submitForm} disabled={!isValid}>
               {submitButtonText}
@@ -83,7 +83,7 @@ export const EmailAndPasswordForm: React.FC<Props> = ({
             <ActionButton onClick={onCancel} variant="outlined">
               Cancel
             </ActionButton>
-          </SpacedContainer>
+          </FlexColumnContainer>
         </Form>
       )}
     </Formik>

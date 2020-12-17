@@ -1,6 +1,6 @@
 import React from "react";
 import { LoginState } from "../../../../pages/LoginPage";
-import { ActionButton, SpacedContainer } from "../../../../components";
+import { ActionButton, FlexColumnContainer } from "../../../../components";
 import { AuthLayout } from "../";
 import { SetsLoginState } from "../../types";
 
@@ -13,12 +13,12 @@ export const Welcome: React.FC<SetsLoginState> = ({ setLoginState }) => {
   };
   return (
     <AuthLayout titleText="Welcome to Pomi!" largeTitle>
-      <SpacedContainer>
+      <FlexColumnContainer>
         <ActionButton onClick={onLogIn}>Log In</ActionButton>
         <ActionButton onClick={onSignUp} variant="outlined">
           Sign Up
         </ActionButton>
-      </SpacedContainer>
+      </FlexColumnContainer>
     </AuthLayout>
   );
 };
