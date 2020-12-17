@@ -11,7 +11,7 @@ import { isExistingOption, OptionType } from "./OptionType";
 export const SearchField = <T extends { title: string }>(
   props: SearchFieldProps<OptionType<T>>
 ): JSX.Element => {
-  const { options, label, name, filterOptions } = props;
+  const { name, label, disabled, options, filterOptions } = props;
   const [field, meta] = useSearchField<T>(name);
 
   type OT = OptionType<T>;
@@ -19,6 +19,7 @@ export const SearchField = <T extends { title: string }>(
   return (
     <Autocomplete
       value={field.value}
+      disabled={disabled}
       onChange={field.onChange}
       filterOptions={filterOptions}
       options={Object.values(options as Record<string, OT>)}
@@ -52,9 +53,10 @@ export const SearchField = <T extends { title: string }>(
 };
 
 export interface SearchFieldProps<OT> {
-  options: Record<string, OT>;
   label: string;
   name: string;
+  disabled?: boolean;
+  options: Record<string, OT>;
   filterOptions: FilterFunction<OT>;
 }
 
