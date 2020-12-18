@@ -4,12 +4,18 @@ import { ActionButton, TimerDisplay, TextField } from "../../components";
 import { Tab, Tabs } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { useAddSession } from "../../hooks";
-import { SessionModel, SessionTypeString } from "../../../shared/types";
+import { SessionTypeString } from "../../../shared/types";
 import { differenceInMilliseconds } from "date-fns";
-import { FlexColumnContainer } from "../../components/SpacedContainer";
+import { FlexColumnContainer } from "../../components";
 import { useHistory } from "react-router-dom";
-import { ProjectField } from "../../features/searchField/ProjectField";
-import { TaskField } from "../../features/searchField/TaskField";
+import {
+  ProjectField,
+  ProjectOptionType,
+} from "../../features/searchField/ProjectField";
+import {
+  TaskField,
+  TaskOptionType,
+} from "../../features/searchField/TaskField";
 
 const timerStartValues = [60 * 25, 60 * 5, 60 * 15];
 
@@ -53,40 +59,62 @@ const LogoutPageButton: React.FC = () => {
   );
 };
 
+interface FormValues {
+  project: ProjectOptionType | null;
+  task: TaskOptionType | null;
+  notes: string;
+  startTimestamp: string;
+}
+
 const TimerPage = () => {
   const [isInProgress, setInProgress] = useState(false);
   const [timerStartValue, setTimerStartValue] = useState(60 * 25);
   const [type, setType] = useState(0);
-
   const addSession = useAddSession();
-
   const tabsClasses = useTabsStyles();
   const tabClasses = useTabStyles();
+
+  const initialValues: FormValues = {
+    project: null,
+    task: null,
+    notes: "",
+    startTimestamp: new Date().toISOString(),
+  };
+
   return (
     <>
       <Formik
-        initialValues={{
-          project: null,
-          task: "",
-          notes: "",
-          startTimestamp: new Date(),
-        }}
+        initialValues={initialValues}
         onSubmit={(values, formikHelpers) => {
           if (!isInProgress) {
-            console.log("timer started");
-            formikHelpers.setFieldValue("startTimestamp", new Date());
+            formikHelpers.setFieldValue(
+              "startTimestamp",
+              new Date().toISOString()
+            );
           } else {
-            const session: SessionModel = {
-              startTimestamp: values.startTimestamp.toISOString(),
-              taskId: values.task,
+            const session = {
+              startTimestamp: values.startTimestamp,
               duration: differenceInMilliseconds(
-                values.startTimestamp,
+                new Date(values.startTimestamp),
                 new Date()
               ),
+              notes: values.notes,
               type: sessionType[type],
             };
-            console.log("timer ended with values:", session);
-            addSession(session);
+
+            console.log(
+              "timer ended with values:",
+              session,
+              values.task,
+              values.project
+            );
+            addSession({
+              session,
+              task: values.task,
+              project: values.project,
+            }).then((result) => {
+              console.log(result);
+            });
             setType((prev) => (prev === 0 ? 1 : 0));
           }
           setInProgress((prev) => !prev);
@@ -98,7 +126,6 @@ const TimerPage = () => {
               classes={tabsClasses}
               value={type}
               onChange={(event, value) => {
-                console.log(value);
                 if (isInProgress) {
                   submitForm().then(() => {
                     const timerType = value % 3;

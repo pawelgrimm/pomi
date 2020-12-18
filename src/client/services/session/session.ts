@@ -1,17 +1,30 @@
 import axios from "axios";
-import { SessionModel } from "../../../shared/types";
+import { ProjectModel, SessionModel, TaskModel } from "../../../shared/types";
 import { validateSession } from "../../../shared/validators";
 import { Method } from "../../../shared/validators/shared";
+import { ProjectOptionType } from "../../features/searchField/ProjectField";
+import { TaskOptionType } from "../../features/searchField/TaskField";
 
-const postSession = (session: SessionModel): Promise<number> => {
-  const validatedSession = validateSession(session);
+export type PostSessionParams = {
+  session: Partial<SessionModel>;
+  project: ProjectOptionType | null;
+  task: TaskOptionType | null;
+};
+
+const postSession = ({
+  session,
+  project,
+  task,
+}: PostSessionParams): Promise<Required<SessionModel>> => {
+  // TODO: Make sure we're not double validating in the useAddSession path
+  const validatedSession = session; // validateSession(session);
   return axios
-    .post("/api/sessions", validatedSession)
-    .then((res) => res?.data?.id);
+    .post("/api/sessions", { session: validatedSession, project, task })
+    .then((res) => res?.data?.session);
 };
 
 const getSession = (id: number): Promise<SessionModel> => {
-  // TODO: Implement Date deserializer
+  // TODO: Implement Date deserializer?
   return axios.get(`/api/sessions/${id}`).then((res) => res?.data);
 };
 
