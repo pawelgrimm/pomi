@@ -42,13 +42,13 @@ router.post("/", async ({ body }, res) => {
   const { userId } = res.locals;
   const { session } = body;
 
-  // Determine if a new task (and project) are needed
   let newTask;
   let newProject;
   let newSession;
   await pool.connect(async (connection) => {
     await connection.transaction(async (transaction) => {
       let taskId;
+      // Determine if a new task (and project) are needed
       ({ newTask, newProject, taskId } = await createNewTaskAndProjectIfNeeded(
         userId,
         body,

@@ -44,7 +44,7 @@ const sessionSchema = Joi.object({
     .trim()
     .allow("session", "break", "long-break")
     .alter(standardFieldAlter),
-  notes: Joi.string().trim().max(NOTES_LENGTH_LIMIT).optional(),
+  notes: Joi.string().trim().allow("").max(NOTES_LENGTH_LIMIT).optional(),
   isRetroAdded: Joi.boolean().alter({
     [Method.CREATE]: (schema) => schema.default(false).optional(),
     [Method.UPDATE]: (schema) => schema.forbidden(),

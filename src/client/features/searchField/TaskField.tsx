@@ -72,4 +72,4 @@ interface TaskFieldProps {
 // TODO: Remove cast to Required<TaskModel>
 type ExistingOption = Required<TaskModel>;
 
-type TaskOptionType = OptionType<ExistingOption>;
+export type TaskOptionType = OptionType<ExistingOption>;
