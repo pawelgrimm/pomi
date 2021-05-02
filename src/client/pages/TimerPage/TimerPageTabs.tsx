@@ -30,31 +30,13 @@ const useTabStyles = makeStyles(
   { name: "MuiTab" }
 );
 
-function changeHandler(timerType: number) {
-  return () => {
-    if (isInProgress) {
-      submitForm().then(() => {
-        const timerType = value % 3;
-        const newTimerValue = timerStartValues[timerType];
-        setTimerStartValue(newTimerValue);
-        setType(timerType);
-      });
-    } else {
-      const timerType = value % 3;
-      const newTimerValue = timerStartValues[timerType];
-      setTimerStartValue(newTimerValue);
-      setType(timerType);
-    }
-  };
-}
-
 interface TimerPageTabsProps {
   type: any;
   isInProgress: boolean;
-  onChangeTabHandler: (value: any) => {};
+  onChangeTabHandler: (value: any) => void;
 }
 
-const TimerPageTabs: React.FC<TimerPageTabsProps> = (props) => {
+export const TimerPageTabs: React.FC<TimerPageTabsProps> = (props) => {
   const { type, onChangeTabHandler } = props;
   const tabsClasses = useTabsStyles();
   const tabClasses = useTabStyles();
