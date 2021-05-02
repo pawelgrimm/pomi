@@ -20,7 +20,8 @@
   },
   "plugins": ["@typescript-eslint", "jest"],
   "rules": {
-    "@typescript-eslint/explicit-function-return-type": "off"
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/consistent-type-definition": "off"
   },
   "root": true
 }

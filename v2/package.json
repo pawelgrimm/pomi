@@ -9,13 +9,18 @@
   "dependencies": {
     "@material-ui/core": "4.11.4",
     "@material-ui/icons": "4.11.2",
+    "@reduxjs/toolkit": "1.5.1",
+    "date-fns": "2.21.1",
     "notistack": "1.0.6",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-router-dom": "5.2.0",
+    "react-simple-timefield": "3.2.3",
     "vite-tsconfig-paths": "3.3.10"
   },
   "devDependencies": {
+    "@testing-library/react": "11.2.6",
+    "@types/jest": "26.0.23",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "4.22.0",
