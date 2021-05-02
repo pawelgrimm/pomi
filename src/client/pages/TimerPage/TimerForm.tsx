@@ -9,40 +9,45 @@ import {
   TimerDisplay,
 } from "../../components";
 import { LogoutPageButton } from "./LogoutPageButton";
-import { Tab, Tabs } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core/styles";
+import { Tab } from "@material-ui/core";
 import { FormValues } from "./TimerPage";
 import { FormikHelpers } from "formik/dist/types";
+import { type } from "os";
+import { TimerPageTabs } from "./TimerPageTabs";
 
 interface TimerFormProps {
   isInProgress: boolean;
-  timerStartValue: number;
+  timerStartValues: number[];
   onSubmitHandler: (
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
   ) => void | Promise<any>;
   initialValues: FormValues;
+  setTimerStartValue: React.Dispatch<React.SetStateAction<number>>;
+  setType: React.Dispatch<React.SetStateAction<number>>;
+  type: number;
 }
 
 const TimerForm: React.FC<TimerFormProps> = (props) => {
   const {
     isInProgress,
-    timerStartValue,
+    timerStartValues,
     onSubmitHandler,
     initialValues,
+    setTimerStartValue,
+    type,
+    setType,
   } = props;
-  const tabsClasses = useTabsStyles();
-  const tabClasses = useTabStyles();
 
   return (
     <>
       <Formik initialValues={initialValues} onSubmit={onSubmitHandler}>
         {({ submitForm, values }) => (
           <Form>
-            <Tabs
-              classes={tabsClasses}
-              value={type}
-              onChange={(event, value) => {
+            <TimerPageTabs
+              type={type}
+              isInProgress={isInProgress}
+              onChangeTabHandler={(value) => {
                 if (isInProgress) {
                   submitForm().then(() => {
                     const timerType = value % 3;
@@ -57,14 +62,7 @@ const TimerForm: React.FC<TimerFormProps> = (props) => {
                   setType(timerType);
                 }
               }}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-            >
-              <Tab label="Session" classes={tabClasses} />
-              <Tab label="Break" classes={tabClasses} />
-              <Tab label="Long Break" classes={tabClasses} />
-            </Tabs>
+            />
             <FlexColumnContainer>
               <ProjectField disabled={isInProgress} />
               <TaskField disabled={isInProgress} />
@@ -77,10 +75,9 @@ const TimerForm: React.FC<TimerFormProps> = (props) => {
                 disabled={false}
               />
               <TimerDisplay
-                timerStartValue={timerStartValue}
+                timerStartValue={timerStartValues[type]}
                 isInProgress={isInProgress}
               />
-
               <ActionButton
                 onClick={() => {
                   submitForm().then();
