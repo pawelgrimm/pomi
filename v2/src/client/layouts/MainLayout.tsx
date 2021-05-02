@@ -12,7 +12,7 @@ type MainLayoutProps = PropsWithChildren<{}> & WithStyles<typeof styles>;
 function MainLayout({ children, classes }: MainLayoutProps) {
   return (
     <div className={classes.root}>
-        <Header/>
+      <Header />
       <div className={classes.mainContent}>{children}</div>
     </div>
   );
