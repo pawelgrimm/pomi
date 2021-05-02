@@ -1,26 +1,48 @@
 import axios from "axios";
-import { ProjectModel, SessionModel, TaskModel } from "../../../shared/types";
+import {
+  ProjectModel,
+  SessionModel,
+  SessionTypeString,
+  TaskModel,
+} from "../../../shared/types";
 import { validateSession } from "../../../shared/validators";
-import { Method } from "../../../shared/validators/shared";
-import { ProjectOptionType } from "../../features/searchField/ProjectField";
-import { TaskOptionType } from "../../features/searchField/TaskField";
+import { Method } from "../../../shared/validators";
 
-export type PostSessionParams = {
-  session: Partial<SessionModel>;
-  project: ProjectOptionType | null;
-  task: TaskOptionType | null;
-};
+export interface NewSessionParams {
+  notes: string;
+  startTimestamp: string;
+  duration: number;
+  type: SessionTypeString;
+  taskId?: string;
+}
+
+export interface NewTaskParams {
+  title: string;
+  projectId?: string;
+}
+
+export interface NewProjectParams {
+  title: string;
+}
+
+export interface PostSessionParams {
+  session: NewSessionParams;
+  task: NewTaskParams | null;
+  project: NewProjectParams | null;
+}
 
 const postSession = ({
   session,
   project,
   task,
-}: PostSessionParams): Promise<Required<SessionModel>> => {
-  // TODO: Make sure we're not double validating in the useAddSession path
-  const validatedSession = session; // validateSession(session);
+}: PostSessionParams): Promise<{
+  session: Required<SessionModel>;
+  task?: Required<TaskModel>;
+  project?: Required<ProjectModel>;
+}> => {
   return axios
-    .post("/api/sessions", { session: validatedSession, project, task })
-    .then((res) => res?.data?.session);
+    .post("/api/sessions", { session, project, task })
+    .then((res) => res?.data);
 };
 
 const getSession = (id: number): Promise<SessionModel> => {
@@ -36,7 +58,7 @@ const patchSession = ({
   id,
   session,
 }: {
-  id: number;
+  id: string;
   session: Partial<SessionModel>;
 }): Promise<boolean> => {
   const validatedSession = validateSession(session, Method.PARTIAL);

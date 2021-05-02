@@ -58,7 +58,7 @@ const EditSessionPage: React.FC<Props> = () => {
   const [session, setSession] = useState<SessionState>(initialState);
 
   const history = useHistory();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
 
   const { isLoading, isError, data, error } = useQuery<SessionModel>(
     ["todo", { id }],
