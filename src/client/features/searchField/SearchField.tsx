@@ -18,6 +18,7 @@ export const SearchField = <T extends { title: string }>(
 
   return (
     <Autocomplete
+      id={name}
       value={field.value}
       disabled={disabled}
       onChange={field.onChange}
@@ -31,15 +32,14 @@ export const SearchField = <T extends { title: string }>(
       handleHomeEndKeys
       autoComplete
       freeSolo
+      fullWidth
       renderInput={(params) => (
         <TextField
           label={label}
-          id={name}
           name={name}
           error={meta.touched && !!meta.error}
           helperText={meta.touched && meta.error}
           variant="filled"
-          fullWidth
           {...params}
         />
       )}

@@ -4,7 +4,6 @@ import { postSession, PostSessionParams } from "../../services/session/session";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useHistory } from "react-router-dom";
 import { SessionModel } from "../../../shared/types";
-import { Method, validateSession } from "../../../shared/validators";
 import { History } from "history";
 import { Button } from "@material-ui/core";
 
@@ -33,28 +32,30 @@ const useAddSession = () => {
   const history = useHistory();
   return async ({ session, project, task }: PostSessionParams) => {
     try {
-      const validatedSession = session; //validateSession(session, Method.CREATE);
       //TODO validate session, project and task
-      const newSession = await addSession({
-        session: validatedSession,
+      const result = await addSession({
+        session,
         project,
         task,
-      }).then((session) => {
-        if (!session) {
+      }).then((result) => {
+        if (!result) {
           throw new Error("No session was created");
         }
-        return session;
+        return result;
       });
 
-      enqueueSnackbar(`New session with id ${newSession.id} was created.`, {
+      enqueueSnackbar(`New session with id ${result.session.id} was created.`, {
         variant: "success",
-        action: editButton(newSession.id, history, closeSnackbar),
+        action: editButton(result.session.id, history, closeSnackbar),
       });
+
+      return result;
     } catch (err) {
       console.log(err);
       enqueueSnackbar(`New session could not be created.`, {
         variant: "error",
       });
+      throw new Error("No session was created");
     }
   };
 };
