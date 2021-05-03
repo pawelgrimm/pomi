@@ -22,6 +22,7 @@
     "paths": {
       "@pages/*": ["./src/client/pages/*"],
       "@components/*": ["./src/client/components/*"],
+      "@components": ["./src/client/components/index"],
       "@features/*": ["./src/client/features/*"],
       "@layouts/*": ["./src/client/layouts/*"],
       "@utils/*": ["./src/shared/utils/*"]

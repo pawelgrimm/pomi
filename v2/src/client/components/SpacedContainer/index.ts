@@ -1,1 +1,1 @@
-export * from "./FlexColumnContainer";
+export { default as FlexColumnContainer } from "./FlexColumnContainer";
