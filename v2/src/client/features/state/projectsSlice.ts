@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ProjectModel } from "../../../shared/types";
+import { ProjectModel } from "@types";
 import { getProjects } from "../../services/project/projectAPI";
 import { PromiseType } from "utility-types";
 

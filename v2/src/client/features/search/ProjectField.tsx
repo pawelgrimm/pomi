@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { createFilterOptions } from "@material-ui/lab";
-import { RootState } from "../../../app/rootReducer";
-import { ProjectModel } from "../../../../shared/types";
+import { RootState } from "@app/rootReducer";
+import { ProjectModel } from "@types";
 import { FilterFunction, SearchField } from "./SearchField";
 import { OptionType } from "./OptionType";
 

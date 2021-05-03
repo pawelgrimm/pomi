@@ -1,4 +1,4 @@
-import { TaskModel } from "../../../shared/types";
+import { TaskModel } from "@types";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getTasks } from "../../services/task/taskAPI";
 import { PromiseType } from "utility-types";
