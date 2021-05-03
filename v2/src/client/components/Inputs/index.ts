@@ -1,5 +1,3 @@
-import DescriptionField from "./DescriptionField";
-import ProjectField from "./ProjectField";
-import TextField from "./TextField";
-
-export { DescriptionField, ProjectField, TextField };
+export { default as DescriptionField } from "./DescriptionField";
+export { default as ProjectField } from "./ProjectField";
+export { default as TextField } from "./TextField";

@@ -5,7 +5,7 @@ import {
   WithStyles,
   withStyles,
 } from "@material-ui/core/styles";
-import Header from "@components/Header";
+import { Header } from "@components";
 
 type MainLayoutProps = PropsWithChildren<{}> & WithStyles<typeof styles>;
 
