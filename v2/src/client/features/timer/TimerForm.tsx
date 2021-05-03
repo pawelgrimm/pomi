@@ -1,34 +1,39 @@
 import React from "react";
-import { ProjectField } from "@features/search/searchField/ProjectField";
-import { TaskField } from "@features/search/searchField/TaskField";
 import { Field, Form, Formik } from "formik";
 import { ActionButton, FlexColumnContainer, TextField } from "@components";
 import TimerDisplay from "./TimerDisplay";
-import { FormValues } from "./TimerPage";
 import { FormikHelpers } from "formik/dist/types";
+import {
+  ProjectField,
+  TaskField,
+  ProjectOptionType,
+  TaskOptionType,
+} from "@features/search";
+import { SessionTypeString } from "@types";
 
+export interface FormValues {
+  project: ProjectOptionType | null;
+  task: TaskOptionType | null;
+  notes: string;
+  startTimestamp: Date;
+  type: SessionTypeString;
+}
 interface TimerFormProps {
   isInProgress: boolean;
-  timerStartValues: number[];
   onSubmitHandler: (
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
-  ) => void | Promise<any>;
+  ) => Promise<any>;
   initialValues: FormValues;
-  setTimerStartValue: React.Dispatch<React.SetStateAction<number>>;
-  setType: React.Dispatch<React.SetStateAction<number>>;
-  type: number;
+  timerStartValue: number;
 }
 
-const TimerForm: React.FC<TimerFormProps> = (props) => {
+function TimerForm(props: TimerFormProps) {
   const {
     isInProgress,
-    timerStartValues,
+    timerStartValue,
     onSubmitHandler,
     initialValues,
-    setTimerStartValue,
-    type,
-    setType,
   } = props;
 
   return (
@@ -36,25 +41,6 @@ const TimerForm: React.FC<TimerFormProps> = (props) => {
       <Formik initialValues={initialValues} onSubmit={onSubmitHandler}>
         {({ submitForm, values }) => (
           <Form>
-            <TimerPageTabs
-              type={type}
-              isInProgress={isInProgress}
-              onChangeTabHandler={(value) => {
-                if (isInProgress) {
-                  submitForm().then(() => {
-                    const timerType = value % 3;
-                    const newTimerValue = timerStartValues[timerType];
-                    setTimerStartValue(newTimerValue);
-                    setType(timerType);
-                  });
-                } else {
-                  const timerType = value % 3;
-                  const newTimerValue = timerStartValues[timerType];
-                  setTimerStartValue(newTimerValue);
-                  setType(timerType);
-                }
-              }}
-            />
             <FlexColumnContainer>
               <ProjectField disabled={isInProgress} />
               <TaskField disabled={isInProgress} />
@@ -67,17 +53,16 @@ const TimerForm: React.FC<TimerFormProps> = (props) => {
                 disabled={false}
               />
               <TimerDisplay
-                timerStartValue={timerStartValues[type]}
+                timerStartValue={timerStartValue}
                 isInProgress={isInProgress}
               />
               <ActionButton
                 onClick={() => {
-                  submitForm().then();
+                  submitForm().catch(() => {});
                 }}
               >
                 {isInProgress ? "Stop" : "Start"}
               </ActionButton>
-              <LogoutPageButton />
             </FlexColumnContainer>
             <div>{JSON.stringify(values, undefined, "\t")}</div>
           </Form>
@@ -85,6 +70,6 @@ const TimerForm: React.FC<TimerFormProps> = (props) => {
       </Formik>
     </>
   );
-};
+}
 
 export default TimerForm;

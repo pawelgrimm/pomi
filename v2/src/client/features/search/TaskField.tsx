@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { createFilterOptions } from "@material-ui/lab";
 import { useFormikContext } from "formik";
-import { RootState } from "../../app/rootReducer";
-import { TaskModel } from "../../../shared/types";
+import { RootState } from "@app/rootReducer";
+import { TaskModel } from "@types";
 import { FilterFunction, SearchField } from "./SearchField";
 import { isExistingOption, isNewOption, OptionType } from "./OptionType";
 
@@ -25,7 +25,7 @@ const createTaskFilter = (
       const projectTasks = options.filter((task) => {
         return isExistingOption(task) ? task.projectId === project.id : false;
       });
-      filtered = filter(projectTasks, params) as TaskOptionType[];
+      filtered = filter(projectTasks, params);
     }
 
     if (params.inputValue !== "") {

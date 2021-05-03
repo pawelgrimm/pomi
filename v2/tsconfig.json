@@ -21,11 +21,12 @@
     "baseUrl": ".",
     "paths": {
       "@pages/*": ["./src/client/pages/*"],
-      "@components/*": ["./src/client/components/*"],
       "@components": ["./src/client/components/index"],
       "@features/*": ["./src/client/features/*"],
-      "@layouts/*": ["./src/client/layouts/*"],
-      "@utils/*": ["./src/shared/utils/*"]
+      "@layouts": ["./src/client/layouts/index"],
+      "@utils/*": ["./src/shared/utils/*"],
+      "@types": ["./src/shared/types/index"],
+      "@app/*": ["./src/client/app/*"]
     }
   },
   "include": ["./src"]

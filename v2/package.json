@@ -19,6 +19,7 @@
     "react-redux": "7.2.4",
     "react-router-dom": "5.2.0",
     "react-simple-timefield": "3.2.3",
+    "utility-types": "3.10.0",
     "vite-tsconfig-paths": "3.3.10"
   },
   "devDependencies": {
