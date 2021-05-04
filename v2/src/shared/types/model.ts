@@ -2,7 +2,7 @@
  * Properties shared by all models in the database
  */
 export interface Model {
-  id?: string;
+  id: string;
   lastModified?: string;
 }
 

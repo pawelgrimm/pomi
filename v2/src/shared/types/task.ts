@@ -4,7 +4,7 @@ import { Model, SyncOptions } from "./model";
  * A row from the tasks table
  */
 export interface TaskModel extends Model {
-  projectId?: string;
+  projectId: string;
   title?: string;
   isCompleted?: boolean;
 }

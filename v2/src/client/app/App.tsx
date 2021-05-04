@@ -3,16 +3,20 @@ import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { AppRouter } from "./router";
 import theme from "./theme";
 import { SnackbarProvider } from "notistack";
+import { store } from "./store";
+import { Provider } from "react-redux";
 
 function App() {
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <SnackbarProvider>
-          <CssBaseline />
-          <AppRouter />
-        </SnackbarProvider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <SnackbarProvider>
+            <CssBaseline />
+            <AppRouter />
+          </SnackbarProvider>
+        </ThemeProvider>
+      </Provider>
     </>
   );
 }

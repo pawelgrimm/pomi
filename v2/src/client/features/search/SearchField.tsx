@@ -37,7 +37,7 @@ export const SearchField = <T extends { title: string }>(
         <TextField
           label={label}
           name={name}
-          error={meta.touched && !!meta.error}
+          error={meta.touched && meta.error !== undefined}
           helperText={meta.touched && meta.error}
           variant="filled"
           {...params}

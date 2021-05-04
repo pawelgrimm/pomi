@@ -3,13 +3,15 @@ import { Field, Form, Formik } from "formik";
 import { ActionButton, FlexColumnContainer, TextField } from "@components";
 import TimerDisplay from "./TimerDisplay";
 import { FormikHelpers } from "formik/dist/types";
+import { v4 as uuid } from "uuid";
 import {
   ProjectField,
   TaskField,
   ProjectOptionType,
   TaskOptionType,
 } from "@features/search";
-import { SessionTypeString } from "@types";
+import { ProjectModel, SessionTypeString } from "@types";
+import { isNewOption } from "@features/search/OptionType";
 
 export interface FormValues {
   project: ProjectOptionType | null;
@@ -20,7 +22,7 @@ export interface FormValues {
 }
 interface TimerFormProps {
   isInProgress: boolean;
-  onSubmitHandler: (
+  onSubmitHandler?: (
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
   ) => Promise<any>;
@@ -36,9 +38,30 @@ function TimerForm(props: TimerFormProps) {
     initialValues,
   } = props;
 
+  const onSubmit: typeof onSubmitHandler =
+    onSubmitHandler ??
+    (async (formValues: FormValues, helpers) => {
+      if (formValues.project == null || formValues.task == null) {
+        console.log("Project or Task is null");
+        return;
+      }
+      if (isNewOption(formValues.project)) {
+        formValues.project = { ...formValues.project, id: uuid() };
+      }
+      if (isNewOption(formValues.task)) {
+        formValues.task = {
+          ...formValues.task,
+          id: uuid(),
+          projectId: (formValues.project as ProjectModel).id,
+        };
+      }
+      console.log(formValues);
+      return await Promise.resolve();
+    });
+
   return (
     <>
-      <Formik initialValues={initialValues} onSubmit={onSubmitHandler}>
+      <Formik initialValues={initialValues} onSubmit={onSubmit}>
         {({ submitForm, values }) => (
           <Form>
             <FlexColumnContainer>
