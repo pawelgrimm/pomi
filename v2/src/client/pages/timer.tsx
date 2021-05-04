@@ -1,11 +1,22 @@
 import React from "react";
 import MainLayout from "../layouts/MainLayout";
-import TimerDisplay from "../features/timer/TimerDisplay";
+import TimerForm, { FormValues } from "@features/timer/TimerForm";
 
 function TimerPage() {
+  const initialValues: FormValues = {
+    project: null,
+    task: null,
+    notes: "",
+    startTimestamp: new Date(),
+    type: "session",
+  };
   return (
     <MainLayout>
-      <TimerDisplay timerStartValue={60 * 60} isInProgress={false} />
+      <TimerForm
+        isInProgress={false}
+        initialValues={initialValues}
+        timerStartValue={10 * 60}
+      />
     </MainLayout>
   );
 }

@@ -1,7 +1,5 @@
 import { TaskModel } from "@types";
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getTasks } from "../../services/task/taskAPI";
-import { PromiseType } from "utility-types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface TasksState {
   data: Record<string, Required<TaskModel>>;
@@ -15,43 +13,15 @@ export const initialTasksState: TasksState = {
   error: null,
 };
 
-export const fetchTasks = createAsyncThunk(
-  "tasks/fetchTasks",
-  async (arg, thunkAPI) => {
-    let tasks;
-    try {
-      tasks = await getTasks();
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.toString());
-    }
-    return tasks;
-  }
-);
-
 const { reducer: tasksReducer } = createSlice({
   name: "tasks",
   initialState: initialTasksState,
-  reducers: {},
-  extraReducers: {
-    [fetchTasks.pending.type]: (state) => {
-      state.loading = true;
-      state.error = null;
+  reducers: {
+    addTask(state, { payload }: PayloadAction<Required<TaskModel>>) {
+      state.data[payload.id] = payload;
     },
-    [fetchTasks.rejected.type]: (state, action: PayloadAction<string>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
-    [fetchTasks.fulfilled.type]: (
-      state,
-      {
-        payload: tasks,
-      }: PayloadAction<PromiseType<ReturnType<typeof getTasks>>>
-    ) => {
-      state.loading = false;
-      state.error = null;
-      tasks.forEach((task) => {
-        state.data[task.id] = task;
-      });
+    editTask(state, { payload }: PayloadAction<TaskModel>) {
+      state.data[payload.id] = { ...state.data[payload.id], ...payload };
     },
   },
 });
