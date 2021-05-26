@@ -30,7 +30,8 @@ const createTaskFilter = (
 
     if (params.inputValue !== "") {
       filtered.push({
-        inputValue: params.inputValue,
+        title: params.inputValue,
+        isNewOption: true,
       });
     }
 
@@ -38,7 +39,7 @@ const createTaskFilter = (
   };
 };
 
-export const TaskField: React.FC<TaskFieldProps> = ({ disabled }) => {
+export function TaskField({ disabled }: TaskFieldProps) {
   const tasks = useSelector(
     (state: RootState) => state.tasks.data as Record<string, ExistingOption>
   );
@@ -63,7 +64,7 @@ export const TaskField: React.FC<TaskFieldProps> = ({ disabled }) => {
       filterOptions={filterTasks}
     />
   );
-};
+}
 
 interface TaskFieldProps {
   disabled?: boolean;

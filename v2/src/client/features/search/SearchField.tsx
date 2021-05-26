@@ -9,12 +9,10 @@ import { isExistingOption, OptionType } from "./OptionType";
  * @param props
  */
 export const SearchField = <T extends { title: string }>(
-  props: SearchFieldProps<OptionType<T>>
+  props: SearchFieldProps<T>
 ): JSX.Element => {
   const { name, label, disabled, options, filterOptions } = props;
   const [field, meta] = useSearchField<T>(name);
-
-  type OT = OptionType<T>;
 
   return (
     <Autocomplete
@@ -23,15 +21,14 @@ export const SearchField = <T extends { title: string }>(
       disabled={disabled}
       onChange={field.onChange}
       filterOptions={filterOptions}
-      options={Object.values(options as Record<string, OT>)}
+      options={Object.values(options)}
       getOptionLabel={(option) =>
-        isExistingOption(option) ? option.title : `* ${option.inputValue}`
+        isExistingOption(option) ? option.title : `* ${option.title}`
       }
       selectOnFocus
       clearOnBlur
       handleHomeEndKeys
       autoComplete
-      freeSolo
       fullWidth
       renderInput={(params) => (
         <TextField
@@ -46,7 +43,7 @@ export const SearchField = <T extends { title: string }>(
       renderOption={(option) =>
         isExistingOption(option)
           ? option.title
-          : `New ${name} "${option.inputValue}"`
+          : `New ${name} "${option.title}"`
       }
     />
   );
@@ -57,7 +54,7 @@ export interface SearchFieldProps<OT> {
   name: string;
   disabled?: boolean;
   options: Record<string, OT>;
-  filterOptions: FilterFunction<OT>;
+  filterOptions: FilterFunction<OptionType<OT>>;
 }
 
 export type FilterFunction<OT> = (
