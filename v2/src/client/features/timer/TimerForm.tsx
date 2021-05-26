@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Field, Form, Formik } from "formik";
 import { ActionButton, FlexColumnContainer, TextField } from "@components";
 import TimerDisplay from "./TimerDisplay";
@@ -13,6 +13,7 @@ import { ProjectModel, SessionTypeString } from "@types";
 import { isNewOption } from "@features/search/OptionType";
 import { useAddProject } from "@features/state/projectsSlice";
 import { useAddTask } from "@features/state/tasksSlice";
+import { differenceInSeconds } from "date-fns";
 
 export interface FormValues {
   project: ProjectOptionType | null;
@@ -22,7 +23,6 @@ export interface FormValues {
   type: SessionTypeString;
 }
 interface TimerFormProps {
-  isInProgress: boolean;
   onSubmitHandler?: (
     values: FormValues,
     formikHelpers: FormikHelpers<FormValues>
@@ -32,12 +32,9 @@ interface TimerFormProps {
 }
 
 function TimerForm(props: TimerFormProps) {
-  const {
-    isInProgress,
-    timerStartValue,
-    onSubmitHandler,
-    initialValues,
-  } = props;
+  const { timerStartValue, onSubmitHandler, initialValues } = props;
+
+  const [isInProgress, setInProgress] = useState(false);
 
   const addProject = useAddProject();
   const addTask = useAddTask();
@@ -45,30 +42,39 @@ function TimerForm(props: TimerFormProps) {
   const onSubmit: typeof onSubmitHandler =
     onSubmitHandler ??
     (async (formValues: FormValues, helpers) => {
-      if (formValues.project == null || formValues.task == null) {
-        console.log("Project or Task is null");
-        return;
-      }
-      let project = formValues.project;
-      if (isNewOption(formValues.project)) {
-        await addProject(formValues.project, (newProject) => {
-          project = newProject;
-        });
-      }
-      let task = formValues.task;
-      if (isNewOption(formValues.task)) {
-        await addTask(
-          {
-            projectId: (project as ProjectModel).id,
-            ...formValues.task,
-          },
-          (newTask) => {
-            task = newTask;
-          }
+      if (!isInProgress) {
+        if (formValues.project == null || formValues.task == null) {
+          console.log("Project or Task is null");
+          return;
+        }
+        let project = formValues.project;
+        if (isNewOption(formValues.project)) {
+          await addProject(formValues.project, (newProject) => {
+            project = newProject;
+          });
+        }
+        let task = formValues.task;
+        if (isNewOption(formValues.task)) {
+          await addTask(
+            {
+              projectId: (project as ProjectModel).id,
+              ...formValues.task,
+            },
+            (newTask) => {
+              task = newTask;
+            }
+          );
+        }
+        helpers.setFieldValue("project", project);
+        helpers.setFieldValue("task", task);
+        setInProgress(true);
+      } else {
+        setInProgress(false);
+        console.log(
+          "elapsed time",
+          differenceInSeconds(new Date(), formValues.startTimestamp)
         );
       }
-      helpers.setFieldValue("project", project);
-      helpers.setFieldValue("task", task);
     });
 
   return (
