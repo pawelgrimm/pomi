@@ -12,20 +12,21 @@ import { isNewOption, OptionType } from "./OptionType";
  * A wrapper around Formik's useField that patches the onChange function
  * @param name
  */
-export function useSearchField<T extends { title: string }>(
+export function useSearchField<T extends {}>(
   name: string
-): UseSearchFieldReturnType<OptionType<T> | null> {
-  type OT = OptionType<T>;
-
-  const [field, meta, helper] = useField<OT | null>(name);
+): UseSearchFieldReturnType<OptionType<T>> {
+  const [field, meta, helper] = useField<ExtendedOptionType<OptionType<T>>>(
+    name
+  );
   const { setValue } = helper;
 
-  const onChange: OnChangeFunction<OT> = (event, newValue) => {
+  const onChange: OnChangeFunction<OptionType<T>> = (event, newValue) => {
     if (newValue === null || typeof newValue === "string") {
       setValue(null);
     } else if (isNewOption(newValue)) {
       setValue({
-        inputValue: newValue.inputValue,
+        title: newValue.title,
+        isNewOption: true,
       });
     } else {
       setValue(newValue);
@@ -35,13 +36,15 @@ export function useSearchField<T extends { title: string }>(
   return [{ ...field, onChange }, meta, helper];
 }
 
-type UseSearchFieldReturnType<OTN> = [
+export type ExtendedOptionType<OT> = OT | null;
+
+type UseSearchFieldReturnType<OT> = [
   Overwrite<
-    FieldInputProps<OTN>,
-    { onChange: UseAutocompleteProps<OTN, false, false, true>["onChange"] }
+    FieldInputProps<ExtendedOptionType<OT>>,
+    { onChange: UseAutocompleteProps<OT, false, false, true>["onChange"] }
   >,
-  FieldMetaProps<OTN>,
-  FieldHelperProps<OTN>
+  FieldMetaProps<ExtendedOptionType<OT>>,
+  FieldHelperProps<ExtendedOptionType<OT>>
 ];
 
 type OnChangeFunction<OT> = UseAutocompleteProps<

@@ -4,7 +4,7 @@ import { Model, SyncOptions } from "./model";
  * A row from the projects table
  */
 export interface ProjectModel extends Model {
-  title?: string;
+  title: string;
   isArchived?: boolean;
 }
 
