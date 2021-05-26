@@ -3,7 +3,6 @@ import { Field, Form, Formik } from "formik";
 import { ActionButton, FlexColumnContainer, TextField } from "@components";
 import TimerDisplay from "./TimerDisplay";
 import { FormikHelpers } from "formik/dist/types";
-import { v4 as uuid } from "uuid";
 import {
   ProjectField,
   TaskField,
@@ -12,6 +11,8 @@ import {
 } from "@features/search";
 import { ProjectModel, SessionTypeString } from "@types";
 import { isNewOption } from "@features/search/OptionType";
+import { useAddProject } from "@features/state/projectsSlice";
+import { useAddTask } from "@features/state/tasksSlice";
 
 export interface FormValues {
   project: ProjectOptionType | null;
@@ -38,6 +39,9 @@ function TimerForm(props: TimerFormProps) {
     initialValues,
   } = props;
 
+  const addProject = useAddProject();
+  const addTask = useAddTask();
+
   const onSubmit: typeof onSubmitHandler =
     onSubmitHandler ??
     (async (formValues: FormValues, helpers) => {
@@ -45,18 +49,26 @@ function TimerForm(props: TimerFormProps) {
         console.log("Project or Task is null");
         return;
       }
+      let project = formValues.project;
       if (isNewOption(formValues.project)) {
-        formValues.project = { ...formValues.project, id: uuid() };
+        await addProject(formValues.project, (newProject) => {
+          project = newProject;
+        });
       }
+      let task = formValues.task;
       if (isNewOption(formValues.task)) {
-        formValues.task = {
-          ...formValues.task,
-          id: uuid(),
-          projectId: (formValues.project as ProjectModel).id,
-        };
+        await addTask(
+          {
+            projectId: (project as ProjectModel).id,
+            ...formValues.task,
+          },
+          (newTask) => {
+            task = newTask;
+          }
+        );
       }
-      console.log(formValues);
-      return await Promise.resolve();
+      helpers.setFieldValue("project", project);
+      helpers.setFieldValue("task", task);
     });
 
   return (

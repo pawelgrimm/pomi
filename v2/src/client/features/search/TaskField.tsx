@@ -40,9 +40,7 @@ const createTaskFilter = (
 };
 
 export function TaskField({ disabled }: TaskFieldProps) {
-  const tasks = useSelector(
-    (state: RootState) => state.tasks.data as Record<string, ExistingOption>
-  );
+  const tasks = useSelector((state: RootState) => state.tasks.data);
 
   const {
     values: { project },
@@ -56,7 +54,7 @@ export function TaskField({ disabled }: TaskFieldProps) {
   }, [setFieldValue, project]);
 
   return (
-    <SearchField<ExistingOption>
+    <SearchField<TaskModel>
       name="task"
       label="Task"
       disabled={disabled}
@@ -67,10 +65,7 @@ export function TaskField({ disabled }: TaskFieldProps) {
 }
 
 interface TaskFieldProps {
-  disabled?: boolean;
+  disabled: boolean;
 }
 
-// TODO: Remove cast to Required<TaskModel>
-type ExistingOption = Required<TaskModel>;
-
-export type TaskOptionType = OptionType<ExistingOption>;
+export type TaskOptionType = OptionType<TaskModel>;
