@@ -5,7 +5,7 @@ import { Model, SyncOptions } from "./model";
  */
 export interface TaskModel extends Model {
   projectId: string;
-  title?: string;
+  title: string;
   isCompleted?: boolean;
 }
 
