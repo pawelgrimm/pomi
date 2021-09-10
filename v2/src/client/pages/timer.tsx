@@ -12,11 +12,7 @@ function TimerPage() {
   };
   return (
     <MainLayout>
-      <TimerForm
-        isInProgress={false}
-        initialValues={initialValues}
-        timerStartValue={10 * 60}
-      />
+      <TimerForm initialValues={initialValues} timerStartValue={10 * 60} />
     </MainLayout>
   );
 }
