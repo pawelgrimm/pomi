@@ -9,7 +9,7 @@
 - [Instructions](#instructions)
 
 ## About
-Pomi is a web application designed for tracking time spent using a timeboxing methodology (e.g. Pomodoro Technique™). 
+Pomi is a work-in-progress web application designed for tracking time spent using a timeboxing methodology (e.g. Pomodoro Technique™). 
 
 See the [Documentation](#documentation) section for in-depth functional and technical specifications, or check out the [Functionality](#key-functionality) and [Technologies](#technologies-used) sections for a quick summary.
 
@@ -51,7 +51,7 @@ It's **not recommended** since the app is not yet released, but if you'd like to
 
 ## Instructions
 
-**NOTE**: Version 1 of this application has not yet been released. For now, Use the `feature/add-database` branch to see a working prototype or the `update-models` branch to see the current development state.
+**NOTE**: No guarantees provided - this application may fail to build during this pre-release stage.
 
 ### To install
 1. Install [Node.js](https://nodejs.org/en/), [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable), and [PostgreSQL](https://www.postgresql.org/download/)
