@@ -3,7 +3,7 @@
     "target": "ESNext",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "types": ["vite/client", "jest"],
-    "allowJs": false,
+    "allowJs": true,
     "skipLibCheck": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
@@ -29,5 +29,6 @@
       "@app/*": ["./src/client/app/*"]
     }
   },
-  "include": ["./src"]
+  "include": ["./src"],
+  "exclude": ["./**/*.test.ts"]
 }

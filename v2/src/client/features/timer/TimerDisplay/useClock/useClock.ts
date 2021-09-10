@@ -1,21 +1,45 @@
-import { useCallback, useEffect, useState } from "react";
-import createClockWorker, { subscribeToWorker } from "./clockWorker";
-import { startClock, stopClock } from "./actions";
+import { useEffect, useState } from "react";
+import ClockWorker from "./clockWorker-script?worker";
 
-const { worker, dispatch } = createClockWorker();
+let worker: Worker;
+
+// @ts-expect-error
+if (!window.clockWorker) {
+  // Workaround for Firefox not supporting workers as modules (not a problem in prod due to bundling)
+  // @ts-expect-error
+  if (process.env.NODE_ENV === "development") {
+    // @ts-expect-error
+    window.clockWorker = new Worker(
+      "/src/client/features/timer/TimerDisplay/useClock/clockWorker-script.js"
+    );
+  } else {
+    // @ts-expect-error
+    window.clockWorker = new ClockWorker();
+  }
+}
+
+console.log("useClock.ts");
 
 const useClock = (interval: number = 1000) => {
-  const start = useCallback(() => dispatch(startClock(interval)), [interval]);
-  const stop = useCallback(() => dispatch(stopClock()), []);
   const [ticks, setTicks] = useState(0);
 
+  console.log("useClock");
   useEffect(() => {
-    return subscribeToWorker(worker, () => {
-      setTicks((prev) => (prev + 1) % Number.MAX_SAFE_INTEGER);
-    });
+    const callback = () => {
+      setTicks((prev) => prev++);
+      console.log("heard tick", Date.now());
+    };
+    // @ts-expect-error
+    window.clockWorker.addEventListener("message", callback);
+
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // @ts-expect-error
+      window.clockWorker.removeEventListener("message", callback);
+    };
   }, []);
 
-  return { start, stop, ticks };
+  return { ticks };
 };
 
 export default useClock;

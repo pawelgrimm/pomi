@@ -18,26 +18,14 @@ function TimerDisplay({
   timerStartValue,
 }: TimerDisplayProps) {
   const [time, setTime] = useState(timerStartValue + 2);
-  const { start, stop, ticks } = useClock();
+  const { ticks } = useClock();
 
-  useEffect(() => {
-    if (isInProgress) {
-      // Timer was started
-      start();
-    } else {
-      // Timer was stopped
-      stop();
-      setTime(timerStartValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInProgress]);
-
+  // Reset the timer if it's stopped
   useEffect(() => {
     if (!isInProgress) {
       setTime(timerStartValue);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [timerStartValue]);
+  }, [isInProgress, timerStartValue]);
 
   useEffect(() => {
     if (isInProgress) {
@@ -50,16 +38,15 @@ function TimerDisplay({
   if (isInProgress) {
     return <TimeInput disabled value={formattedTime} />;
   }
-  return (
-    <TimeField
-      value={formattedTime}
-      onChange={(e, value) => {
-        setTime(formattedTimeToSeconds(value));
-      }}
-      input={<TimeInput />}
-      showSeconds
-    />
-  );
+  return null;
+  // <TimeField
+  //   value={formattedTime}
+  //   onChange={(e, value) => {
+  //     setTime(formattedTimeToSeconds(value));
+  //   }}
+  //   input={<TimeInput />}
+  //   showSeconds
+  // />
 }
 
 export default TimerDisplay;
