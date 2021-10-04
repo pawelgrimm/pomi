@@ -14,6 +14,8 @@ import { isNewOption } from "@features/search/OptionType";
 import { useAddProject } from "@features/state/projectsSlice";
 import { useAddTask } from "@features/state/tasksSlice";
 import { differenceInSeconds } from "date-fns";
+import { useSelector } from "react-redux";
+import { RootState } from "@app/rootReducer";
 
 export interface FormValues {
   project: ProjectOptionType | null;
@@ -32,6 +34,8 @@ interface TimerFormProps {
 }
 
 function TimerForm(props: TimerFormProps) {
+  const projects = useSelector((state: RootState) => state.projects.data);
+  const tasks = useSelector((state: RootState) => state.tasks.data);
   const { timerStartValue, onSubmitHandler, initialValues } = props;
 
   const [isInProgress, setInProgress] = useState(false);
@@ -105,7 +109,18 @@ function TimerForm(props: TimerFormProps) {
                 {isInProgress ? "Stop" : "Start"}
               </ActionButton>
             </FlexColumnContainer>
-            <div>{JSON.stringify(values, undefined, "\t")}</div>
+            <div>
+              <h3>Form Values</h3>
+              <p>{JSON.stringify(values, undefined, "\t")}</p>
+            </div>
+            <div>
+              <h3>Projects</h3>
+              <p>{JSON.stringify(projects, undefined, "\t")}</p>
+            </div>
+            <div>
+              <h3>Tasks</h3>
+              <p>{JSON.stringify(tasks, undefined, "\t")}</p>
+            </div>
           </Form>
         )}
       </Formik>
