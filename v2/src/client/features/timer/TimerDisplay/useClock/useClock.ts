@@ -18,22 +18,17 @@ if (!window.clockWorker) {
   }
 }
 
-console.log("useClock.ts");
-
 const useClock = (interval: number = 1000) => {
   const [ticks, setTicks] = useState(0);
 
-  console.log("useClock");
   useEffect(() => {
     const callback = () => {
-      setTicks((prev) => prev++);
-      console.log("heard tick", Date.now());
+      setTicks((prev) => prev + 1);
     };
     // @ts-expect-error
     window.clockWorker.addEventListener("message", callback);
 
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
       // @ts-expect-error
       window.clockWorker.removeEventListener("message", callback);
     };
