@@ -1,12 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
 import { AppRouter } from "./router";
 import theme from "./theme";
 import { SnackbarProvider } from "notistack";
-import { persistor, store } from "./store";
-import { Provider, useDispatch } from "react-redux";
-import { RootState } from "@app/rootReducer";
-import { initialize } from "@features/state/projectsSlice";
+import { persistor, store } from "@infra/store";
+import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 
 function App() {
