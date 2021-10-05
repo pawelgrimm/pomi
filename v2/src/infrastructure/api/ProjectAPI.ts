@@ -31,10 +31,11 @@ export class ProjectAPI {
   async create(request: CreateProjectDTO) {
     const newProject = new Project(request.name, uuid());
     this._projects[newProject.id] = newProject;
-    this.save();
+    await this.save();
+    return newProject;
   }
 
-  protected load(): SerializeProjectDTO[] {
+  private load(): SerializeProjectDTO[] {
     const rawStorage = window.localStorage.getItem(PROJECT_STORAGE_KEY) ?? "";
     try {
       return JSON.parse(rawStorage);
@@ -43,7 +44,7 @@ export class ProjectAPI {
     }
   }
 
-  protected save() {
+  private async save() {
     const serializedProjects = this.serializer.serialize(this._projects);
     window.localStorage.setItem(
       PROJECT_STORAGE_KEY,
