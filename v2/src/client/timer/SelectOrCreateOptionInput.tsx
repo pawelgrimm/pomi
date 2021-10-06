@@ -115,6 +115,8 @@ export function SelectOrCreateOptionInput<TOption, TDefault>({
         clearOnBlur
         handleHomeEndKeys
         freeSolo
+        autoHighlight
+        autoSelect
         renderInput={(params) => <TextField {...params} label={label} />}
       />
       <Dialog open={open} onClose={handleClose}>
