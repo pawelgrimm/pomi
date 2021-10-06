@@ -6,21 +6,32 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import TextField from "@material-ui/core/TextField";
 import React from "react";
-import { SelectOrCreateOptionInput } from "./SelectOrCreateOptionInput";
+import {
+  HandleOptionCallback,
+  SelectOrCreateOptionInput,
+} from "./SelectOrCreateOptionInput";
 
-export default function ProjectInput() {
-  const projects = useProjects();
-  const options = projects.getAll();
+interface Props {
+  createProject: ReturnType<typeof useProjects>["create"];
+  projects: Project[];
+  handleProjectSelected?: HandleOptionCallback<Project>;
+}
 
+export default function ProjectInput({
+  createProject,
+  projects,
+  handleProjectSelected = () => {},
+}: Props) {
   return (
     <SelectOrCreateOptionInput<Project, CreateProjectDTO>
       id="project-input"
       label="Project"
-      options={options}
+      options={projects}
       defaultOptionValue={new CreateProjectDTO("")}
-      createNewOption={projects.create}
+      createNewOption={createProject}
       getNewOptionDTO={(name) => new CreateProjectDTO(name)}
       getOptionLabel={(option: Project) => option.name}
+      handleOptionSelected={handleProjectSelected}
     >
       {(dialogValue, setDialogValue) => (
         <>

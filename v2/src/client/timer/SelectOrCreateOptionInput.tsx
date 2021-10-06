@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useState } from "react";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -36,7 +36,30 @@ interface SelectOrCreateOptionsInputProps<TOption, TDefault> {
   ) => void;
   getNewOptionDTO: (name: string) => TDefault;
   getOptionLabel: (option: TOption) => string;
+  handleOptionSelected: HandleOptionCallback<TOption>;
+  disabled?: boolean;
   children: childrenRenderFunction<TDefault>;
+}
+
+export type OptionState<T> = T | null;
+
+export type HandleOptionCallback<TOption> = (
+  selectedOption: OptionState<TOption>
+) => void;
+
+function useOptionState<TOption>(
+  callback: HandleOptionCallback<TOption> = () => {}
+): [OptionState<TOption>, HandleOptionCallback<OptionState<TOption>>] {
+  const [value, setValue] = useState<OptionState<TOption>>(null);
+  const newCallback = useCallback(
+    (newValue: OptionState<TOption>) => {
+      setValue(newValue);
+      callback(newValue);
+    },
+    [callback]
+  );
+
+  return [value, newCallback];
 }
 
 export function SelectOrCreateOptionInput<TOption, TDefault>({
@@ -47,10 +70,12 @@ export function SelectOrCreateOptionInput<TOption, TDefault>({
   createNewOption,
   getNewOptionDTO,
   getOptionLabel,
+  handleOptionSelected,
+  disabled = false,
   children,
 }: SelectOrCreateOptionsInputProps<TOption, TDefault>) {
-  const [value, setValue] = React.useState<OptionType<TOption> | null>(null);
-  const [open, toggleOpen] = React.useState(false);
+  const [value, setValue] = useOptionState<TOption>(handleOptionSelected);
+  const [open, toggleOpen] = useState(false);
 
   const handleClose = () => {
     setDialogValue(defaultOptionValue);
@@ -72,6 +97,7 @@ export function SelectOrCreateOptionInput<TOption, TDefault>({
   return (
     <React.Fragment>
       <Autocomplete
+        disabled={disabled}
         value={value}
         onChange={(event, newValue) => {
           if (typeof newValue === "string") {
@@ -112,7 +138,7 @@ export function SelectOrCreateOptionInput<TOption, TDefault>({
           return getOptionLabel(option);
         }}
         selectOnFocus
-        clearOnBlur
+        blurOnSelect={false}
         handleHomeEndKeys
         freeSolo
         autoHighlight
