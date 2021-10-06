@@ -101,11 +101,8 @@ export function SelectOrCreateOptionInput<TOption, TDefault>({
         value={value}
         onChange={(event, newValue) => {
           if (typeof newValue === "string") {
-            // timeout to avoid instant validation of the dialog's form.
-            setTimeout(() => {
-              toggleOpen(true);
-              setDialogValue(getNewOptionDTO(newValue));
-            });
+            // We end up here after blurring when an existing option is selected,
+            // but at that point, we've already called setValue the way we wanted
           } else if (isNewOption<TOption>(newValue)) {
             toggleOpen(true);
             setDialogValue(getNewOptionDTO(newValue.inputValue));
