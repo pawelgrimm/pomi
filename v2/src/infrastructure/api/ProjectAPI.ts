@@ -29,7 +29,7 @@ export class ProjectAPI {
   }
 
   async create(request: CreateProjectDTO) {
-    const newProject = new Project(request.name, uuid());
+    const newProject = new Project(uuid(), request.name);
     this._projects[newProject.id] = newProject;
     await this.save();
     return newProject;

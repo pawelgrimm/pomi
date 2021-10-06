@@ -9,13 +9,13 @@ import {
   ProjectOptionType,
   TaskOptionType,
 } from "@features/search";
-import { ProjectModel, SessionTypeString } from "@types";
+import { SessionTypeString } from "@types";
 import { isNewOption } from "@features/search/OptionType";
-import { useAddProject } from "@features/state/projectsSlice";
 import { useAddTask } from "@features/state/tasksSlice";
 import { differenceInSeconds } from "date-fns";
 import { useSelector } from "react-redux";
 import { RootState } from "@app/rootReducer";
+import { useAddProject } from "@features/state/projectsSlice";
 
 export interface FormValues {
   project: ProjectOptionType | null;
@@ -35,42 +35,42 @@ interface TimerFormProps {
 
 function TimerForm(props: TimerFormProps) {
   const projects = useSelector((state: RootState) => state.projects.data);
-  const tasks = useSelector((state: RootState) => state.tasks.data);
+  // const tasks = useSelector((state: RootState) => state.tasks.data);
   const { timerStartValue, onSubmitHandler, initialValues } = props;
 
   const [isInProgress, setInProgress] = useState(false);
 
   const addProject = useAddProject();
-  const addTask = useAddTask();
+  // const addTask = useAddTask();
 
   const onSubmit: typeof onSubmitHandler =
     onSubmitHandler ??
     (async (formValues: FormValues, helpers) => {
       if (!isInProgress) {
-        if (formValues.project == null || formValues.task == null) {
-          console.log("Project or Task is null");
-          return;
-        }
+        // if (formValues.project == null || formValues.task == null) {
+        //   console.log("Project or Task is null");
+        //   return;
+        // }
         let project = formValues.project;
         if (isNewOption(formValues.project)) {
           await addProject(formValues.project, (newProject) => {
             project = newProject;
           });
         }
-        let task = formValues.task;
-        if (isNewOption(formValues.task)) {
-          await addTask(
-            {
-              projectId: (project as ProjectModel).id,
-              ...formValues.task,
-            },
-            (newTask) => {
-              task = newTask;
-            }
-          );
-        }
+        // let task = formValues.task;
+        // if (isNewOption(formValues.task)) {
+        //   await addTask(
+        //     {
+        //       projectId: (project as ProjectModel).id,
+        //       ...formValues.task,
+        //     },
+        //     (newTask) => {
+        //       task = newTask;
+        //     }
+        //   );
+        // }
         helpers.setFieldValue("project", project);
-        helpers.setFieldValue("task", task);
+        // helpers.setFieldValue("task", task);
         setInProgress(true);
       } else {
         setInProgress(false);
@@ -88,7 +88,7 @@ function TimerForm(props: TimerFormProps) {
           <Form>
             <FlexColumnContainer>
               <ProjectField disabled={isInProgress} />
-              <TaskField disabled={isInProgress} />
+              {/* <TaskField disabled={isInProgress} /> */}
               <Field
                 component={TextField}
                 multiline
@@ -117,10 +117,10 @@ function TimerForm(props: TimerFormProps) {
               <h3>Projects</h3>
               <p>{JSON.stringify(projects, undefined, "\t")}</p>
             </div>
-            <div>
-              <h3>Tasks</h3>
-              <p>{JSON.stringify(tasks, undefined, "\t")}</p>
-            </div>
+            {/* <div> */}
+            {/*  <h3>Tasks</h3> */}
+            {/*  <p>{JSON.stringify(tasks, undefined, "\t")}</p> */}
+            {/* </div> */}
           </Form>
         )}
       </Formik>

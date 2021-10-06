@@ -12,6 +12,7 @@ function TimerPage() {
   };
   return (
     <MainLayout>
+      Test
       <TimerForm initialValues={initialValues} timerStartValue={10 * 60} />
     </MainLayout>
   );

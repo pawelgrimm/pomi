@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import TimerPage from "@pages/timer";
+import TimerPage from "src/client/timer/TimerPage";
 
 export const AppRouter = () => {
   return (

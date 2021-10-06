@@ -1,3 +1,7 @@
+export interface CreateProjectDTO {
+  name: string;
+}
+
 export class CreateProjectDTO {
   constructor(public name: string) {}
 }
