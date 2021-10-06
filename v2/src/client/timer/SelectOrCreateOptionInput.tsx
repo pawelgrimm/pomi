@@ -1,61 +1,73 @@
 import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import Autocomplete, {
   createFilterOptions,
 } from "@material-ui/lab/Autocomplete";
-import Project from "@core/projectAggregate/Project";
-import { CreateProjectDTO } from "@core/interfaces/ProjectDTOs";
-import useProjects from "../../application/useProjects";
-
-const filter = createFilterOptions<ProjectOptionType>();
 
 interface NewOption {
   title: string;
   inputValue: string;
 }
 
-type ProjectOptionType = Project | NewOption;
+type OptionType<T> = T | NewOption;
 
-function isNewOption(option: ProjectOptionType | null): option is NewOption {
+function isNewOption<T>(option: OptionType<T> | null): option is NewOption {
   return option == null
     ? false
     : Object.prototype.hasOwnProperty.call(option, "inputValue");
 }
 
-interface SelectOrCreateOptionsInputProps {
-  options: ProjectOptionType[];
-  defaultProjectValue: CreateProjectDTO;
+type childrenRenderFunction<TDefault> = (
+  dialogOption: TDefault,
+  setDialogOption: (newValue: TDefault) => void
+) => JSX.Element;
+
+interface SelectOrCreateOptionsInputProps<TOption, TDefault> {
+  id: string;
+  label: string;
+  options: Array<OptionType<TOption>>;
+  defaultOptionValue: TDefault;
+  createNewOption: (
+    request: TDefault,
+    callback: (newOption: TOption) => void
+  ) => void;
+  getNewOptionDTO: (name: string) => TDefault;
+  getOptionLabel: (option: TOption) => string;
+  children: childrenRenderFunction<TDefault>;
 }
 
-export function SelectOrCreateOptionInput({
+export function SelectOrCreateOptionInput<TOption, TDefault>({
+  id,
+  label,
   options,
-  defaultProjectValue,
-}: SelectOrCreateOptionsInputProps) {
-  const [value, setValue] = React.useState<ProjectOptionType | null>(null);
+  defaultOptionValue,
+  createNewOption,
+  getNewOptionDTO,
+  getOptionLabel,
+  children,
+}: SelectOrCreateOptionsInputProps<TOption, TDefault>) {
+  const [value, setValue] = React.useState<OptionType<TOption> | null>(null);
   const [open, toggleOpen] = React.useState(false);
 
   const handleClose = () => {
-    setDialogValue(defaultProjectValue);
+    setDialogValue(defaultOptionValue);
     toggleOpen(false);
   };
 
-  const [dialogValue, setDialogValue] = React.useState(defaultProjectValue);
-
-  const projects = useProjects();
+  const [dialogValue, setDialogValue] = React.useState(defaultOptionValue);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    projects.create(dialogValue, (newProject) => {
+    createNewOption(dialogValue, (newProject) => {
       setValue(newProject);
       handleClose();
     });
   };
+
+  const filter = createFilterOptions<OptionType<TOption>>();
 
   return (
     <React.Fragment>
@@ -66,11 +78,11 @@ export function SelectOrCreateOptionInput({
             // timeout to avoid instant validation of the dialog's form.
             setTimeout(() => {
               toggleOpen(true);
-              setDialogValue(new CreateProjectDTO(newValue));
+              setDialogValue(getNewOptionDTO(newValue));
             });
-          } else if (isNewOption(newValue)) {
+          } else if (isNewOption<TOption>(newValue)) {
             toggleOpen(true);
-            setDialogValue(new CreateProjectDTO(newValue.inputValue));
+            setDialogValue(getNewOptionDTO(newValue.inputValue));
           } else {
             setValue(newValue);
           }
@@ -81,13 +93,13 @@ export function SelectOrCreateOptionInput({
           if (params.inputValue !== "") {
             filtered.push({
               inputValue: params.inputValue,
-              title: `Create new "${params.inputValue}" Project`,
+              title: `Create new "${params.inputValue}" ${label}`,
             });
           }
 
           return filtered;
         }}
-        id="project-input"
+        id={id}
         options={options}
         getOptionLabel={(option) => {
           // e.g value selected with enter, right from the input
@@ -97,38 +109,17 @@ export function SelectOrCreateOptionInput({
           if (isNewOption(option)) {
             return option.title;
           }
-          return option.name;
+          return getOptionLabel(option);
         }}
         selectOnFocus
         clearOnBlur
         handleHomeEndKeys
-        // renderOption={(props, option) => <li {...props}>{option.title}</li>}
         freeSolo
-        renderInput={(params) => <TextField {...params} label="Project" />}
+        renderInput={(params) => <TextField {...params} label={label} />}
       />
       <Dialog open={open} onClose={handleClose}>
         <form onSubmit={handleSubmit}>
-          <DialogTitle>Create a new Project</DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              Would you like to create a new Project?
-            </DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="name"
-              value={dialogValue.name}
-              onChange={(event) =>
-                setDialogValue({
-                  ...dialogValue,
-                  name: event.target.value,
-                })
-              }
-              label="name"
-              type="text"
-              variant="standard"
-            />
-          </DialogContent>
+          {children(dialogValue, setDialogValue)}
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
             <Button type="submit">Create</Button>
@@ -136,19 +127,5 @@ export function SelectOrCreateOptionInput({
         </form>
       </Dialog>
     </React.Fragment>
-  );
-}
-
-export default function SelectOrCreateOptionInputContainer() {
-  const projects = useProjects();
-  const options = projects.getAll();
-
-  return (
-    <>
-      <SelectOrCreateOptionInput
-        options={options}
-        defaultProjectValue={new CreateProjectDTO("")}
-      />
-    </>
   );
 }

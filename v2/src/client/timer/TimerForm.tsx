@@ -1,8 +1,8 @@
 import React from "react";
-import SelectOrCreateOptionInput from "./SelectOrCreateOptionInput";
+import ProjectInput from "./ProjectInput";
 
 function TimerForm() {
-  return <SelectOrCreateOptionInput />;
+  return <ProjectInput />;
 }
 
 export default TimerForm;
