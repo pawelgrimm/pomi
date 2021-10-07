@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import TimeField from "react-simple-timefield";
 import useClock from "./useClock";
 import {
   formattedTimeToSeconds,
   secondsToFormattedTime,
 } from "@utils/time/time";
 import TimeInput from "./TimeInput";
+import TimeField from "react-simple-timefield";
 
 export interface TimerDisplayProps {
   timerStartValue: number;
@@ -38,15 +38,16 @@ function TimerDisplay({
   if (isInProgress) {
     return <TimeInput disabled value={formattedTime} />;
   }
-  return null;
-  // <TimeField
-  //   value={formattedTime}
-  //   onChange={(e, value) => {
-  //     setTime(formattedTimeToSeconds(value));
-  //   }}
-  //   input={<TimeInput />}
-  //   showSeconds
-  // />
+  return (
+    <TimeField
+      value={formattedTime}
+      onChange={(e, value) => {
+        setTime(formattedTimeToSeconds(value));
+      }}
+      input={<TimeInput />}
+      showSeconds
+    />
+  );
 }
 
 export default TimerDisplay;

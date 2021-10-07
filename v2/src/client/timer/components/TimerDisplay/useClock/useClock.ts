@@ -1,16 +1,14 @@
 import { useEffect, useState } from "react";
 import ClockWorker from "./clockWorker-script?worker";
 
-let worker: Worker;
-
 // @ts-expect-error
-if (!window.clockWorker) {
+if (window.clockWorker == null) {
   // Workaround for Firefox not supporting workers as modules (not a problem in prod due to bundling)
   // @ts-expect-error
   if (process.env.NODE_ENV === "development") {
     // @ts-expect-error
     window.clockWorker = new Worker(
-      "/src/client/features/timer/TimerDisplay/useClock/clockWorker-script.js"
+      "/src/client/timer/components/TimerDisplay/useClock/clockWorker-script.js"
     );
   } else {
     // @ts-expect-error
