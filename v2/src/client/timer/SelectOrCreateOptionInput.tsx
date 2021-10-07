@@ -28,6 +28,8 @@ type childrenRenderFunction<TDefault> = (
 interface SelectOrCreateOptionsInputProps<TOption, TDefault> {
   id: string;
   label: string;
+  value: OptionState<TOption>;
+  setValue: (newValue: OptionState<TOption>) => void;
   options: Array<OptionType<TOption>>;
   defaultOptionValue: TDefault;
   createNewOption: (
@@ -36,7 +38,6 @@ interface SelectOrCreateOptionsInputProps<TOption, TDefault> {
   ) => void;
   getNewOptionDTO: (name: string) => TDefault;
   getOptionLabel: (option: TOption) => string;
-  handleOptionSelected: HandleOptionCallback<TOption>;
   disabled?: boolean;
   children: childrenRenderFunction<TDefault>;
 }
@@ -44,37 +45,22 @@ interface SelectOrCreateOptionsInputProps<TOption, TDefault> {
 export type OptionState<T> = T | null;
 
 export type HandleOptionCallback<TOption> = (
-  selectedOption: OptionState<TOption>
+  option: OptionState<TOption>
 ) => void;
-
-function useOptionState<TOption>(
-  callback: HandleOptionCallback<TOption> = () => {}
-): [OptionState<TOption>, HandleOptionCallback<OptionState<TOption>>] {
-  const [value, setValue] = useState<OptionState<TOption>>(null);
-  const newCallback = useCallback(
-    (newValue: OptionState<TOption>) => {
-      setValue(newValue);
-      callback(newValue);
-    },
-    [callback]
-  );
-
-  return [value, newCallback];
-}
 
 export function SelectOrCreateOptionInput<TOption, TDefault>({
   id,
   label,
+  value,
+  setValue,
   options,
   defaultOptionValue,
   createNewOption,
   getNewOptionDTO,
   getOptionLabel,
-  handleOptionSelected,
   disabled = false,
   children,
 }: SelectOrCreateOptionsInputProps<TOption, TDefault>) {
-  const [value, setValue] = useOptionState<TOption>(handleOptionSelected);
   const [open, toggleOpen] = useState(false);
 
   const handleClose = () => {

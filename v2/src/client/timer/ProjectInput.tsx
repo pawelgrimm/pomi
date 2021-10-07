@@ -8,30 +8,34 @@ import TextField from "@material-ui/core/TextField";
 import React from "react";
 import {
   HandleOptionCallback,
+  OptionState,
   SelectOrCreateOptionInput,
 } from "./SelectOrCreateOptionInput";
 
 interface Props {
+  value: OptionState<Project>;
+  setValue: HandleOptionCallback<Project>;
   createProject: ReturnType<typeof useProjects>["create"];
   projects: Project[];
-  handleProjectSelected?: HandleOptionCallback<Project>;
 }
 
 export default function ProjectInput({
+  value,
+  setValue,
   createProject,
   projects,
-  handleProjectSelected = () => {},
 }: Props) {
   return (
     <SelectOrCreateOptionInput<Project, CreateProjectTaskDTO>
       id="project-input"
       label="Project"
+      value={value}
+      setValue={setValue}
       options={projects}
       defaultOptionValue={new CreateProjectTaskDTO("")}
       createNewOption={createProject}
       getNewOptionDTO={(name) => new CreateProjectTaskDTO(name)}
       getOptionLabel={(option: Project) => option.name}
-      handleOptionSelected={handleProjectSelected}
     >
       {(dialogValue, setDialogValue) => (
         <>

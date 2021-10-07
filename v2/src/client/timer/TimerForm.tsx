@@ -7,13 +7,21 @@ import Project from "@core/projectAggregate/Project";
 import { CreateProjectTaskDTO } from "@core/interfaces/ProjectDTOs";
 import TaskInput from "./TaskInput";
 
-interface TimerState {
-  project: OptionState<Project>;
-  task: OptionState<ProjectTask>;
+function useTimerState() {
+  const [project, setProject] = useState<OptionState<Project>>(null);
+  const [task, setTask] = useState<OptionState<ProjectTask>>(null);
+
+  const setProjectOverride = (projectOption: OptionState<Project>) => {
+    if (projectOption == null) {
+      setTask(null);
+    }
+    setProject(projectOption);
+  };
+  return { state: { project, task }, setProject: setProjectOverride, setTask };
 }
 
 function TimerForm() {
-  const [state, setState] = useState<TimerState>({ project: null, task: null });
+  const { state, setProject, setTask } = useTimerState();
   const projects = useProjects();
 
   const createAndAddTask = (
@@ -33,18 +41,16 @@ function TimerForm() {
   return (
     <>
       <ProjectInput
+        value={state.project}
+        setValue={setProject}
         projects={projects.getAll()}
         createProject={projects.create}
-        handleProjectSelected={(projectSelected) => {
-          setState((prevState) => ({ ...prevState, project: projectSelected }));
-        }}
       />
       <TaskInput
+        value={state.task}
+        setValue={setTask}
         project={state.project}
         createTask={createAndAddTask}
-        handleTaskSelected={(taskSelected) => {
-          setState((prevState) => ({ ...prevState, task: taskSelected }));
-        }}
       />
 
       <div>

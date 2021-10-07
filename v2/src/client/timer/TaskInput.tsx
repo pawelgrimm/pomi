@@ -7,6 +7,7 @@ import TextField from "@material-ui/core/TextField";
 import React, { useMemo } from "react";
 import {
   HandleOptionCallback,
+  OptionState,
   SelectOrCreateOptionInput,
 } from "./SelectOrCreateOptionInput";
 import ProjectTask from "@core/projectAggregate/ProjectTask";
@@ -17,13 +18,15 @@ interface Props {
     callback: (newTask: ProjectTask) => void
   ) => void;
   project: Project | null;
-  handleTaskSelected?: HandleOptionCallback<ProjectTask>;
+  value: OptionState<ProjectTask>;
+  setValue: HandleOptionCallback<ProjectTask>;
 }
 
 export default function TaskInput({
+  value,
+  setValue,
   createTask,
   project,
-  handleTaskSelected = () => {},
 }: Props) {
   const tasks = useMemo(() => {
     if (project == null) {
@@ -37,12 +40,13 @@ export default function TaskInput({
     <SelectOrCreateOptionInput<ProjectTask, CreateProjectTaskDTO>
       id="task-input"
       label="Task"
+      value={value}
+      setValue={setValue}
       options={tasks}
       defaultOptionValue={new CreateProjectTaskDTO("")}
       createNewOption={createTask}
       getNewOptionDTO={(name) => new CreateProjectTaskDTO(name)}
       getOptionLabel={(option: ProjectTask) => option.name}
-      handleOptionSelected={handleTaskSelected}
       disabled={project == null}
     >
       {(dialogValue, setDialogValue) => (
