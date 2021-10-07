@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useProjects from "@application/useProjects";
 import { Project, ProjectTask } from "@core/projectAggregate";
 import { CreateProjectTaskDTO } from "@core/interfaces/ProjectDTOs";
-import { ProjectInput, TaskInput, OptionState, TimerDisplay } from "./index";
+import { ProjectInput, TaskInput, OptionState, TimerDisplay } from "../index";
 import { ActionButton, FlexColumnContainer } from "@components";
 import { differenceInSeconds } from "date-fns";
 
@@ -71,6 +71,7 @@ function TimerForm() {
           isInProgress={state.isInProgress}
         />
         <ActionButton
+          disabled={state.project == null || state.task == null}
           onClick={() => {
             if (!state.isInProgress) {
               // Starting the timer

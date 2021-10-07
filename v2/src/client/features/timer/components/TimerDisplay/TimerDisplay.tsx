@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import useClock from "./useClock";
 import {
   formattedTimeToSeconds,
   secondsToFormattedTime,
 } from "@utils/time/time";
-import TimeInput from "./TimeInput";
 import TimeField from "react-simple-timefield";
+import { useClock } from "../../hooks";
+import { TimeInput } from "../index";
 
 export interface TimerDisplayProps {
   timerStartValue: number;

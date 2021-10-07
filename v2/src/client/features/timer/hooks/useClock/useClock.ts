@@ -8,7 +8,7 @@ if (window.clockWorker == null) {
   if (process.env.NODE_ENV === "development") {
     // @ts-expect-error
     window.clockWorker = new Worker(
-      "/src/client/timer/components/TimerDisplay/useClock/clockWorker-script.js"
+      "/src/client/features/timer/hooks/useClock/clockWorker-script.js"
     );
   } else {
     // @ts-expect-error
