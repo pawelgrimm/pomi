@@ -1,5 +1,5 @@
 import {
-  CreateProjectDTO,
+  CreateProjectTaskDTO,
   SerializeProjectDTO,
 } from "@core/interfaces/ProjectDTOs";
 import Project from "@core/projectAggregate/Project";
@@ -28,11 +28,17 @@ export class ProjectAPI {
     return foundProject;
   }
 
-  async create(request: CreateProjectDTO) {
+  async create(request: CreateProjectTaskDTO) {
     const newProject = new Project(uuid(), request.name);
     this._projects[newProject.id] = newProject;
     await this.save();
     return newProject;
+  }
+
+  async update(request: Project) {
+    this._projects[request.id] = request;
+    await this.save();
+    return request;
   }
 
   private load(): SerializeProjectDTO[] {

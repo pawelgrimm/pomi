@@ -1,8 +1,17 @@
+import Project from "@core/projectAggregate/Project";
 export interface CreateProjectDTO {
   name: string;
 }
 
-export class CreateProjectDTO {
+export interface CreateProjectTaskDTO {
+  name: string;
+}
+
+export class CreateProjectTaskDTO {
+  constructor(public name: string) {}
+}
+
+export class CreateTaskDTO {
   constructor(public name: string) {}
 }
 

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import Project from "@core/projectAggregate/Project";
-import { CreateProjectDTO } from "@core/interfaces/ProjectDTOs";
+import { CreateProjectTaskDTO } from "@core/interfaces/ProjectDTOs";
 import ProjectAPI from "@infra/api/ProjectAPI";
 
 interface ProjectsState {
@@ -21,12 +21,27 @@ export const addProject = createAsyncThunk(
     request,
     callback,
   }: {
-    request: CreateProjectDTO;
+    request: CreateProjectTaskDTO;
     callback: (newProject: Project) => void;
   }) => {
     const newProject = await ProjectAPI.create(request);
     callback(newProject);
     return newProject;
+  }
+);
+
+export const updateProject = createAsyncThunk(
+  "projects/update",
+  async ({
+    request,
+    callback,
+  }: {
+    request: Project;
+    callback: (savedProject: Project) => void;
+  }) => {
+    const savedProject = await ProjectAPI.update(request);
+    callback(savedProject);
+    return savedProject;
   }
 );
 
