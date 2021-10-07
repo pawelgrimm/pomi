@@ -23,12 +23,13 @@
       "@pages/*": ["./src/client/pages/*"],
       "@components": ["./src/client/components/index"],
       "@features/*": ["./src/client/features/*"],
-      "@layouts": ["./src/client/layouts/index"],
+      "@layouts/*": ["./src/client/layouts/*"],
       "@utils/*": ["./src/shared/utils/*"],
       "@types": ["./src/shared/types/index"],
       "@app/*": ["./src/client/app/*"],
       "@infra/*": ["./src/infrastructure/*"],
-      "@core/*": ["./src/core/*"]
+      "@core/*": ["./src/core/*"],
+      "@application/*": ["./src/application/*"]
     }
   },
   "include": ["./src"],

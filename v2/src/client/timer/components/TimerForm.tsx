@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import ProjectInput from "./ProjectInput";
-import useProjects from "../../application/useProjects";
-import { OptionState } from "./SelectOrCreateOptionInput";
-import ProjectTask from "@core/projectAggregate/ProjectTask";
-import Project from "@core/projectAggregate/Project";
+import useProjects from "@application/useProjects";
+import { Project, ProjectTask } from "@core/projectAggregate";
 import { CreateProjectTaskDTO } from "@core/interfaces/ProjectDTOs";
-import TaskInput from "./TaskInput";
+import { ProjectInput, TaskInput, OptionState } from "./InputFields";
 
 function useTimerState() {
   const [project, setProject] = useState<OptionState<Project>>(null);
   const [task, setTask] = useState<OptionState<ProjectTask>>(null);
+  const [isInProgress, setIsInProgress] = useState(false);
 
   const setProjectOverride = (projectOption: OptionState<Project>) => {
     if (projectOption == null) {
@@ -17,7 +15,12 @@ function useTimerState() {
     }
     setProject(projectOption);
   };
-  return { state: { project, task }, setProject: setProjectOverride, setTask };
+  return {
+    state: { project, task, isInProgress },
+    setProject: setProjectOverride,
+    setTask,
+    setIsInProgress,
+  };
 }
 
 function TimerForm() {

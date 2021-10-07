@@ -1,4 +1,4 @@
-import useProjects from "../../application/useProjects";
+import useProjects from "@application/useProjects";
 import Project from "@core/projectAggregate/Project";
 import { CreateProjectTaskDTO } from "@core/interfaces/ProjectDTOs";
 import DialogTitle from "@material-ui/core/DialogTitle";
